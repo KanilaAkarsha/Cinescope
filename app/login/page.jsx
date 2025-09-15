@@ -1,6 +1,10 @@
 import Link from 'next/link';
 import LoginForm from '@/components/login-form';
-import { Logo } from '@/components/logo'; // Importing Logo component
+import { Logo } from '@/components/logo'; 
+// Importing Logo component
+
+//react sever component
+
 export default function LoginPage() {
   return (
     <div className="flex flex-col min-h-screen container"> 
