@@ -4,6 +4,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { signIn } from "@/lib/auth-client";
 import {
   Card,
   CardContent,
@@ -66,23 +67,18 @@ export default function LoginForm() {
             //pass the data to the api 
             setIsLoading(true);
             try {
-                const response = await fetch("/api/v1/login", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ email, password }),
-                });
-                if(!response.ok){
-                    const errorData = await response.json();
-                    setError({
-                        error: true,
-                        message: errorData.message || "Login failed",
-                    });
-                }else{
-                    const loginData = await response.json();
-                    console.log("Login successful" , loginData);
-                }
+                await signIn.email({email, password} , 
+                    {onSuccess: (ctx) => {
+                    
+                    console.log("Login successful",ctx);},
+                    onError: (ctx) => {
+                        setError({
+                            error: true,
+                            message: ctx.error.message || "Login failed",
+                        });
+                        
+                        },});
+               
             } catch (error) { 
                 setError({
                     error: true,
@@ -90,9 +86,8 @@ export default function LoginForm() {
                 });
                 
             } finally{
-                setTimeout(() => {
                 setIsLoading(false);
-                }, 3000);
+                
             }
         }else{
             console.log("validation failed. Fix errors and try again.");
