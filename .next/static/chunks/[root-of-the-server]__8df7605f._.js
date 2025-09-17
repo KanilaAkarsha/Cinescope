@@ -2092,14 +2092,11 @@ Object.defineProperty(exports, "normalizePathTrailingSlash", {
 const _removetrailingslash = __turbopack_context__.r("[project]/node_modules/next/dist/shared/lib/router/utils/remove-trailing-slash.js [client] (ecmascript)");
 const _parsepath = __turbopack_context__.r("[project]/node_modules/next/dist/shared/lib/router/utils/parse-path.js [client] (ecmascript)");
 const normalizePathTrailingSlash = (path)=>{
-    if (!path.startsWith('/') || __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$client$5d$__$28$ecmascript$29$__["default"].env.__NEXT_MANUAL_TRAILING_SLASH) {
+    if (!path.startsWith('/') || ("TURBOPACK compile-time value", true)) {
         return path;
     }
-    const { pathname, query, hash } = (0, _parsepath.parsePath)(path);
-    if ("TURBOPACK compile-time falsy", 0) {
-        "TURBOPACK unreachable";
-    }
-    return "" + (0, _removetrailingslash.removeTrailingSlash)(pathname) + query + hash;
+    "TURBOPACK unreachable";
+    const pathname = undefined, query = undefined, hash = undefined;
 };
 if ((typeof exports.default === 'function' || typeof exports.default === 'object' && exports.default !== null) && typeof exports.default.__esModule === 'undefined') {
     Object.defineProperty(exports.default, '__esModule', {
@@ -20951,7 +20948,7 @@ function AppContainer(param) {
                             children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_headmanagercontextsharedruntime.HeadManagerContext.Provider, {
                                 value: headManager,
                                 children: /*#__PURE__*/ (0, _jsxruntime.jsx)(_imageconfigcontextsharedruntime.ImageConfigContext.Provider, {
-                                    value: ("TURBOPACK compile-time value", JSON.parse('{"deviceSizes":[640,750,828,1080,1200,1920,2048,3840],"imageSizes":[16,32,48,64,96,128,256,384],"path":"/_next/image","loader":"default","dangerouslyAllowSVG":false,"unoptimized":false,"domains":[],"remotePatterns":[]}')),
+                                    value: ("TURBOPACK compile-time value", JSON.parse('{"deviceSizes":[640,750,828,1080,1200,1920,2048,3840],"imageSizes":[16,32,48,64,96,128,256,384],"path":"/_next/image","loader":"default","dangerouslyAllowSVG":false,"unoptimized":false,"domains":[],"remotePatterns":[{"protocol":"https","hostname":"m.media-amazon.com","port":"","pathname":"/**","search":""}]}')),
                                     children: children
                                 })
                             })

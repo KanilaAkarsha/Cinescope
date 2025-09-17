@@ -1,4 +1,16 @@
 {
-  "node": {},
+  "node": {
+    "7fcc655411f29d6e224db71bfd3bbe686cb26f2158": {
+      "workers": {
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/page": "rsc"
+      }
+    }
+  },
   "edge": {}
 }
