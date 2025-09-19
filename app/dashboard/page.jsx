@@ -1,5 +1,5 @@
 export default function AdminDashboard() {
   return (
-    <div>AdminDashboard</div>
+    <div className="container">AdminDashboard</div>
   )
 }

@@ -79,7 +79,7 @@ function middleware(request) {
 }
 const config = {
     runtime: "nodejs",
-    matcher: '/admin/:path*'
+    matcher: '/dashboard/:path*'
 };
 }}),
 

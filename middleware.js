@@ -12,6 +12,5 @@ export function middleware(request) {
 }
  
 export const config = {
-    runtime: "nodejs",
-  matcher: '/admin/:path*',
+   matcher: '/dashboard/:path*',
 }

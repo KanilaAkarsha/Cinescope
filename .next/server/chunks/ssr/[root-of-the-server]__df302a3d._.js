@@ -309,6 +309,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/utils.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/button.jsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/loader-circle.js [app-ssr] (ecmascript) <export default as Loader2>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$auth$2d$client$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/auth-client.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/card.jsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/input.jsx [app-ssr] (ecmascript)");
@@ -327,11 +328,13 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$constants$2e$js__$5b$
 ;
 ;
 ;
+;
 const DEFAULT_ERROR = {
     error: false,
     message: ""
 };
 function LoginForm() {
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(DEFAULT_ERROR);
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const validateForm = ({ email, password })=>{
@@ -378,6 +381,7 @@ function LoginForm() {
                 }, {
                     onSuccess: (ctx)=>{
                         console.log("Login successful", ctx);
+                        router.push("/dashboard");
                     },
                     onError: (ctx)=>{
                         setError({
@@ -408,20 +412,20 @@ function LoginForm() {
                             children: "Login to Your Account"
                         }, void 0, false, {
                             fileName: "[project]/components/login-form.jsx",
-                            lineNumber: 100,
+                            lineNumber: 103,
                             columnNumber: 17
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
                             children: "Enter your email below to login to your account"
                         }, void 0, false, {
                             fileName: "[project]/components/login-form.jsx",
-                            lineNumber: 101,
+                            lineNumber: 104,
                             columnNumber: 18
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/login-form.jsx",
-                    lineNumber: 99,
+                    lineNumber: 102,
                     columnNumber: 13
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -440,7 +444,7 @@ function LoginForm() {
                                                 children: "Email"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/login-form.jsx",
-                                                lineNumber: 109,
+                                                lineNumber: 112,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -452,13 +456,13 @@ function LoginForm() {
                                                 required: true
                                             }, void 0, false, {
                                                 fileName: "[project]/components/login-form.jsx",
-                                                lineNumber: 110,
+                                                lineNumber: 113,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/login-form.jsx",
-                                        lineNumber: 108,
+                                        lineNumber: 111,
                                         columnNumber: 28
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -472,7 +476,7 @@ function LoginForm() {
                                                         children: "Password"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/login-form.jsx",
-                                                        lineNumber: 121,
+                                                        lineNumber: 124,
                                                         columnNumber: 29
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -481,13 +485,13 @@ function LoginForm() {
                                                         children: "Forgot your password?"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/login-form.jsx",
-                                                        lineNumber: 122,
+                                                        lineNumber: 125,
                                                         columnNumber: 29
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/login-form.jsx",
-                                                lineNumber: 120,
+                                                lineNumber: 123,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -499,13 +503,13 @@ function LoginForm() {
                                                 required: true
                                             }, void 0, false, {
                                                 fileName: "[project]/components/login-form.jsx",
-                                                lineNumber: 129,
+                                                lineNumber: 132,
                                                 columnNumber: 30
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/login-form.jsx",
-                                        lineNumber: 119,
+                                        lineNumber: 122,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -515,12 +519,12 @@ function LoginForm() {
                                             children: error.message
                                         }, void 0, false, {
                                             fileName: "[project]/components/login-form.jsx",
-                                            lineNumber: 138,
+                                            lineNumber: 141,
                                             columnNumber: 49
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/login-form.jsx",
-                                        lineNumber: 137,
+                                        lineNumber: 140,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -535,14 +539,14 @@ function LoginForm() {
                                                         className: "animate-spin"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/login-form.jsx",
-                                                        lineNumber: 142,
+                                                        lineNumber: 145,
                                                         columnNumber: 51
                                                     }, this),
                                                     " Login"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/login-form.jsx",
-                                                lineNumber: 141,
+                                                lineNumber: 144,
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -551,19 +555,19 @@ function LoginForm() {
                                                 children: "Login with Google"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/login-form.jsx",
-                                                lineNumber: 144,
+                                                lineNumber: 147,
                                                 columnNumber: 33
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/login-form.jsx",
-                                        lineNumber: 140,
+                                        lineNumber: 143,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/login-form.jsx",
-                                lineNumber: 107,
+                                lineNumber: 110,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -577,35 +581,35 @@ function LoginForm() {
                                         children: "Sign up"
                                     }, void 0, false, {
                                         fileName: "[project]/components/login-form.jsx",
-                                        lineNumber: 151,
+                                        lineNumber: 154,
                                         columnNumber: 33
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/login-form.jsx",
-                                lineNumber: 149,
+                                lineNumber: 152,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/login-form.jsx",
-                        lineNumber: 106,
+                        lineNumber: 109,
                         columnNumber: 17
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/login-form.jsx",
-                    lineNumber: 105,
+                    lineNumber: 108,
                     columnNumber: 13
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/login-form.jsx",
-            lineNumber: 98,
+            lineNumber: 101,
             columnNumber: 9
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/login-form.jsx",
-        lineNumber: 97,
+        lineNumber: 100,
         columnNumber: 5
     }, this);
 }

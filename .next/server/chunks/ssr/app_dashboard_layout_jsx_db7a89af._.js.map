@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///Users/kanilaakarsha/Documents/GitHub/Cinescope/app/dashboard/layout.jsx"],"sourcesContent":["\nexport const metadata = {\n  title: \"Cinescope | Dashboard\",\n  description: \"Movie Database and Management Dashboard\",\n};\n\nexport default function DashboardLayout({ children }) {\n  return (\n   <div>{children}</div>\n  );\n}\n"],"names":[],"mappings":";;;;;;AACO,MAAM,WAAW;IACtB,OAAO;IACP,aAAa;AACf;AAEe,SAAS,gBAAgB,EAAE,QAAQ,EAAE;IAClD,qBACC,8OAAC;kBAAK;;;;;;AAET","debugId":null}}]
+}

@@ -1,5 +1,7 @@
+import { Suspense } from 'react';
 import { Button } from '@/components/ui/button';
-import MoviesList from './movies-list';
+import MoviesList from '@/components/home/movies-list';
+import { MovieListSkeleton } from '@/components/home/movies-list';
 
 export default function FeaturedMovies() {
   return (
@@ -20,7 +22,9 @@ export default function FeaturedMovies() {
         </div>
 
         {/*  Movies List */}
+        <Suspense fallback={<MovieListSkeleton/>} >
         <MoviesList/>
+        </Suspense>
     </section>
   );
 }
