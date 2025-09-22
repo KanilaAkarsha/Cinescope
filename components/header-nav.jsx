@@ -20,7 +20,7 @@ export default function HeaderNav({isAuthenticated }) {
           <Link href="/movies" className="hover:text-primary text-sm font-medium transition-colors">Movies</Link>
           <Link href="/genres" className="hover:text-primary text-sm font-medium transition-colors">Genres</Link>
           <Link href="/about" className="hover:text-primary text-sm font-medium transition-colors">About</Link>
-          {isAuthenticated &&(<Link href="/dashboard" className="hover:text-primary text-sm font-medium transition-colors">Dashboard</Link>)}
+          {isAuthenticated &&(<Link href="/admin" className="hover:text-primary text-sm font-medium transition-colors">Dashboard</Link>)}
           {!isAuthenticated &&(<Link href="/login" className="hover:text-primary text-sm font-medium transition-colors">Login</Link>)}
           <ModeToggle/> {/* Mode Toggle Button */}
 
