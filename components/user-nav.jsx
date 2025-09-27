@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { UserIcon, SettingsIcon, LogOutIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,15 +20,25 @@ export default function UserNav() {
 </Avatar>
   </DropdownMenuTrigger>
   <DropdownMenuContent className="w-56" align="end" forceMount>
-    <DropdownMenuLabel><div>
-        <p>Admin User</p>
-        <p className="text-xs">kanilasaman1@gmail.com</p>
+    <DropdownMenuLabel className="font-normal"><div className="flex flex-col space-y-1">
+        <p className="text-sm font-medium leading-none">Admin User</p>
+        <p className="text-muted-foreground text-xs leading-none">kanilasaman1@gmail.com</p>
         </div></DropdownMenuLabel>
     <DropdownMenuSeparator />
-    <DropdownMenuItem>Profile</DropdownMenuItem>
-    <DropdownMenuItem>Billing</DropdownMenuItem>
-    <DropdownMenuItem>Team</DropdownMenuItem>
-    <DropdownMenuItem>Subscription</DropdownMenuItem>
+    <DropdownMenuItem asChild>
+      <Link href="/admin/profile">
+      <UserIcon className="mr-2 h-4 w-4"/>
+      <span>Profile</span>
+      </Link>
+      </DropdownMenuItem>
+    <DropdownMenuItem asChild>
+      <Link href="/admin/settings">
+      <SettingsIcon className="mr-2 h-4 w-4"/>
+      <span>Settings</span>
+      </Link>
+    </DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem><LogOutIcon className="mr-2 h-4 w-4"/>Logout</DropdownMenuItem>
   </DropdownMenuContent>
 </DropdownMenu>
     );

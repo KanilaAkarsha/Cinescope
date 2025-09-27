@@ -39,7 +39,11 @@ function useIsMobile() {
 var { g: global, __dirname } = __turbopack_context__;
 {
 __turbopack_context__.s({
-    "cn": (()=>cn)
+    "capitalizeFirstLetter": (()=>capitalizeFirstLetter),
+    "cn": (()=>cn),
+    "getAllGenres": (()=>getAllGenres),
+    "getAllMovieStatus": (()=>getAllMovieStatus),
+    "getAllYears": (()=>getAllYears)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$clsx$2f$dist$2f$clsx$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/clsx/dist/clsx.mjs [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$tailwind$2d$merge$2f$dist$2f$bundle$2d$mjs$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/tailwind-merge/dist/bundle-mjs.mjs [app-ssr] (ecmascript)");
@@ -47,6 +51,34 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$tailwind$2d$
 ;
 function cn(...inputs) {
     return (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$tailwind$2d$merge$2f$dist$2f$bundle$2d$mjs$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["twMerge"])((0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$clsx$2f$dist$2f$clsx$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["clsx"])(inputs));
+}
+function getAllYears() {
+    return Array.from({
+        length: 100
+    }, (_, i)=>(new Date().getFullYear() - i).toString());
+}
+function getAllGenres() {
+    return [
+        "Action",
+        "Adventure",
+        "Sci-Fi",
+        "Horror",
+        "Mystery",
+        "Comedy"
+    ];
+}
+function getAllMovieStatus() {
+    return [
+        "Published",
+        "Draft",
+        "Archived"
+    ];
+}
+function capitalizeFirstLetter(str) {
+    if (str.length === 0) {
+        return "";
+    }
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 }}),
 "[project]/components/ui/button.jsx [app-ssr] (ecmascript)": ((__turbopack_context__) => {

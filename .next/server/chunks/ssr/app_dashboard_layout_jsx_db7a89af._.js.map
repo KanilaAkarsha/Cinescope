@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///Users/kanilaakarsha/Documents/GitHub/Cinescope/app/dashboard/layout.jsx"],"sourcesContent":["\nexport const metadata = {\n  title: \"Cinescope | Dashboard\",\n  description: \"Movie Database and Management Dashboard\",\n};\n\nexport default function DashboardLayout({ children }) {\n  return (\n   <div className=\"bg-amber-400 min-h-screen flex flex-row\">\n    <div className=\"bg-green-400 flex-2\">sidebar</div>\n    <div className=\"bg-orange-400 flex-10 flex flex-col\">\n      <div className=\"bg-red-400 flex-1\">header</div>\n      <div className=\"bg-purple-400 flex-10\">{children}</div>\n    </div>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;;AACO,MAAM,WAAW;IACtB,OAAO;IACP,aAAa;AACf;AAEe,SAAS,gBAAgB,EAAE,QAAQ,EAAE;IAClD,qBACC,8OAAC;QAAI,WAAU;;0BACd,8OAAC;gBAAI,WAAU;0BAAsB;;;;;;0BACrC,8OAAC;gBAAI,WAAU;;kCACb,8OAAC;wBAAI,WAAU;kCAAoB;;;;;;kCACnC,8OAAC;wBAAI,WAAU;kCAAyB;;;;;;;;;;;;;;;;;;AAI9C","debugId":null}}]
-}

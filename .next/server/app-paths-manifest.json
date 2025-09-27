@@ -3,8 +3,6 @@
   "/admin/movies/page": "app/admin/movies/page.js",
   "/admin/page": "app/admin/page.js",
   "/api/v1/movies/route": "app/api/v1/movies/route.js",
-  "/dashboard/movies/page": "app/dashboard/movies/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/page": "app/page.js"
 }

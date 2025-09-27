@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 6, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
-    {"offset": {"line": 24, "column": 0}, "map": {"version":3,"sources":["file:///Users/kanilaakarsha/Documents/GitHub/Cinescope/app/page.jsx"],"sourcesContent":["import {auth} from \"@/lib/auth\";\nimport {headers} from \"next/headers\";\nimport HeaderNav from \"@/components/header-nav\";\nimport FeaturedMovies from \"@/components/home/featured-movies\";\nimport HeroBanner from \"@/components/home/hero-banner\";\n\nexport default async function Home() {\n  const session = await auth.api.getSession({\n    headers: await headers()\n  });\n\n  const isAuthenticated = session?  true : false;\n\n  return (\n    <div className=\"flex flex-col min-h-screen\">\n      <HeaderNav isAuthenticated={isAuthenticated}/>\n      <main className=\"flex-1\">\n        <HeroBanner/>\n        <FeaturedMovies/>\n      </main>\n      <footer className=\"flex-1 bg-amber-400\">Footer Section</footer>\n    </div>\n  );\n}\n"],"names":[],"mappings":";;;;;;;;;AACA;;;;;;;;;;;;;;;;;;;;;;AAKe,eAAe;IAC5B,MAAM,UAAU,MAAM,KAAK,GAAG,CAAC,UAAU,CAAC;QACxC,SAAS,MAAM,CAAA,GAAA,+HAAA,CAAA,UAAO,AAAD;IACvB;IAEA,MAAM,kBAAkB,UAAU,OAAO;IAEzC,qBACE,8OAAC;QAAI,WAAU;;0BACb,8OAAC;gBAAU,iBAAiB;;;;;;0BAC5B,8OAAC;gBAAK,WAAU;;kCACd,8OAAC;;;;;kCACD,8OAAC;;;;;;;;;;;0BAEH,8OAAC;gBAAO,WAAU;0BAAsB;;;;;;;;;;;;AAG9C","debugId":null}}]
-}

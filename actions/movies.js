@@ -1,6 +1,9 @@
 "use server";
+import {db} from "@/db";
+
 // get all movies database - action
 export const getMovies = async () => {
+    console.log("response")
     try {
         // Fetch movies from the API
         const movieResponse = await fetch(`${process.env.API_BASE_URL}/v1/movies`,
@@ -13,6 +16,8 @@ export const getMovies = async () => {
                 cache: "no-store",
             }
         );
+        
+
 
         if (!movieResponse.ok) {
             throw new Error("Failed to fetch movies");
@@ -30,3 +35,37 @@ export const getMovies = async () => {
     }
 }
 
+// option 2 : Search movies from the database using server action
+
+export const searchMovies = async (query) => {
+    
+    try{
+        //search by title (i=case insensitive)
+        const movies = await db.collection("movies").find({title: {$regex: query, $options: "i" }}).limit(50).toArray();
+        console.log("movies",movies)
+        if(movies && movies.length > 0){
+            return {
+                success: true,
+                message: "Movies fetched successfully",
+                data: movies,
+            };
+        }else{
+            return {
+                success: false,
+                message: "No movies found",
+                data: [],
+            };
+        }
+    }catch(error){
+        console.log("Error",error)
+        return {
+                success: false,
+                message: "Error fetching movies",
+                data: [],
+            };
+}
+};
+
+export const createMovie = async () => {
+
+};
