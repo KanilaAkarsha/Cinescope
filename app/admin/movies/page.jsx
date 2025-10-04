@@ -1,7 +1,7 @@
 
-import AddMoviesForm from "@/components/add-movies-form";
+import AddMoviesForm from "@/components/add-movie-form";
 import MoviesData from "./movies-data";
-import AddMoviesDialog from "@/components/add-movies-dialog";
+import AddMovieDialog from "@/components/add-movie-dialog";
 
 export default function MoviesPage(){
     return (
@@ -11,7 +11,7 @@ export default function MoviesPage(){
           <h2 className="text-3xl font-bold tracking-tight">Movies</h2>
           <p className="text-muted-foreground">Manage Your movies catalog</p>
         </div>
-        <AddMoviesDialog/>
+        <AddMovieDialog/>
       </div>
       
       <MoviesData query=""/>
