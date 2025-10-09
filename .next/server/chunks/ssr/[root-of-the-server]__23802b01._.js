@@ -1287,7 +1287,7 @@ function UpdateMovieForm({ showDialog, movie }) {
         year: movie?.year || null,
         director: movie?.directors?.at(0) || "",
         genre: movie?.genres?.at(0) || null,
-        rating: movie?.IMDb?.rating || "",
+        rating: movie?.imdb?.rating || "",
         runtime: movie?.runtime || "",
         overview: movie?.plot || "",
         poster: movie?.poster || "",
@@ -1316,7 +1316,7 @@ function UpdateMovieForm({ showDialog, movie }) {
             genres: [
                 formData.get("genre")
             ],
-            IMDb: {
+            imdb: {
                 rating: Number(formData.get("rating"))
             },
             runtime: formData.get("runtime"),
@@ -1891,20 +1891,13 @@ __turbopack_context__.s({
     "default": (()=>UpdateMovieDialog)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/button.jsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/dialog.jsx [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$update$2d$movie$2d$form$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/update-movie-form.jsx [app-ssr] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$externals$5d2f$events__$5b$external$5d$__$28$events$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/events [external] (events, cjs)");
 "use client";
 ;
 ;
 ;
-;
-;
-;
-;
-function UpdateMovieDialog(open, onOpenChange, movie) {
+function UpdateMovieDialog({ open, onOpenChange, movie }) {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Dialog"], {
         open: open,
         onOpenChange: onOpenChange,
@@ -1917,20 +1910,20 @@ function UpdateMovieDialog(open, onOpenChange, movie) {
                             children: "Update Movie"
                         }, void 0, false, {
                             fileName: "[project]/components/update-movie-dialog.jsx",
-                            lineNumber: 24,
+                            lineNumber: 20,
                             columnNumber: 7
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogDescription"], {
                             children: "Fill in the details to Update the movie."
                         }, void 0, false, {
                             fileName: "[project]/components/update-movie-dialog.jsx",
-                            lineNumber: 25,
+                            lineNumber: 21,
                             columnNumber: 7
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/update-movie-dialog.jsx",
-                    lineNumber: 23,
+                    lineNumber: 19,
                     columnNumber: 5
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$update$2d$movie$2d$form$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -1938,18 +1931,18 @@ function UpdateMovieDialog(open, onOpenChange, movie) {
                     movie: movie
                 }, void 0, false, {
                     fileName: "[project]/components/update-movie-dialog.jsx",
-                    lineNumber: 29,
+                    lineNumber: 25,
                     columnNumber: 5
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/update-movie-dialog.jsx",
-            lineNumber: 22,
+            lineNumber: 18,
             columnNumber: 3
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/update-movie-dialog.jsx",
-        lineNumber: 18,
+        lineNumber: 16,
         columnNumber: 3
     }, this);
 }
@@ -2288,6 +2281,17 @@ function MovieTable({ movies }) {
             }, void 0, false, {
                 fileName: "[project]/app/admin/movies/movie-table.jsx",
                 lineNumber: 100,
+                columnNumber: 1
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(DeleteMovieDialog, {
+                open: true,
+                onOpenChange: ()=>{},
+                movie: selectedMovie,
+                onConfirm: handleDeleteConfirm,
+                isLoading: true
+            }, void 0, false, {
+                fileName: "[project]/app/admin/movies/movie-table.jsx",
+                lineNumber: 102,
                 columnNumber: 1
             }, this)
         ]

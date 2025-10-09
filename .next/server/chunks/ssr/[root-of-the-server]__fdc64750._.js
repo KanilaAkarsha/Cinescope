@@ -28,8 +28,9 @@ const db = client.db("sample_mflix"); // Access the database instance
 
 var { g: global, __dirname } = __turbopack_context__;
 {
-/* __next_internal_action_entry_do_not_use__ [{"7f03b6e35ce3120448612bbd2f8c33375f358780d7":"updateMovie","7f087a2d6dc3412e9b5f19906a001be56a12c999b0":"getMovies","7fd290a89e25327ac58e8613810692d8ed33ccc944":"createMovie","7fe6ef1262a7b828972fba2327a0187c9cdaba93b5":"searchMovies"},"",""] */ __turbopack_context__.s({
+/* __next_internal_action_entry_do_not_use__ [{"7f03b6e35ce3120448612bbd2f8c33375f358780d7":"updateMovie","7f087a2d6dc3412e9b5f19906a001be56a12c999b0":"getMovies","7fd290a89e25327ac58e8613810692d8ed33ccc944":"createMovie","7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be":"deleteMovie","7fe6ef1262a7b828972fba2327a0187c9cdaba93b5":"searchMovies"},"",""] */ __turbopack_context__.s({
     "createMovie": (()=>createMovie),
+    "deleteMovie": (()=>deleteMovie),
     "getMovies": (()=>getMovies),
     "searchMovies": (()=>searchMovies),
     "updateMovie": (()=>updateMovie)
@@ -140,17 +141,38 @@ const updateMovie = async (movieDoc, movieId)=>{
         console.log("Mongodb movie update failed", error);
     }
 };
+const deleteMovie = async (movieId)=>{
+    try {
+        const result = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("movies_n").deleteOne({
+            _id: __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["ObjectId"].createFromHexString(movieId)
+        } // Filter to find the movie by its ID
+        );
+        if (result.acknowledged) {
+            console.log(`A movie was deleted with the _id: ${result.insertedId}`);
+            return {
+                success: true,
+                message: "Movie Deleted Successfully"
+            };
+        } else {
+            return undefined;
+        }
+    } catch (error) {
+        console.log("Mongodb movie delete failed", error);
+    }
+};
 ;
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$action$2d$validate$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["ensureServerEntryExports"])([
     getMovies,
     searchMovies,
     createMovie,
-    updateMovie
+    updateMovie,
+    deleteMovie
 ]);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getMovies, "7f087a2d6dc3412e9b5f19906a001be56a12c999b0", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(searchMovies, "7fe6ef1262a7b828972fba2327a0187c9cdaba93b5", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(createMovie, "7fd290a89e25327ac58e8613810692d8ed33ccc944", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(updateMovie, "7f03b6e35ce3120448612bbd2f8c33375f358780d7", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(deleteMovie, "7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be", null);
 }}),
 "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript) <locals>": ((__turbopack_context__) => {
 "use strict";
@@ -159,6 +181,7 @@ var { g: global, __dirname } = __turbopack_context__;
 {
 __turbopack_context__.s({});
 var __TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/actions/movies.js [app-rsc] (ecmascript)");
+;
 ;
 ;
 ;
@@ -182,6 +205,7 @@ __turbopack_context__.s({
     "7f03b6e35ce3120448612bbd2f8c33375f358780d7": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["updateMovie"]),
     "7f087a2d6dc3412e9b5f19906a001be56a12c999b0": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getMovies"]),
     "7fd290a89e25327ac58e8613810692d8ed33ccc944": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["createMovie"]),
+    "7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["deleteMovie"]),
     "7fe6ef1262a7b828972fba2327a0187c9cdaba93b5": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["searchMovies"])
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/actions/movies.js [app-rsc] (ecmascript)");
@@ -196,6 +220,7 @@ __turbopack_context__.s({
     "7f03b6e35ce3120448612bbd2f8c33375f358780d7": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7f03b6e35ce3120448612bbd2f8c33375f358780d7"]),
     "7f087a2d6dc3412e9b5f19906a001be56a12c999b0": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7f087a2d6dc3412e9b5f19906a001be56a12c999b0"]),
     "7fd290a89e25327ac58e8613810692d8ed33ccc944": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fd290a89e25327ac58e8613810692d8ed33ccc944"]),
+    "7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be"]),
     "7fe6ef1262a7b828972fba2327a0187c9cdaba93b5": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fe6ef1262a7b828972fba2327a0187c9cdaba93b5"])
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i('[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => "[project]/actions/movies.js [app-rsc] (ecmascript)" } [app-rsc] (server actions loader, ecmascript) <module evaluation>');

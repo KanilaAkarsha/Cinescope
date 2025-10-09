@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { UserIcon, SettingsIcon, LogOutIcon } from "lucide-react";
 import {
@@ -9,8 +10,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { sign } from "crypto";
+import { signOut } from "@/lib/auth-client";
+import { redirect } from "next/navigation";
 
 export default function UserNav() {
+  const handleLogout = async() => {
+    await signOut({
+      fetchOptions:{
+        onSuccess: () => redirect("/login"),
+      }
+    });
+  }
     return (
         <DropdownMenu>
   <DropdownMenuTrigger asChild>
@@ -38,7 +49,7 @@ export default function UserNav() {
       </Link>
     </DropdownMenuItem>
     <DropdownMenuSeparator />
-    <DropdownMenuItem><LogOutIcon className="mr-2 h-4 w-4"/>Logout</DropdownMenuItem>
+    <DropdownMenuItem onClick={handleLogout}><LogOutIcon className="mr-2 h-4 w-4"/>Logout</DropdownMenuItem>
   </DropdownMenuContent>
 </DropdownMenu>
     );

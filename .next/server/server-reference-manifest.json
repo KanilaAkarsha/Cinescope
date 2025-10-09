@@ -6,6 +6,10 @@
           "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         },
+        "app/movies/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/movies/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
         "app/page": {
           "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
@@ -13,6 +17,7 @@
       },
       "layer": {
         "app/admin/movies/page": "action-browser",
+        "app/movies/[id]/page": "rsc",
         "app/page": "rsc"
       }
     },
@@ -22,6 +27,10 @@
           "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         },
+        "app/movies/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/movies/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
         "app/page": {
           "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
@@ -29,6 +38,28 @@
       },
       "layer": {
         "app/admin/movies/page": "rsc",
+        "app/movies/[id]/page": "rsc",
+        "app/page": "rsc"
+      }
+    },
+    "7fc8f6743517b3b9134e31c966cd36c5abd0e2d0a9": {
+      "workers": {
+        "app/admin/movies/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/movies/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/movies/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/movies/page": "rsc",
+        "app/movies/[id]/page": "rsc",
         "app/page": "rsc"
       }
     },
@@ -38,6 +69,10 @@
           "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         },
+        "app/movies/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/movies/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
         "app/page": {
           "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
@@ -45,13 +80,18 @@
       },
       "layer": {
         "app/admin/movies/page": "action-browser",
+        "app/movies/[id]/page": "rsc",
         "app/page": "rsc"
       }
     },
-    "7fe6ef1262a7b828972fba2327a0187c9cdaba93b5": {
+    "7fdc4dc53f37b8bc2b9512d4699d490f3db0914b1d": {
       "workers": {
         "app/admin/movies/page": {
           "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/movies/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/movies/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false
         },
         "app/page": {
@@ -61,6 +101,49 @@
       },
       "layer": {
         "app/admin/movies/page": "rsc",
+        "app/movies/[id]/page": "rsc",
+        "app/page": "rsc"
+      }
+    },
+    "7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be": {
+      "workers": {
+        "app/admin/movies/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/movies/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/movies/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/movies/page": "action-browser",
+        "app/movies/[id]/page": "rsc",
+        "app/page": "rsc"
+      }
+    },
+    "7fe6ef1262a7b828972fba2327a0187c9cdaba93b5": {
+      "workers": {
+        "app/admin/movies/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/movies/[id]/page": {
+          "moduleId": "[project]/.next-internal/server/app/movies/[id]/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/admin/movies/page": "rsc",
+        "app/movies/[id]/page": "rsc",
         "app/page": "rsc"
       }
     }
