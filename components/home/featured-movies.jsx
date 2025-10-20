@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import MoviesList from '@/components/home/movies-list';
 import { MovieListSkeleton } from '@/components/home/movies-list';
+import MovieSelectors from '@/app/admin/movies/movie-selectors';
 
 export default function FeaturedMovies() {
   return (
@@ -17,9 +18,7 @@ export default function FeaturedMovies() {
         </div>
 
         {/* Movie search */}
-        <div className="w-full h-32 bg-purple-400 rounded-lg mb-6">
-            {/* SearchBar input */}
-        </div>
+        <MovieSelectors />
 
         {/*  Movies List */}
         <Suspense fallback={<MovieListSkeleton/>} >

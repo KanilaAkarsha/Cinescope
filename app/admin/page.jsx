@@ -16,15 +16,23 @@ import {
   Clock,
   ArrowRight,
 } from "lucide-react";
-import { movies, users, reviews } from "@/lib/data";
+import {  users, reviews } from "@/lib/data";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import MoviesData from "./movies-data";
+import { getMovies } from "@/actions/movies";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
   const pendingReviews = reviews.filter(
     (review) => review.status === "pending",
   ).length;
+  const movies = await getMovies();
+
+
+    if (!movies || movies.length === 0) {
+        return <div className=" text-foreground font-medium text-center py-12">No movies available.</div>;
+    }
 
   return (
     <div className="flex flex-col gap-4">
@@ -218,47 +226,7 @@ export default function AdminDashboard() {
           <TabsTrigger value="recent-reviews">Recent Reviews</TabsTrigger>
         </TabsList>
         <TabsContent value="recent-movies" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {movies.slice(0, 6).map((movie) => (
-              <Card key={movie.id} className="overflow-hidden py-0">
-                <div className="aspect-video w-full overflow-hidden">
-                  <Image
-                    src={movie.poster || "/placeholder.svg"}
-                    alt={movie.title}
-                    className="h-full w-full object-cover"
-                    width={200}
-                    height={400}
-                    priority
-                  />
-                </div>
-                <CardHeader className="p-4">
-                  <CardTitle className="line-clamp-1">{movie.title}</CardTitle>
-                  <CardDescription>
-                    {movie.year} • {movie.genre.join(", ")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="p-4 pt-0">
-                  <div className="flex justify-between">
-                    <span className="text-sm">Rating: {movie.rating}/10</span>
-                    <Link
-                      href={`/admin/movies/${movie.id}`}
-                      className="text-primary text-sm hover:underline"
-                    >
-                      View Details
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div className="flex justify-end">
-            <Link
-              href="/admin/movies"
-              className="text-primary text-sm hover:underline"
-            >
-              View All Movies →
-            </Link>
-          </div>
+          <MoviesData/>
         </TabsContent>
         <TabsContent value="recent-users" className="space-y-4">
           <div className="rounded-md border">

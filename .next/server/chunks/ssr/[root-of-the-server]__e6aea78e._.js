@@ -129,7 +129,7 @@ const MOVIES = [
         rating: 9.2,
         runtime: 175,
         poster: "https://m.media-amazon.com/images/M/MV5BNGEwYjgwOGQtYjg5ZS00Njc1LTk2ZGEtM2QwZWQ2NjdhZTE5XkEyXkFqcGc@._V1_FMjpg_UY1982_.jpg",
-        backdrop: "/placeholder.svg?height=800&width=1200",
+        backdrop: "/images/hero-4.jpg",
         overview: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
         releaseDate: "1972-03-24",
         status: "published",
@@ -149,7 +149,7 @@ const MOVIES = [
         rating: 8.6,
         runtime: 169,
         poster: "https://m.media-amazon.com/images/M/MV5BYzdjMDAxZGItMjI2My00ODA1LTlkNzItOWFjMDU5ZDJlYWY3XkEyXkFqcGc@._V1_FMjpg_UY3600_.jpg",
-        backdrop: "/placeholder.svg?height=800&width=1200",
+        backdrop: "/images/hero-4.jpg",
         overview: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
         releaseDate: "2014-11-07",
         status: "published",
@@ -247,7 +247,7 @@ const movies = [
         rating: 9.2,
         runtime: 175,
         poster: "https://m.media-amazon.com/images/M/MV5BNGEwYjgwOGQtYjg5ZS00Njc1LTk2ZGEtM2QwZWQ2NjdhZTE5XkEyXkFqcGc@._V1_FMjpg_UY1982_.jpg",
-        backdrop: "/public/images/hero-4.jpg",
+        backdrop: "/images/hero-4.jpg",
         overview: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
         releaseDate: "1972-03-24",
         status: "published",
@@ -267,7 +267,7 @@ const movies = [
         rating: 8.6,
         runtime: 169,
         poster: "https://m.media-amazon.com/images/M/MV5BYzdjMDAxZGItMjI2My00ODA1LTlkNzItOWFjMDU5ZDJlYWY3XkEyXkFqcGc@._V1_FMjpg_UY3600_.jpg",
-        backdrop: "/placeholder.svg?height=800&width=1200",
+        backdrop: "/images/hero-4.jpg",
         overview: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
         releaseDate: "2014-11-07",
         status: "published",
@@ -694,7 +694,32 @@ const deleteMovie = async (movieId)=>{
 const getMovieById = async (movieId)=>{
     // Call the database based on parameter
     // Simulate 2 second delay
-    return await new Promise((resolve)=>setTimeout(()=>resolve(__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$data$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["MOVIES"].at(5)), 2000));
+    try {
+        const result = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("movies_n").findOne({
+            _id: __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["ObjectId"].createFromHexString(movieId)
+        } // Filter to find the movie by its ID
+        );
+        if (result) {
+            return {
+                success: true,
+                message: "Movie fetched successfully",
+                data: result
+            };
+        } else {
+            return {
+                success: false,
+                message: "Movie not found",
+                data: null
+            };
+        }
+    } catch (error) {
+        console.log("Mongodb movie fetch failed", error);
+        return {
+            success: false,
+            message: "Error fetching movie",
+            data: null
+        };
+    }
 };
 const getReviewsForMovie = async (movieId)=>{
     return [

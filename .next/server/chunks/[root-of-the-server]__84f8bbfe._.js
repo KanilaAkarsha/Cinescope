@@ -90,7 +90,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2
 ;
 const GET = async ()=>{
     try {
-        const movies = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["db"].collection("movies").find({}).sort({
+        const movies = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["db"].collection("movies_n").find({}).sort({
             metacritc: -1
         }).limit(50).toArray().catch((error)=>{
             console.error("Error fetching movies:", error);

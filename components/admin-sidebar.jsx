@@ -16,7 +16,7 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar"
 import {Logo} from "./logo";
-import ModeToggle from "./mode-toggle";
+import { ModeToggle } from "./mode-toggle";
 
 const menuItems = [
 { title: "Dashboard", href: "/admin", icon: HomeIcon,  exact: true},
@@ -48,13 +48,18 @@ export default function AdminSidebar() {
     <Sidebar>
         {/* Header */}
       <SidebarHeader className="flex flex-col">
+
         <div className="flex items-center p-2">
+          
             <Logo/>
+            <Link href="/">
             <h2 className="ml-2 text-xl font-bold">CineScope</h2>
+            </Link>
             <div className="ml-auto flex items-center">
                 <ModeToggle/>
             </div>
         </div>
+        
       </SidebarHeader>
       <SidebarContent>
         {/* Menu */}

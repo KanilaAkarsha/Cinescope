@@ -3,7 +3,7 @@ import { db } from "@/db"; // Import the database instance
 
 export const GET= async() => {
     try {
-        const movies = await db.collection("movies").find({}).sort({metacritc: -1}).limit(50).toArray().catch((error) =>{
+        const movies = await db.collection("movies_n").find({}).sort({metacritc: -1}).limit(50).toArray().catch((error) =>{
             console.error("Error fetching movies:", error);
             return [];
         }); // Fetch all movies from the "movies" collection

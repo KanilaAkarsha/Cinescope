@@ -7,14 +7,25 @@ export const metadata = {
   description: "Movie Database and Management Dashboard",
 };
 
+
+import { ThemeProvider } from "@/components/theme-provider"
+
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="light">
-      <body
-        className={`${inter.className} `}
-      >
-        {children}
-      </body>
-    </html>
-  );
+    <>
+      <html lang="en" className="light" suppressHydrationWarning>
+        <head />
+        <body  className={`${inter.className} `}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </body>
+      </html>
+    </>
+  )
 }

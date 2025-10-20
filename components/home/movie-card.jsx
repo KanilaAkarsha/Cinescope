@@ -6,12 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "../ui/button";
 import { Ghost } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
+import Link from "next/link";
 
 export default function MovieCard({movie}) {
     const[posterUrl,setPosterUrl] = useState(movie.poster);
 
 
   return (
+    <Link href={`/movies/${movie._id}`} target="_blank">
     <Card className="border-primary/20 hover:border-primary/50 overflow-hidden py-0 gap-0 transition-colors">
         <div className="aspect-2/3 w-full overflow-hidden">
             <Image width={300} height={450} src={posterUrl || "/placeholder.svg"} alt={movie.title} 
@@ -36,6 +38,7 @@ export default function MovieCard({movie}) {
         </CardFooter>
         
         </Card>
+        </Link>
   );
 }
 

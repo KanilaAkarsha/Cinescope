@@ -568,8 +568,14 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$app$2d$render$2f$encryption$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/app-render/encryption.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/db/index.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$data$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/lib/data.js [app-rsc] (ecmascript)");
+(()=>{
+    const e = new Error("Cannot find module 'better-auth/*'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
 var __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/mongodb [external] (mongodb, cjs)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$action$2d$validate$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/webpack/loaders/next-flight-loader/action-validate.js [app-rsc] (ecmascript)");
+;
 ;
 ;
 ;
@@ -694,19 +700,49 @@ const deleteMovie = async (movieId)=>{
 const getMovieById = async (movieId)=>{
     // Call the database based on parameter
     // Simulate 2 second delay
-    return await new Promise((resolve)=>setTimeout(()=>resolve(__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$data$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["MOVIES"].at(5)), 2000));
+    //   return await new Promise((resolve) =>
+    //     setTimeout(() => resolve(MOVIES.at(5)), 2000)
+    //   );
+    try {
+        const movie = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("movies_n").findOne({
+            _id: __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["ObjectId"].createFromHexString(movieId)
+        } // Filter to find the movie by its ID
+        );
+        if (movie && Object.keys(movie).length > 0) {
+            console.log(`Mongodb get movie by id success: ${movie._id}`);
+            return {
+                success: true,
+                message: "Movie fetched successfully",
+                data: movie
+            };
+        } else {
+            console.log("Mongodb get movie by id: Movie not found");
+            return {
+                success: false,
+                message: "Movie not found",
+                data: null
+            };
+        }
+    } catch (error) {
+        console.log("Mongodb get movie by id failed", error);
+        return {
+            success: false,
+            message: "Error fetching movie",
+            data: null
+        };
+    }
 };
 const getReviewsForMovie = async (movieId)=>{
-    return [
-        {
-            id: 123,
-            userAvatar: "",
-            userName: "Test",
-            comment: "This is a test comment",
-            rating: 4.5,
-            createdAt: ""
-        }
-    ];
+    return await new Promise((resolve)=>setTimeout(()=>resolve([
+                {
+                    id: 123,
+                    userAvatar: "",
+                    userName: "Test",
+                    comment: "This is a test comment",
+                    rating: 4.5,
+                    createdAt: ""
+                }
+            ]), 2000));
 };
 ;
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$action$2d$validate$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["ensureServerEntryExports"])([

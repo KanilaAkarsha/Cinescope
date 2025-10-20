@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {Logo} from "./logo"; // Importing Logo component 
-import ModeToggle from "./mode-toggle";
+import { ModeToggle } from "./mode-toggle";
 // Logo Component
 // Mode Toggle Component
 

@@ -92,8 +92,10 @@ export default function MovieTable({ movies }){
       <TableRow key={movie.id}>
       <TableCell className="font-medium"> {key+ 1}</TableCell>
       <TableCell><div className="flex items-center gap-2">
+        <Link href={`/movies/${movie?.id}`} className="flex items-center gap-2">
         <Image src={movie.poster ?? "/placeholder.svg"} width={28} height={40} alt={movie.title} className="h-10 w-7 rounded object-cover"/>
         <span className="font-medium max-w-60 text-wrap line-clamp-2">{movie.title}</span>
+        </Link>
         </div></TableCell>
       <TableCell>{movie.year}</TableCell>
       <TableCell>
@@ -114,7 +116,9 @@ export default function MovieTable({ movies }){
            <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Movie Actions</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild><Link href={`/movies/${movie?.id}`}>View Details</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href={`/movies/${movie?.id}`}>
+                    View Details
+                    </Link></DropdownMenuItem>
                     <DropdownMenuItem
                      onClick={() => {
                       setSelectedMovie(movie);

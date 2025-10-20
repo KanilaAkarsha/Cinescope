@@ -1,7 +1,10 @@
 "use server";
 import {db} from "@/db";
-import { MOVIES } from "@/lib/data";
+
+// import { MOVIES } from "@/lib/data";
+
 import { ObjectId } from "mongodb";
+import { it, run } from "node:test";
 
 // get all movies database - action
 export const getMovies = async () => {
@@ -135,13 +138,57 @@ export const deleteMovie = async (movieId) => {
 export const getMovieById = async (movieId) => {
   // Call the database based on parameter
   // Simulate 2 second delay
-  return await new Promise((resolve) =>
-    setTimeout(() => resolve(MOVIES.at(5)), 2000)
-  );
+//   return await new Promise((resolve) =>
+//     setTimeout(() => resolve(MOVIES.at(5)), 2000)
+//   );
+
+    try{
+        const movie =  await db.collection("movies_n").findOne(
+            { _id:  ObjectId.createFromHexString(movieId) } // Filter to find the movie by its ID
+        );
+
+        if(movie && Object.keys(movie).length > 0){
+            console.log(`Mongodb get movie by id success: ${movie._id}`);
+            const refindedMovie = {
+                title: movie.title,
+                backdrop: movie.backdrop,
+                poster: movie.poster,
+                year: movie.year,
+                rating: movie.imdb.rating ?? 0,
+                genre: movie.genres,
+                director: movie.directors[0],
+                releaseDate: movie.released,
+                overview: movie.fullplot ?? movie.plot,
+                runtime: movie.runtime,
+            };
+            return {
+                success: true,
+                message: "Movie fetched successfully",
+                data: refindedMovie,
+            };
+            
+        }else{
+            console.log("Mongodb get movie by id: Movie not found");
+            return {
+                success: false,
+                message: "Movie not found",
+                data: null,
+            };
+        }
+    }catch(error){
+        console.log("Mongodb get movie by id failed",error)
+        return {
+            success: false,
+            message: "Error fetching movie",
+            data: null,
+        };
+    }
 };
 
 export const getReviewsForMovie = async (movieId) => {
-  return [
+
+    return await new Promise((resolve) =>
+    setTimeout(() => resolve([
     {
       id: 123,
       userAvatar: "",
@@ -150,5 +197,7 @@ export const getReviewsForMovie = async (movieId) => {
       rating: 4.5,
       createdAt: "",
     },
-  ];
+  ]), 2000)
+  );
+  
 };

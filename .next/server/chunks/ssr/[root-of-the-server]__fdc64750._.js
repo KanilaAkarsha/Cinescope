@@ -28,18 +28,23 @@ const db = client.db("sample_mflix"); // Access the database instance
 
 var { g: global, __dirname } = __turbopack_context__;
 {
-/* __next_internal_action_entry_do_not_use__ [{"7f03b6e35ce3120448612bbd2f8c33375f358780d7":"updateMovie","7f087a2d6dc3412e9b5f19906a001be56a12c999b0":"getMovies","7fd290a89e25327ac58e8613810692d8ed33ccc944":"createMovie","7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be":"deleteMovie","7fe6ef1262a7b828972fba2327a0187c9cdaba93b5":"searchMovies"},"",""] */ __turbopack_context__.s({
+/* __next_internal_action_entry_do_not_use__ [{"7f03b6e35ce3120448612bbd2f8c33375f358780d7":"updateMovie","7f087a2d6dc3412e9b5f19906a001be56a12c999b0":"getMovies","7fc8f6743517b3b9134e31c966cd36c5abd0e2d0a9":"getReviewsForMovie","7fd290a89e25327ac58e8613810692d8ed33ccc944":"createMovie","7fdc4dc53f37b8bc2b9512d4699d490f3db0914b1d":"getMovieById","7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be":"deleteMovie","7fe6ef1262a7b828972fba2327a0187c9cdaba93b5":"searchMovies"},"",""] */ __turbopack_context__.s({
     "createMovie": (()=>createMovie),
     "deleteMovie": (()=>deleteMovie),
+    "getMovieById": (()=>getMovieById),
     "getMovies": (()=>getMovies),
+    "getReviewsForMovie": (()=>getReviewsForMovie),
     "searchMovies": (()=>searchMovies),
     "updateMovie": (()=>updateMovie)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/webpack/loaders/next-flight-loader/server-reference.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$app$2d$render$2f$encryption$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/app-render/encryption.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/db/index.js [app-rsc] (ecmascript)");
+// import { MOVIES } from "@/lib/data";
 var __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/mongodb [external] (mongodb, cjs)");
+var __TURBOPACK__url__external__node$3a$test__ = __turbopack_context__.x("node:test", ()=>require("node:test"), true);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$action$2d$validate$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/webpack/loaders/next-flight-loader/action-validate.js [app-rsc] (ecmascript)");
+;
 ;
 ;
 ;
@@ -160,19 +165,82 @@ const deleteMovie = async (movieId)=>{
         console.log("Mongodb movie delete failed", error);
     }
 };
+const getMovieById = async (movieId)=>{
+    // Call the database based on parameter
+    // Simulate 2 second delay
+    //   return await new Promise((resolve) =>
+    //     setTimeout(() => resolve(MOVIES.at(5)), 2000)
+    //   );
+    try {
+        const movie = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("movies_n").findOne({
+            _id: __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["ObjectId"].createFromHexString(movieId)
+        } // Filter to find the movie by its ID
+        );
+        if (movie && Object.keys(movie).length > 0) {
+            console.log(`Mongodb get movie by id success: ${movie._id}`);
+            const refindedMovie = {
+                title: movie.title,
+                backdrop: movie.backdrop,
+                poster: movie.poster,
+                year: movie.year,
+                rating: movie.imdb.rating ?? 0,
+                genre: movie.genres,
+                director: movie.directors[0],
+                releaseDate: movie.released,
+                overview: movie.fullplot ?? movie.plot,
+                runtime: movie.runtime
+            };
+            return {
+                success: true,
+                message: "Movie fetched successfully",
+                data: refindedMovie
+            };
+        } else {
+            console.log("Mongodb get movie by id: Movie not found");
+            return {
+                success: false,
+                message: "Movie not found",
+                data: null
+            };
+        }
+    } catch (error) {
+        console.log("Mongodb get movie by id failed", error);
+        return {
+            success: false,
+            message: "Error fetching movie",
+            data: null
+        };
+    }
+};
+const getReviewsForMovie = async (movieId)=>{
+    return await new Promise((resolve)=>setTimeout(()=>resolve([
+                {
+                    id: 123,
+                    userAvatar: "",
+                    userName: "Test",
+                    comment: "This is a test comment",
+                    rating: 4.5,
+                    createdAt: ""
+                }
+            ]), 2000));
+};
 ;
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$action$2d$validate$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["ensureServerEntryExports"])([
     getMovies,
     searchMovies,
     createMovie,
     updateMovie,
-    deleteMovie
+    deleteMovie,
+    getMovieById,
+    getReviewsForMovie
 ]);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getMovies, "7f087a2d6dc3412e9b5f19906a001be56a12c999b0", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(searchMovies, "7fe6ef1262a7b828972fba2327a0187c9cdaba93b5", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(createMovie, "7fd290a89e25327ac58e8613810692d8ed33ccc944", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(updateMovie, "7f03b6e35ce3120448612bbd2f8c33375f358780d7", null);
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(deleteMovie, "7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getMovieById, "7fdc4dc53f37b8bc2b9512d4699d490f3db0914b1d", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getReviewsForMovie, "7fc8f6743517b3b9134e31c966cd36c5abd0e2d0a9", null);
 }}),
 "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript) <locals>": ((__turbopack_context__) => {
 "use strict";
@@ -181,6 +249,8 @@ var { g: global, __dirname } = __turbopack_context__;
 {
 __turbopack_context__.s({});
 var __TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/actions/movies.js [app-rsc] (ecmascript)");
+;
+;
 ;
 ;
 ;
@@ -204,7 +274,9 @@ var { g: global, __dirname } = __turbopack_context__;
 __turbopack_context__.s({
     "7f03b6e35ce3120448612bbd2f8c33375f358780d7": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["updateMovie"]),
     "7f087a2d6dc3412e9b5f19906a001be56a12c999b0": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getMovies"]),
+    "7fc8f6743517b3b9134e31c966cd36c5abd0e2d0a9": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getReviewsForMovie"]),
     "7fd290a89e25327ac58e8613810692d8ed33ccc944": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["createMovie"]),
+    "7fdc4dc53f37b8bc2b9512d4699d490f3db0914b1d": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getMovieById"]),
     "7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["deleteMovie"]),
     "7fe6ef1262a7b828972fba2327a0187c9cdaba93b5": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["searchMovies"])
 });
@@ -219,7 +291,9 @@ var { g: global, __dirname } = __turbopack_context__;
 __turbopack_context__.s({
     "7f03b6e35ce3120448612bbd2f8c33375f358780d7": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7f03b6e35ce3120448612bbd2f8c33375f358780d7"]),
     "7f087a2d6dc3412e9b5f19906a001be56a12c999b0": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7f087a2d6dc3412e9b5f19906a001be56a12c999b0"]),
+    "7fc8f6743517b3b9134e31c966cd36c5abd0e2d0a9": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fc8f6743517b3b9134e31c966cd36c5abd0e2d0a9"]),
     "7fd290a89e25327ac58e8613810692d8ed33ccc944": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fd290a89e25327ac58e8613810692d8ed33ccc944"]),
+    "7fdc4dc53f37b8bc2b9512d4699d490f3db0914b1d": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fdc4dc53f37b8bc2b9512d4699d490f3db0914b1d"]),
     "7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be"]),
     "7fe6ef1262a7b828972fba2327a0187c9cdaba93b5": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fe6ef1262a7b828972fba2327a0187c9cdaba93b5"])
 });
@@ -694,6 +768,12 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/rsc/react.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$jsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/ui/button.jsx [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$home$2f$movies$2d$list$2e$jsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/home/movies-list.jsx [app-rsc] (ecmascript)");
+(()=>{
+    const e = new Error("Cannot find module './movie-selectors'");
+    e.code = 'MODULE_NOT_FOUND';
+    throw e;
+})();
+;
 ;
 ;
 ;
@@ -714,7 +794,7 @@ function FeaturedMovies() {
                                 children: "Featured Movies"
                             }, void 0, false, {
                                 fileName: "[project]/components/home/featured-movies.jsx",
-                                lineNumber: 12,
+                                lineNumber: 13,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -722,13 +802,13 @@ function FeaturedMovies() {
                                 children: "Our section of must-watch films"
                             }, void 0, false, {
                                 fileName: "[project]/components/home/featured-movies.jsx",
-                                lineNumber: 13,
+                                lineNumber: 14,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/home/featured-movies.jsx",
-                        lineNumber: 11,
+                        lineNumber: 12,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$jsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["Button"], {
@@ -736,42 +816,40 @@ function FeaturedMovies() {
                         children: "View All"
                     }, void 0, false, {
                         fileName: "[project]/components/home/featured-movies.jsx",
-                        lineNumber: 16,
+                        lineNumber: 17,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/home/featured-movies.jsx",
-                lineNumber: 10,
+                lineNumber: 11,
                 columnNumber: 9
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "w-full h-32 bg-purple-400 rounded-lg mb-6"
-            }, void 0, false, {
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(MovieSelectors, {}, void 0, false, {
                 fileName: "[project]/components/home/featured-movies.jsx",
-                lineNumber: 20,
+                lineNumber: 21,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["Suspense"], {
                 fallback: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$home$2f$movies$2d$list$2e$jsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["MovieListSkeleton"], {}, void 0, false, {
                     fileName: "[project]/components/home/featured-movies.jsx",
-                    lineNumber: 25,
+                    lineNumber: 24,
                     columnNumber: 29
                 }, void 0),
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$home$2f$movies$2d$list$2e$jsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
                     fileName: "[project]/components/home/featured-movies.jsx",
-                    lineNumber: 26,
+                    lineNumber: 25,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/home/featured-movies.jsx",
-                lineNumber: 25,
+                lineNumber: 24,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/home/featured-movies.jsx",
-        lineNumber: 8,
+        lineNumber: 9,
         columnNumber: 5
     }, this);
 }

@@ -1,14 +1,23 @@
 import { getMovieById, getReviewsForMovie } from "@/actions/movies";
 import MovieDetails from "./movie-details";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default async function MovieDetailsPage({ params }) {
   const { id } = await params;
-  const movie = await getMovieById(id);
-  const reviews = await getReviewsForMovie(id);
+  // const movie = await getMovieById(id);
+  // const reviews = await getReviewsForMovie(id);
 
-//   throw new Error("ffff");
 
-  if (!movie && !isLoading) {
+
+  const [movie , reviews] = await Promise.all([
+    getMovieById(id),
+    getReviewsForMovie(id),
+  ]);
+
+  //   throw new Error("ffff");
+
+  if (!movie) {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="flex flex-col items-center justify-center py-12">
@@ -25,5 +34,5 @@ export default async function MovieDetailsPage({ params }) {
   }
 
   // Passing server data to client component
-  return <MovieDetails movie={movie} reviews={reviews} id={id} />;
+  return <MovieDetails movie={movie.data} reviews={reviews} id={id} />;
 }
