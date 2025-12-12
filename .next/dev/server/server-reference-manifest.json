@@ -1,0 +1,297 @@
+{
+  "node": {
+    "7f1bd066557a709bd61b00f83bf0b5d93a6eab75b1": {
+      "workers": {
+        "app/admin/movies/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getReviewsForMovie",
+          "filename": "actions/movies.js"
+        },
+        "app/admin/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getReviewsForMovie",
+          "filename": "actions/movies.js"
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getReviewsForMovie",
+          "filename": "actions/movies.js"
+        }
+      },
+      "layer": {
+        "app/admin/movies/page": "rsc",
+        "app/admin/page": "rsc",
+        "app/page": "rsc"
+      },
+      "filename": "actions/movies.js",
+      "exportedName": "getReviewsForMovie"
+    },
+    "7f2410862eb92f6d24256cc3b3dc55eb28f2351a54": {
+      "workers": {
+        "app/admin/movies/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getAllGenres",
+          "filename": "actions/movies.js"
+        },
+        "app/admin/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getAllGenres",
+          "filename": "actions/movies.js"
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getAllGenres",
+          "filename": "actions/movies.js"
+        }
+      },
+      "layer": {
+        "app/admin/movies/page": "rsc",
+        "app/admin/page": "rsc",
+        "app/page": "rsc"
+      },
+      "filename": "actions/movies.js",
+      "exportedName": "getAllGenres"
+    },
+    "7f991afbd1c8eea7bdf6681efcbbfce5942cbae94e": {
+      "workers": {
+        "app/admin/movies/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "searchMovies",
+          "filename": "actions/movies.js"
+        },
+        "app/admin/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "searchMovies",
+          "filename": "actions/movies.js"
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "searchMovies",
+          "filename": "actions/movies.js"
+        }
+      },
+      "layer": {
+        "app/admin/movies/page": "rsc",
+        "app/admin/page": "rsc",
+        "app/page": "rsc"
+      },
+      "filename": "actions/movies.js",
+      "exportedName": "searchMovies"
+    },
+    "7faa41a01fb21043c02998cfca9d15e2ef5d373782": {
+      "workers": {
+        "app/admin/movies/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "updateMovie",
+          "filename": "actions/movies.js"
+        },
+        "app/admin/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "updateMovie",
+          "filename": "actions/movies.js"
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "updateMovie",
+          "filename": "actions/movies.js"
+        }
+      },
+      "layer": {
+        "app/admin/movies/page": "action-browser",
+        "app/admin/page": "rsc",
+        "app/page": "rsc"
+      },
+      "filename": "actions/movies.js",
+      "exportedName": "updateMovie"
+    },
+    "7fae0dc5c0edca0924af4f54e79ed68c18babc3950": {
+      "workers": {
+        "app/admin/movies/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "deleteMovie",
+          "filename": "actions/movies.js"
+        },
+        "app/admin/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "deleteMovie",
+          "filename": "actions/movies.js"
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "deleteMovie",
+          "filename": "actions/movies.js"
+        }
+      },
+      "layer": {
+        "app/admin/movies/page": "action-browser",
+        "app/admin/page": "rsc",
+        "app/page": "rsc"
+      },
+      "filename": "actions/movies.js",
+      "exportedName": "deleteMovie"
+    },
+    "7fb32120941666429eba1b700396c112e3bcc67e5a": {
+      "workers": {
+        "app/admin/movies/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "createMovie",
+          "filename": "actions/movies.js"
+        },
+        "app/admin/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "createMovie",
+          "filename": "actions/movies.js"
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "createMovie",
+          "filename": "actions/movies.js"
+        }
+      },
+      "layer": {
+        "app/admin/movies/page": "action-browser",
+        "app/admin/page": "rsc",
+        "app/page": "rsc"
+      },
+      "filename": "actions/movies.js",
+      "exportedName": "createMovie"
+    },
+    "7fbea025d7f183caa9c611b152b6e910e2be508ddd": {
+      "workers": {
+        "app/admin/movies/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getMovies",
+          "filename": "actions/movies.js"
+        },
+        "app/admin/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getMovies",
+          "filename": "actions/movies.js"
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getMovies",
+          "filename": "actions/movies.js"
+        }
+      },
+      "layer": {
+        "app/admin/movies/page": "rsc",
+        "app/admin/page": "rsc",
+        "app/page": "rsc"
+      },
+      "filename": "actions/movies.js",
+      "exportedName": "getMovies"
+    },
+    "7fd1362d447a842d4f91f6008d61d2490e578c0484": {
+      "workers": {
+        "app/admin/movies/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getMovieById",
+          "filename": "actions/movies.js"
+        },
+        "app/admin/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getMovieById",
+          "filename": "actions/movies.js"
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getMovieById",
+          "filename": "actions/movies.js"
+        }
+      },
+      "layer": {
+        "app/admin/movies/page": "rsc",
+        "app/admin/page": "rsc",
+        "app/page": "rsc"
+      },
+      "filename": "actions/movies.js",
+      "exportedName": "getMovieById"
+    },
+    "7fd50946ad0eae32842a3b245f907fd52ac73c618d": {
+      "workers": {
+        "app/admin/movies/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "createReviewForMovie",
+          "filename": "actions/movies.js"
+        },
+        "app/admin/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "createReviewForMovie",
+          "filename": "actions/movies.js"
+        },
+        "app/page": {
+          "moduleId": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "createReviewForMovie",
+          "filename": "actions/movies.js"
+        }
+      },
+      "layer": {
+        "app/admin/movies/page": "rsc",
+        "app/admin/page": "rsc",
+        "app/page": "rsc"
+      },
+      "filename": "actions/movies.js",
+      "exportedName": "createReviewForMovie"
+    },
+    "7f6c9a853156019eef87140bd4a2c8be7bd612b47b": {
+      "workers": {
+        "app/admin/users/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/users/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/users.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "searchUsers",
+          "filename": "actions/users.js"
+        }
+      },
+      "layer": {
+        "app/admin/users/page": "action-browser"
+      },
+      "filename": "actions/users.js",
+      "exportedName": "searchUsers"
+    },
+    "7f06a4395c8f1c519d99c667db349193d390bf3e67": {
+      "workers": {
+        "app/admin/profile/page": {
+          "moduleId": "[project]/.next-internal/server/app/admin/profile/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/users.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getUserById",
+          "filename": "actions/users.js"
+        }
+      },
+      "layer": {
+        "app/admin/profile/page": "action-browser"
+      },
+      "filename": "actions/users.js",
+      "exportedName": "getUserById"
+    }
+  },
+  "edge": {},
+  "encryptionKey": "UdCnOwLR7qoGlNjjBWc5ktk3bdKWm+m22tXi+HKEuyk="
+}

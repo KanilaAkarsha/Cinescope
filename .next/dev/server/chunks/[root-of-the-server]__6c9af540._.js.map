@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 46, "column": 0}, "map": {"version":3,"sources":["file:///Users/kanilaakarsha/Documents/GitHub/Cinescope/proxy.js"],"sourcesContent":["import { NextResponse } from \"next/server\";\nimport { getSessionCookie } from \"better-auth/cookies\";\n\n// This function can be marked `async` if using `await` inside\nexport function proxy(request) {\n  const SessionCookie = getSessionCookie(request);\n\n  if (!SessionCookie) {\n    return NextResponse.redirect(new URL(\"/login\", request.url));\n  }\n  return NextResponse.next();\n}\n\nexport const config = {\n  matcher: \"/admin/:path*\",\n};\n"],"names":[],"mappings":";;;;;;AAAA;AACA;AAAA;;;AAGO,SAAS,MAAM,OAAO;IAC3B,MAAM,gBAAgB,IAAA,4OAAgB,EAAC;IAEvC,IAAI,CAAC,eAAe;QAClB,OAAO,8IAAY,CAAC,QAAQ,CAAC,IAAI,IAAI,UAAU,QAAQ,GAAG;IAC5D;IACA,OAAO,8IAAY,CAAC,IAAI;AAC1B;AAEO,MAAM,SAAS;IACpB,SAAS;AACX"}}]
+}

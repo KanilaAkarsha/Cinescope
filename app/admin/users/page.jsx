@@ -1,13 +1,19 @@
 "use client";
 
-import { User } from "lucide-react";
+import { useState, useEffect } from "react";
 import UsersData from "./users-data";
 import UserSelectors from "./user-selectors";
 
-export default async function UsersPage(props) {
-  // Filter and sort users
-  const searchParams = await props.searchParams;
-  const searchQuery = searchParams?.query || "";
+export default function UsersPage(props) {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const getSearchParams = async () => {
+      const searchParams = await props.searchParams;
+      setSearchQuery(searchParams?.query || "");
+    };
+    getSearchParams();
+  }, [props.searchParams]);
 
   return (
     <div className="space-y-4">

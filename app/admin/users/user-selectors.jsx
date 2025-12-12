@@ -13,7 +13,7 @@ import { SearchIcon, SlidersHorizontalIcon } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useDebounce } from "use-debounce";
 
-export default function MovieSelectors() {
+export default function UserSelectors() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -21,6 +21,7 @@ export default function MovieSelectors() {
   const searchTerm = searchParams.get("query") || "";
 
   const [immediateSearchTerm, setImmediateSearchTerm] = useState(searchTerm);
+  const [roleFilter, setRoleFilter] = useState("all");
   // const deferredSearchTerm = useDeferredValue(immediateSearchTerm);
 
   const isFirstRender = useRef(true);
@@ -33,25 +34,27 @@ export default function MovieSelectors() {
     }
     const newSearchParams = new URLSearchParams(searchParams.toString());
 
-    debouncedSearchTerm
-      ? newSearchParams.set("query", debouncedSearchTerm)
-      : newSearchParams.delete("query");
+    if (debouncedSearchTerm) {
+      newSearchParams.set("query", debouncedSearchTerm);
+    } else {
+      newSearchParams.delete("query");
+    }
 
     if (searchTerm !== debouncedSearchTerm) {
       replace(`${pathname}?${newSearchParams.toString()}`);
     }
-  }, [pathname, debouncedSearchTerm, replace]);
+  }, [pathname, debouncedSearchTerm, replace, searchParams, searchTerm]);
 
   // const handleMovieSearch = (term) => setImmediateSearchTerm(term);
 
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
+    <div className="flex w-full items-center justify-between">
       <div className="flex w-full items-center space-x-2 md:w-1/2">
-        <Search className="h-4 w-4 text-muted-foreground" />
+        <SearchIcon className="h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search users..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          value={immediateSearchTerm}
+          onChange={(e) => setImmediateSearchTerm(e.target.value)}
           className="h-9"
         />
       </div>
