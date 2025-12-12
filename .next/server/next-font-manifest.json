@@ -1,8 +1,32 @@
 {
   "app": {
+    "[project]/app/admin/analytics/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2",
+      "static/media/2f13ad8e538108e0-s.p.9b936cf7.woff2"
+    ],
+    "[project]/app/admin/movies/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2",
+      "static/media/2f13ad8e538108e0-s.p.9b936cf7.woff2"
+    ],
+    "[project]/app/admin/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2",
+      "static/media/2f13ad8e538108e0-s.p.9b936cf7.woff2"
+    ],
+    "[project]/app/admin/profile/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2",
+      "static/media/2f13ad8e538108e0-s.p.9b936cf7.woff2"
+    ],
+    "[project]/app/admin/settings/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2",
+      "static/media/2f13ad8e538108e0-s.p.9b936cf7.woff2"
+    ],
+    "[project]/app/admin/users/page": [
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2",
+      "static/media/2f13ad8e538108e0-s.p.9b936cf7.woff2"
+    ],
     "[project]/app/page": [
-      "static/media/L0x5DF4xlVMF_BfR8bXMIjhLq3_cXbKD-s.p.f7723675.woff2",
-      "static/media/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw-s.p.0faac26c.woff2"
+      "static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2",
+      "static/media/2f13ad8e538108e0-s.p.9b936cf7.woff2"
     ]
   },
   "appUsingSizeAdjust": true,
