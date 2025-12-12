@@ -1,20 +1,4 @@
 {
-  "node": {
-    "7f06a4395c8f1c519d99c667db349193d390bf3e67": {
-      "workers": {
-        "app/admin/profile/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/profile/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/users.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "getUserById",
-          "filename": "actions/users.js"
-        }
-      },
-      "layer": {
-        "app/admin/profile/page": "action-browser"
-      },
-      "exportedName": "getUserById",
-      "filename": "actions/users.js"
-    }
-  },
+  "node": {},
   "edge": {}
 }

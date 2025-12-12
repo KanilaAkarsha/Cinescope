@@ -12,7 +12,7 @@ import { SelectTrigger } from "@/components/ui/select";
 
 import { Select } from "@/components/ui/select";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Camera,
   Check,
@@ -39,54 +39,46 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import { getUserById } from "@/actions/users";
 
-export default function ProfilePage({ params }) {
+export default function ProfilePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const { id } = await params;
-        const userData = await getUserById(id);
-        setUser(userData);
-      } catch {
-        toast.error("Error loading user profile.");
-      }
-    };
-    fetchUser();
-  }, [params]);
 
   const handleSaveProfile = () => {
     setIsSubmitting(true);
-    //API call to save profile changes
-    try {
-      // await saveProfileApiCall();
 
-      toast.success("Profile updated successfully!");
-      setIsEditing(false);
-    } catch {
-      toast.error("Error updating profile. Please try again.");
-    } finally {
+    // Simulate API call
+    setTimeout(() => {
       setIsSubmitting(false);
-    }
+      setIsEditing(false);
+      // toast({
+      //   title: "Profile updated",
+      //   description: "Your profile has been updated successfully.",
+      // });
+      toast.success("Profile updated!", {
+        className: "success",
+        description: "Your profile has been updated successfully.",
+        icon: <MyIcon />,
+        cancel: {
+          label: "Dismiss",
+          onClick: () => console.log("Dismiss"),
+        },
+      });
+    }, 1000);
   };
 
   const handleChangePassword = () => {
     setIsSubmitting(true);
 
-    //API call
-    try {
-      // await changePasswordApiCall();
-      toast.success("Password changed successfully!");
+    // Simulate API call
+    setTimeout(() => {
       setIsSubmitting(false);
-    } catch {
-      toast.error("Error changing password. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+      // toast({
+      //   title: "Password changed",
+      //   description: "Your password has been changed successfully.",
+      // });
+      toast("Password changed");
+    }, 1000);
   };
 
   return (
@@ -106,7 +98,7 @@ export default function ProfilePage({ params }) {
               <div className="relative">
                 <Avatar className="h-32 w-32">
                   <AvatarImage
-                    src={user?.avatar || "/placeholder.svg"}
+                    src="/placeholder.svg?height=128&width=128"
                     alt="Admin User"
                   />
                   <AvatarFallback className="text-4xl">AD</AvatarFallback>
@@ -114,19 +106,23 @@ export default function ProfilePage({ params }) {
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full">
+                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full"
+                >
                   <Camera className="h-4 w-4" />
                 </Button>
               </div>
               <div className="text-center">
-                <h3 className="text-xl font-bold">{user?.name}</h3>
-                <p className="text-muted-foreground text-sm">{user?.email}</p>
+                <h3 className="text-xl font-bold">Admin User</h3>
+                <p className="text-muted-foreground text-sm">
+                  admin@cinescope.com
+                </p>
               </div>
               <div className="w-full">
                 <Button
                   variant="outline"
                   className="w-full"
-                  onClick={() => setIsEditing(!isEditing)}>
+                  onClick={() => setIsEditing(!isEditing)}
+                >
                   {isEditing ? (
                     <>
                       <Check className="mr-2 h-4 w-4" />
@@ -148,7 +144,7 @@ export default function ProfilePage({ params }) {
               <div className="flex items-center gap-3">
                 <User className="text-muted-foreground h-5 w-5" />
                 <div>
-                  <p className="text-sm font-medium">{user?.role}</p>
+                  <p className="text-sm font-medium">Admin</p>
                   <p className="text-muted-foreground text-xs">Role</p>
                 </div>
               </div>
@@ -156,7 +152,7 @@ export default function ProfilePage({ params }) {
               <div className="flex items-center gap-3">
                 <Mail className="text-muted-foreground h-5 w-5" />
                 <div>
-                  <p className="text-sm font-medium">{user?.email}</p>
+                  <p className="text-sm font-medium">admin@cinescope.com</p>
                   <p className="text-muted-foreground text-xs">Email</p>
                 </div>
               </div>
@@ -164,7 +160,7 @@ export default function ProfilePage({ params }) {
               <div className="flex items-center gap-3">
                 <Smartphone className="text-muted-foreground h-5 w-5" />
                 <div>
-                  <p className="text-sm font-medium">{user?.phone}</p>
+                  <p className="text-sm font-medium">+1 (555) 123-4567</p>
                   <p className="text-muted-foreground text-xs">Phone</p>
                 </div>
               </div>
@@ -172,9 +168,7 @@ export default function ProfilePage({ params }) {
               <div className="flex items-center gap-3">
                 <Key className="text-muted-foreground h-5 w-5" />
                 <div>
-                  <p className="text-sm font-medium">
-                    Last login: {user?.lastLogin} ago
-                  </p>
+                  <p className="text-sm font-medium">Last login: 2 hours ago</p>
                   <p className="text-muted-foreground text-xs">
                     Account Activity
                   </p>
@@ -254,7 +248,8 @@ export default function ProfilePage({ params }) {
                   <Button
                     onClick={handleSaveProfile}
                     disabled={isSubmitting || !isEditing}
-                    className="ml-auto">
+                    className="ml-auto"
+                  >
                     {isSubmitting ? "Saving..." : "Save Changes"}
                   </Button>
                 </CardFooter>
@@ -312,7 +307,8 @@ export default function ProfilePage({ params }) {
                   <Button
                     onClick={handleSaveProfile}
                     disabled={isSubmitting || !isEditing}
-                    className="ml-auto">
+                    className="ml-auto"
+                  >
                     {isSubmitting ? "Saving..." : "Save Changes"}
                   </Button>
                 </CardFooter>
@@ -349,7 +345,8 @@ export default function ProfilePage({ params }) {
                   <Button
                     onClick={handleChangePassword}
                     disabled={isSubmitting}
-                    className="ml-auto">
+                    className="ml-auto"
+                  >
                     {isSubmitting ? "Changing..." : "Change Password"}
                   </Button>
                 </CardFooter>
@@ -444,5 +441,23 @@ export default function ProfilePage({ params }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function MyIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="hsl(var(--primary))"
+      className="size-4"
+    >
+      <path d="M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z" />
+      <path
+        fillRule="evenodd"
+        d="M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z"
+        clipRule="evenodd"
+      />
+    </svg>
   );
 }
