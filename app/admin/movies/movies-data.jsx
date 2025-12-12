@@ -2,15 +2,15 @@ import { searchMovies } from "@/actions/movies";
 import MovieTable from "./movie-table";
 
 export default async function MoviesData({ query = "" }) {
-  //Fetch movies data from database 
+  //Fetch movies data from database
   //option 1: fetch from api route
   //option 2: direct database query (server component)
 
-  try{
+  try {
     const { data: moviesData = [] } = await searchMovies(query);
     // console.log( "Movies" , moviesData);
 
-    if(!moviesData.length) throw new Error("No movies found");
+    if (!moviesData.length) throw new Error("No movies found");
 
     const refinedMovies = moviesData.map((movie) => ({
       id: movie._id.toString(),
@@ -25,14 +25,11 @@ export default async function MoviesData({ query = "" }) {
       runtime: movie.runtime,
       status: movie.status ?? "published",
       directors: movie.directors,
+      releaseDate: movie.releaseDate ?? movie.year,
     }));
 
-    return <MovieTable movies={refinedMovies}/>;
-
+    return <MovieTable movies={refinedMovies} />;
   } catch {
-
     return <div>No Movies Available!</div>;
-
   }
-  
 }

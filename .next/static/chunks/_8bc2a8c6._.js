@@ -28,10 +28,17 @@ function getAllGenres() {
     return [
         "Action",
         "Adventure",
-        "Sci-Fi",
+        "Comedy",
+        "Drama",
+        "Fantasy",
         "Horror",
+        "Musicals",
         "Mystery",
-        "Comedy"
+        "Romance",
+        "Sci-Fi",
+        "Sports",
+        "Thriller",
+        "Western"
     ];
 }
 function getAllMovieStatus() {
@@ -84,7 +91,9 @@ const buttonVariants = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_
             default: "h-9 px-4 py-2 has-[>svg]:px-3",
             sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
             lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-            icon: "size-9"
+            icon: "size-9",
+            "icon-sm": "size-8",
+            "icon-lg": "size-10"
         }
     },
     defaultVariants: {
@@ -104,7 +113,7 @@ function Button({ className, variant, size, asChild = false, ...props }) {
         ...props
     }, void 0, false, {
         fileName: "[project]/components/ui/button.jsx",
-        lineNumber: 47,
+        lineNumber: 49,
         columnNumber: 5
     }, this);
 }
@@ -151,7 +160,7 @@ _c = Card;
 function CardHeader({ className, ...props }) {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         "data-slot": "card-header",
-        className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6", className),
+        className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6", className),
         ...props
     }, void 0, false, {
         fileName: "[project]/components/ui/card.jsx",

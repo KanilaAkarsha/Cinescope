@@ -28,9 +28,11 @@ const db = client.db("sample_mflix"); // Access the database instance
 
 var { g: global, __dirname } = __turbopack_context__;
 {
-/* __next_internal_action_entry_do_not_use__ [{"7f03b6e35ce3120448612bbd2f8c33375f358780d7":"updateMovie","7f087a2d6dc3412e9b5f19906a001be56a12c999b0":"getMovies","7fc8f6743517b3b9134e31c966cd36c5abd0e2d0a9":"getReviewsForMovie","7fd290a89e25327ac58e8613810692d8ed33ccc944":"createMovie","7fdc4dc53f37b8bc2b9512d4699d490f3db0914b1d":"getMovieById","7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be":"deleteMovie","7fe6ef1262a7b828972fba2327a0187c9cdaba93b5":"searchMovies"},"",""] */ __turbopack_context__.s({
+/* __next_internal_action_entry_do_not_use__ [{"7f08cce86fd416d70bd28716c566059702095be26f":"deleteMovie","7f2198382988381d3179a900648dc9a27e46db3844":"searchMovies","7f7d72ac7f0851ade5d79cb28e3a50b93e7c92682e":"updateMovie","7f91c7a2cd0049e412f36183952d80a56da8582875":"createMovie","7fa4568a14b35b33e829b8f60886580c46a3fed87a":"getReviewsForMovie","7fcfbab09fb744c2dd061a8be88f01c2d5fda857ab":"getAllGenres","7fd94c18048b2b8ae612e28cb321070508d84d0752":"getMovies","7fe05f156f145175bb3d7e74e57b2a3de100f90fc2":"createReviewForMovie","7ff1a5382140b0ce3d0f2d437c54c4a37ee0540a71":"getMovieById"},"",""] */ __turbopack_context__.s({
     "createMovie": (()=>createMovie),
+    "createReviewForMovie": (()=>createReviewForMovie),
     "deleteMovie": (()=>deleteMovie),
+    "getAllGenres": (()=>getAllGenres),
     "getMovieById": (()=>getMovieById),
     "getMovies": (()=>getMovies),
     "getReviewsForMovie": (()=>getReviewsForMovie),
@@ -78,18 +80,18 @@ const getMovies = async ()=>{
 const searchMovies = async (query)=>{
     try {
         //search by title (i=case insensitive)
-        const movies = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("movies_n").find({
+        const movies1 = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("movies_n").find({
             title: {
                 $regex: query,
                 $options: "i"
             }
         }).limit(50).toArray();
-        console.log("movies", movies);
-        if (movies && movies.length > 0) {
+        console.log("movies", movies1);
+        if (movies1 && movies1.length > 0) {
             return {
                 success: true,
                 message: "Movies fetched successfully",
-                data: movies
+                data: movies1
             };
         } else {
             return {
@@ -212,17 +214,62 @@ const getMovieById = async (movieId)=>{
         };
     }
 };
+const createReviewForMovie = async (movieId, review)=>{
+    try {
+        const result = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("reviews").insertOne({
+            movieId: __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["ObjectId"].createFromHexString(movieId),
+            ...review
+        });
+        if (result.acknowledged) {
+            console.log(`A review was inserted with the _id: ${result.insertedId}`);
+            return {
+                success: true,
+                message: "Review Created Successfully"
+            };
+        } else {
+            return undefined;
+        }
+    } catch (error) {
+        console.log("Error creating review:", error);
+        return undefined;
+    }
+};
 const getReviewsForMovie = async (movieId)=>{
-    return await new Promise((resolve)=>setTimeout(()=>resolve([
-                {
-                    id: 123,
-                    userAvatar: "",
-                    userName: "Test",
-                    comment: "This is a test comment",
-                    rating: 4.5,
-                    createdAt: ""
-                }
-            ]), 2000));
+    try {
+        const reviews = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("reviews").find({
+            movieId: __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["ObjectId"].createFromHexString(movieId)
+        }).toArray();
+        console.log("reviews", reviews);
+        if (reviews && reviews.length > 0) {
+            return {
+                success: true,
+                message: "Reviews fetched successfully",
+                data: reviews
+            };
+        } else {
+            return {
+                success: false,
+                message: "No reviews found",
+                data: []
+            };
+        }
+    } catch (error) {
+        console.log("Error fetching reviews:", error);
+        return {
+            success: false,
+            message: "Error fetching reviews",
+            data: []
+        };
+    }
+};
+const getAllGenres = async ()=>{
+    const genreSet = new Set();
+    movies.forEach((movie)=>{
+        movie.genre.forEach((genre)=>{
+            genreSet.add(genre);
+        });
+    });
+    return Array.from(genreSet).sort();
 };
 ;
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$action$2d$validate$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["ensureServerEntryExports"])([
@@ -232,15 +279,19 @@ const getReviewsForMovie = async (movieId)=>{
     updateMovie,
     deleteMovie,
     getMovieById,
-    getReviewsForMovie
+    createReviewForMovie,
+    getReviewsForMovie,
+    getAllGenres
 ]);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getMovies, "7f087a2d6dc3412e9b5f19906a001be56a12c999b0", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(searchMovies, "7fe6ef1262a7b828972fba2327a0187c9cdaba93b5", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(createMovie, "7fd290a89e25327ac58e8613810692d8ed33ccc944", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(updateMovie, "7f03b6e35ce3120448612bbd2f8c33375f358780d7", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(deleteMovie, "7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getMovieById, "7fdc4dc53f37b8bc2b9512d4699d490f3db0914b1d", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getReviewsForMovie, "7fc8f6743517b3b9134e31c966cd36c5abd0e2d0a9", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getMovies, "7fd94c18048b2b8ae612e28cb321070508d84d0752", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(searchMovies, "7f2198382988381d3179a900648dc9a27e46db3844", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(createMovie, "7f91c7a2cd0049e412f36183952d80a56da8582875", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(updateMovie, "7f7d72ac7f0851ade5d79cb28e3a50b93e7c92682e", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(deleteMovie, "7f08cce86fd416d70bd28716c566059702095be26f", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getMovieById, "7ff1a5382140b0ce3d0f2d437c54c4a37ee0540a71", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(createReviewForMovie, "7fe05f156f145175bb3d7e74e57b2a3de100f90fc2", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getReviewsForMovie, "7fa4568a14b35b33e829b8f60886580c46a3fed87a", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getAllGenres, "7fcfbab09fb744c2dd061a8be88f01c2d5fda857ab", null);
 }}),
 "[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript) <locals>": ((__turbopack_context__) => {
 "use strict";
@@ -249,6 +300,8 @@ var { g: global, __dirname } = __turbopack_context__;
 {
 __turbopack_context__.s({});
 var __TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/actions/movies.js [app-rsc] (ecmascript)");
+;
+;
 ;
 ;
 ;
@@ -272,13 +325,15 @@ var __TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server
 var { g: global, __dirname } = __turbopack_context__;
 {
 __turbopack_context__.s({
-    "7f03b6e35ce3120448612bbd2f8c33375f358780d7": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["updateMovie"]),
-    "7f087a2d6dc3412e9b5f19906a001be56a12c999b0": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getMovies"]),
-    "7fc8f6743517b3b9134e31c966cd36c5abd0e2d0a9": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getReviewsForMovie"]),
-    "7fd290a89e25327ac58e8613810692d8ed33ccc944": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["createMovie"]),
-    "7fdc4dc53f37b8bc2b9512d4699d490f3db0914b1d": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getMovieById"]),
-    "7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["deleteMovie"]),
-    "7fe6ef1262a7b828972fba2327a0187c9cdaba93b5": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["searchMovies"])
+    "7f08cce86fd416d70bd28716c566059702095be26f": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["deleteMovie"]),
+    "7f2198382988381d3179a900648dc9a27e46db3844": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["searchMovies"]),
+    "7f7d72ac7f0851ade5d79cb28e3a50b93e7c92682e": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["updateMovie"]),
+    "7f91c7a2cd0049e412f36183952d80a56da8582875": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["createMovie"]),
+    "7fa4568a14b35b33e829b8f60886580c46a3fed87a": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getReviewsForMovie"]),
+    "7fcfbab09fb744c2dd061a8be88f01c2d5fda857ab": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getAllGenres"]),
+    "7fd94c18048b2b8ae612e28cb321070508d84d0752": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getMovies"]),
+    "7fe05f156f145175bb3d7e74e57b2a3de100f90fc2": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["createReviewForMovie"]),
+    "7ff1a5382140b0ce3d0f2d437c54c4a37ee0540a71": (()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getMovieById"])
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/actions/movies.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i('[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => "[project]/actions/movies.js [app-rsc] (ecmascript)" } [app-rsc] (server actions loader, ecmascript) <locals>');
@@ -289,13 +344,15 @@ var __TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server
 var { g: global, __dirname } = __turbopack_context__;
 {
 __turbopack_context__.s({
-    "7f03b6e35ce3120448612bbd2f8c33375f358780d7": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7f03b6e35ce3120448612bbd2f8c33375f358780d7"]),
-    "7f087a2d6dc3412e9b5f19906a001be56a12c999b0": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7f087a2d6dc3412e9b5f19906a001be56a12c999b0"]),
-    "7fc8f6743517b3b9134e31c966cd36c5abd0e2d0a9": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fc8f6743517b3b9134e31c966cd36c5abd0e2d0a9"]),
-    "7fd290a89e25327ac58e8613810692d8ed33ccc944": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fd290a89e25327ac58e8613810692d8ed33ccc944"]),
-    "7fdc4dc53f37b8bc2b9512d4699d490f3db0914b1d": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fdc4dc53f37b8bc2b9512d4699d490f3db0914b1d"]),
-    "7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fe0c2dfdeff7ffa5a2992856e12668bbc986d40be"]),
-    "7fe6ef1262a7b828972fba2327a0187c9cdaba93b5": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fe6ef1262a7b828972fba2327a0187c9cdaba93b5"])
+    "7f08cce86fd416d70bd28716c566059702095be26f": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7f08cce86fd416d70bd28716c566059702095be26f"]),
+    "7f2198382988381d3179a900648dc9a27e46db3844": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7f2198382988381d3179a900648dc9a27e46db3844"]),
+    "7f7d72ac7f0851ade5d79cb28e3a50b93e7c92682e": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7f7d72ac7f0851ade5d79cb28e3a50b93e7c92682e"]),
+    "7f91c7a2cd0049e412f36183952d80a56da8582875": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7f91c7a2cd0049e412f36183952d80a56da8582875"]),
+    "7fa4568a14b35b33e829b8f60886580c46a3fed87a": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fa4568a14b35b33e829b8f60886580c46a3fed87a"]),
+    "7fcfbab09fb744c2dd061a8be88f01c2d5fda857ab": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fcfbab09fb744c2dd061a8be88f01c2d5fda857ab"]),
+    "7fd94c18048b2b8ae612e28cb321070508d84d0752": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fd94c18048b2b8ae612e28cb321070508d84d0752"]),
+    "7fe05f156f145175bb3d7e74e57b2a3de100f90fc2": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7fe05f156f145175bb3d7e74e57b2a3de100f90fc2"]),
+    "7ff1a5382140b0ce3d0f2d437c54c4a37ee0540a71": (()=>__TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__["7ff1a5382140b0ce3d0f2d437c54c4a37ee0540a71"])
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i('[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => "[project]/actions/movies.js [app-rsc] (ecmascript)" } [app-rsc] (server actions loader, ecmascript) <module evaluation>');
 var __TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$admin$2f$movies$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$exports$3e$__ = __turbopack_context__.i('[project]/.next-internal/server/app/admin/movies/page/actions.js { ACTIONS_MODULE0 => "[project]/actions/movies.js [app-rsc] (ecmascript)" } [app-rsc] (server actions loader, ecmascript) <exports>');
@@ -409,7 +466,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$app$2f$admin$2f$movies$2f$mo
 ;
 ;
 async function MoviesData({ query = "" }) {
-    //Fetch movies data from database 
+    //Fetch movies data from database
     //option 1: fetch from api route
     //option 2: direct database query (server component)
     try {
@@ -428,13 +485,14 @@ async function MoviesData({ query = "" }) {
                 imdb: movie.imdb,
                 runtime: movie.runtime,
                 status: movie.status ?? "published",
-                directors: movie.directors
+                directors: movie.directors,
+                releaseDate: movie.releaseDate ?? movie.year
             }));
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$app$2f$admin$2f$movies$2f$movie$2d$table$2e$jsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
             movies: refinedMovies
         }, void 0, false, {
             fileName: "[project]/app/admin/movies/movies-data.jsx",
-            lineNumber: 30,
+            lineNumber: 31,
             columnNumber: 12
         }, this);
     } catch  {
@@ -442,7 +500,7 @@ async function MoviesData({ query = "" }) {
             children: "No Movies Available!"
         }, void 0, false, {
             fileName: "[project]/app/admin/movies/movies-data.jsx",
-            lineNumber: 34,
+            lineNumber: 33,
             columnNumber: 12
         }, this);
     }

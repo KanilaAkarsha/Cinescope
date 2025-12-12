@@ -53,10 +53,17 @@ function getAllGenres() {
     return [
         "Action",
         "Adventure",
-        "Sci-Fi",
+        "Comedy",
+        "Drama",
+        "Fantasy",
         "Horror",
+        "Musicals",
         "Mystery",
-        "Comedy"
+        "Romance",
+        "Sci-Fi",
+        "Sports",
+        "Thriller",
+        "Western"
     ];
 }
 function getAllMovieStatus() {
@@ -106,7 +113,9 @@ const buttonVariants = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_
             default: "h-9 px-4 py-2 has-[>svg]:px-3",
             sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
             lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-            icon: "size-9"
+            icon: "size-9",
+            "icon-sm": "size-8",
+            "icon-lg": "size-10"
         }
     },
     defaultVariants: {
@@ -126,7 +135,7 @@ function Button({ className, variant, size, asChild = false, ...props }) {
         ...props
     }, void 0, false, {
         fileName: "[project]/components/ui/button.jsx",
-        lineNumber: 47,
+        lineNumber: 49,
         columnNumber: 5
     }, this);
 }

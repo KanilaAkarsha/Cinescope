@@ -28,10 +28,17 @@ function getAllGenres() {
     return [
         "Action",
         "Adventure",
-        "Sci-Fi",
+        "Comedy",
+        "Drama",
+        "Fantasy",
         "Horror",
+        "Musicals",
         "Mystery",
-        "Comedy"
+        "Romance",
+        "Sci-Fi",
+        "Sports",
+        "Thriller",
+        "Western"
     ];
 }
 function getAllMovieStatus() {
@@ -84,7 +91,9 @@ const buttonVariants = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_
             default: "h-9 px-4 py-2 has-[>svg]:px-3",
             sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
             lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-            icon: "size-9"
+            icon: "size-9",
+            "icon-sm": "size-8",
+            "icon-lg": "size-10"
         }
     },
     defaultVariants: {
@@ -104,7 +113,7 @@ function Button({ className, variant, size, asChild = false, ...props }) {
         ...props
     }, void 0, false, {
         fileName: "[project]/components/ui/button.jsx",
-        lineNumber: 47,
+        lineNumber: 49,
         columnNumber: 5
     }, this);
 }
@@ -568,7 +577,7 @@ _c = Card;
 function CardHeader({ className, ...props }) {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         "data-slot": "card-header",
-        className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6", className),
+        className: (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$utils$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["cn"])("@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6", className),
         ...props
     }, void 0, false, {
         fileName: "[project]/components/ui/card.jsx",
@@ -1306,9 +1315,11 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$search$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__SearchIcon$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/search.js [app-client] (ecmascript) <export default as SearchIcon>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$sliders$2d$horizontal$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__SlidersHorizontalIcon$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/sliders-horizontal.js [app-client] (ecmascript) <export default as SlidersHorizontalIcon>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$use$2d$debounce$2f$dist$2f$index$2e$module$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/use-debounce/dist/index.module.js [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
+;
 ;
 ;
 ;
@@ -1322,8 +1333,9 @@ function MovieSelectors() {
     const { replace } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const searchTerm = searchParams.get("query") || "";
     const [immediateSearchTerm, setImmediateSearchTerm] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(searchTerm);
-    const deferredSearchTerm = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useDeferredValue"])(immediateSearchTerm);
+    // const deferredSearchTerm = useDeferredValue(immediateSearchTerm);
     const isFirstRender = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(true);
+    const [debouncedSearchTerm] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$use$2d$debounce$2f$dist$2f$index$2e$module$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useDebounce"])(immediateSearchTerm, 1000);
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "MovieSelectors.useEffect": ()=>{
             if (isFirstRender.current) {
@@ -1331,14 +1343,14 @@ function MovieSelectors() {
                 return;
             }
             const newSearchParams = new URLSearchParams(searchParams.toString());
-            deferredSearchTerm ? newSearchParams.set("query", deferredSearchTerm) : newSearchParams.delete("query");
-            if (searchTerm !== deferredSearchTerm) {
+            debouncedSearchTerm ? newSearchParams.set("query", debouncedSearchTerm) : newSearchParams.delete("query");
+            if (searchTerm !== debouncedSearchTerm) {
                 replace(`${pathname}?${newSearchParams.toString()}`);
             }
         }
     }["MovieSelectors.useEffect"], [
         pathname,
-        deferredSearchTerm,
+        debouncedSearchTerm,
         replace
     ]);
     // const handleMovieSearch = (term) => setImmediateSearchTerm(term);
@@ -1352,8 +1364,8 @@ function MovieSelectors() {
                         className: "h-4 w-4 text-muted-foreground"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                        lineNumber: 41,
-                        columnNumber: 13
+                        lineNumber: 50,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
                         placeholder: "Search movies...",
@@ -1361,14 +1373,14 @@ function MovieSelectors() {
                         className: "h-9"
                     }, void 0, false, {
                         fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                        lineNumber: 42,
-                        columnNumber: 13
+                        lineNumber: 51,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                lineNumber: 40,
-                columnNumber: 9
+                lineNumber: 49,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "flex items-center gap-2",
@@ -1381,13 +1393,13 @@ function MovieSelectors() {
                                     placeholder: "Filter by Status"
                                 }, void 0, false, {
                                     fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                                    lineNumber: 48,
-                                    columnNumber: 21
+                                    lineNumber: 61,
+                                    columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                                lineNumber: 47,
-                                columnNumber: 17
+                                lineNumber: 60,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
                                 children: [
@@ -1396,44 +1408,44 @@ function MovieSelectors() {
                                         children: "All Statuses"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                                        lineNumber: 51,
-                                        columnNumber: 21
+                                        lineNumber: 64,
+                                        columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
                                         value: "published",
                                         children: "Published"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                                        lineNumber: 52,
-                                        columnNumber: 21
+                                        lineNumber: 65,
+                                        columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
                                         value: "draft",
                                         children: "Draft"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                                        lineNumber: 53,
-                                        columnNumber: 21
+                                        lineNumber: 66,
+                                        columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectItem"], {
                                         value: "archived",
                                         children: "Archived"
                                     }, void 0, false, {
                                         fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                                        lineNumber: 54,
-                                        columnNumber: 21
+                                        lineNumber: 67,
+                                        columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                                lineNumber: 50,
-                                columnNumber: 17
+                                lineNumber: 63,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                        lineNumber: 46,
-                        columnNumber: 13
+                        lineNumber: 59,
+                        columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                         variant: "outline",
@@ -1444,35 +1456,35 @@ function MovieSelectors() {
                                 className: "mr-2 h-4 w-4"
                             }, void 0, false, {
                                 fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                                lineNumber: 59,
-                                columnNumber: 17
+                                lineNumber: 71,
+                                columnNumber: 11
                             }, this),
                             "Filters"
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                        lineNumber: 58,
-                        columnNumber: 13
+                        lineNumber: 70,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-                lineNumber: 45,
-                columnNumber: 9
+                lineNumber: 58,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/admin/movies/movie-selectors.jsx",
-        lineNumber: 39,
+        lineNumber: 48,
         columnNumber: 5
     }, this);
 }
-_s(MovieSelectors, "V8l0C9lvmuHvoIc2+YBaIREXgdY=", false, function() {
+_s(MovieSelectors, "yRUL90+SrDNbNG9bIOUsKGqBcT8=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"],
-        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useDeferredValue"]
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$use$2d$debounce$2f$dist$2f$index$2e$module$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useDebounce"]
     ];
 });
 _c = MovieSelectors;

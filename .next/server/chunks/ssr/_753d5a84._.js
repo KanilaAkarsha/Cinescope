@@ -28,10 +28,17 @@ function getAllGenres() {
     return [
         "Action",
         "Adventure",
-        "Sci-Fi",
+        "Comedy",
+        "Drama",
+        "Fantasy",
         "Horror",
+        "Musicals",
         "Mystery",
-        "Comedy"
+        "Romance",
+        "Sci-Fi",
+        "Sports",
+        "Thriller",
+        "Western"
     ];
 }
 function getAllMovieStatus() {

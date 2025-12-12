@@ -1,0 +1,104 @@
+{
+  "node": {
+    "7f08cce86fd416d70bd28716c566059702095be26f": {
+      "workers": {
+        "app/genres/page": {
+          "moduleId": "[project]/.next-internal/server/app/genres/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/genres/page": "rsc"
+      }
+    },
+    "7f2198382988381d3179a900648dc9a27e46db3844": {
+      "workers": {
+        "app/genres/page": {
+          "moduleId": "[project]/.next-internal/server/app/genres/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/genres/page": "rsc"
+      }
+    },
+    "7f7d72ac7f0851ade5d79cb28e3a50b93e7c92682e": {
+      "workers": {
+        "app/genres/page": {
+          "moduleId": "[project]/.next-internal/server/app/genres/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/genres/page": "rsc"
+      }
+    },
+    "7f91c7a2cd0049e412f36183952d80a56da8582875": {
+      "workers": {
+        "app/genres/page": {
+          "moduleId": "[project]/.next-internal/server/app/genres/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/genres/page": "rsc"
+      }
+    },
+    "7fa4568a14b35b33e829b8f60886580c46a3fed87a": {
+      "workers": {
+        "app/genres/page": {
+          "moduleId": "[project]/.next-internal/server/app/genres/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/genres/page": "rsc"
+      }
+    },
+    "7fcfbab09fb744c2dd061a8be88f01c2d5fda857ab": {
+      "workers": {
+        "app/genres/page": {
+          "moduleId": "[project]/.next-internal/server/app/genres/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/genres/page": "rsc"
+      }
+    },
+    "7fd94c18048b2b8ae612e28cb321070508d84d0752": {
+      "workers": {
+        "app/genres/page": {
+          "moduleId": "[project]/.next-internal/server/app/genres/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/genres/page": "rsc"
+      }
+    },
+    "7fe05f156f145175bb3d7e74e57b2a3de100f90fc2": {
+      "workers": {
+        "app/genres/page": {
+          "moduleId": "[project]/.next-internal/server/app/genres/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/genres/page": "rsc"
+      }
+    },
+    "7ff1a5382140b0ce3d0f2d437c54c4a37ee0540a71": {
+      "workers": {
+        "app/genres/page": {
+          "moduleId": "[project]/.next-internal/server/app/genres/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/genres/page": "rsc"
+      }
+    }
+  },
+  "edge": {}
+}
