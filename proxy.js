@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
 // This function can be marked `async` if using `await` inside
-export function middleware(request) {
+export function proxy(request) {
   const SessionCookie = getSessionCookie(request);
 
   if (!SessionCookie) {
