@@ -48,11 +48,10 @@ import { users } from "@/lib/data";
 
 export default function UsersPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortField, setSortField] = useState < users > "name";
-  const [sortDirection, setSortDirection] =
-    (useState < "asc") | ("desc" > "asc");
-  const [roleFilter, setRoleFilter] = useState < string > "all";
-  const [selectedUser, setSelectedUser] = (useState < users) | (null > null);
+  const [sortField, setSortField] = useState("name");
+  const [sortDirection, setSortDirection] = useState("asc");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [selectedUser, setSelectedUser] = useState(null);
   const [showEditRole, setShowEditRole] = useState(false);
 
   // Filter and sort users

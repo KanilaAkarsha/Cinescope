@@ -236,11 +236,25 @@ export const getReviewsForMovie = async (movieId) => {
 };
 
 export const getAllGenres = async () => {
-  const genreSet = new Set();
-  movies.forEach((movie) => {
-    movie.genre.forEach((genre) => {
-      genreSet.add(genre);
-    });
-  });
-  return Array.from(genreSet).sort();
+  return [
+    "Action",
+    "Adventure",
+    "Animation",
+    "Comedy",
+    "Crime",
+    "Documentary",
+    "Drama",
+    "Family",
+    "Fantasy",
+    "History",
+    "Horror",
+    "Music",
+    "Mystery",
+    "Romance",
+    "Science Fiction",
+    "TV Movie",
+    "Thriller",
+    "War",
+    "Western",
+  ];
 };

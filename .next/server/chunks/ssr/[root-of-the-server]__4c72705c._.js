@@ -83,18 +83,18 @@ const getMovies = async ()=>{
 const searchMovies = async (query)=>{
     try {
         //search by title (i=case insensitive)
-        const movies1 = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("movies_n").find({
+        const movies = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("movies_n").find({
             title: {
                 $regex: query,
                 $options: "i"
             }
         }).limit(50).toArray();
-        console.log("movies", movies1);
-        if (movies1 && movies1.length > 0) {
+        console.log("movies", movies);
+        if (movies && movies.length > 0) {
             return {
                 success: true,
                 message: "Movies fetched successfully",
-                data: movies1
+                data: movies
             };
         } else {
             return {
@@ -266,13 +266,27 @@ const getReviewsForMovie = async (movieId)=>{
     }
 };
 const getAllGenres = async ()=>{
-    const genreSet = new Set();
-    movies.forEach((movie)=>{
-        movie.genre.forEach((genre)=>{
-            genreSet.add(genre);
-        });
-    });
-    return Array.from(genreSet).sort();
+    return [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Comedy",
+        "Crime",
+        "Documentary",
+        "Drama",
+        "Family",
+        "Fantasy",
+        "History",
+        "Horror",
+        "Music",
+        "Mystery",
+        "Romance",
+        "Science Fiction",
+        "TV Movie",
+        "Thriller",
+        "War",
+        "Western"
+    ];
 };
 ;
 (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$action$2d$validate$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["ensureServerEntryExports"])([
