@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getAllGenres, getMovies } from "@/actions/movies";
+import { getAllGenres, getMovies } from "@/lib/data";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 
