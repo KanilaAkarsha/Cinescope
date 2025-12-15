@@ -5,13 +5,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getAllGenres, getMovies } from "@/lib/data";
+import { getAllGenres, movies } from "@/lib/data";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 
 export default function GenresPage() {
   const genres = getAllGenres();
-  const movies = getMovies();
+  const movies = movies;
 
   // Count movies per genre
   const genreCounts = genres.map((genre) => ({
