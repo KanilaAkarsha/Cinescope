@@ -11,7 +11,6 @@ import { Logo } from "@/components/logo";
 
 export default function GenresPage() {
   const genres = getAllGenres();
-  const movies = movies;
 
   // Count movies per genre
   const genreCounts = genres.map((genre) => ({
