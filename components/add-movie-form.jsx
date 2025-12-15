@@ -33,6 +33,7 @@ export default function AddMovieForm({ showDialog }) {
       title: formData.get("title"),
       year: formData.get("year"),
       directors: [formData.get("director")],
+      cast: [formData.get("cast")],
       genres: [formData.get("genre")],
       imdb: { rating: Number(formData.get("rating")) },
       runtime: formData.get("runtime"),
@@ -89,6 +90,10 @@ export default function AddMovieForm({ showDialog }) {
         <div className="space-y-2">
           <Label htmlFor="director">Director</Label>
           <Input id="director" name="director" placeholder="Director Name" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="cast">Cast</Label>
+          <Input id="cast" name="cast" placeholder="Cast Name" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="genre">
@@ -189,13 +194,6 @@ export default function AddMovieForm({ showDialog }) {
               ))}
             </SelectContent>
           </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="releaseDate">
-            Release Date<span className="text-red-500">*</span>
-          </Label>
-          <Calendar22 />
         </div>
       </div>
 

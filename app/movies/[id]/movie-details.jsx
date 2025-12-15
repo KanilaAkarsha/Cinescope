@@ -86,23 +86,20 @@ export default function MovieDetails({ movie, reviews }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="w-full"
-          >
+            className="w-full">
             <div
               className="relative h-[50vh] w-full bg-cover bg-center"
               style={{
                 backgroundImage: `url(${movie.backdrop})`,
                 backgroundPosition: "center 20%",
-              }}
-            >
+              }}>
               <div className="bg-linear-to-t from-background absolute inset-0 to-transparent" />
               <div className="container relative mx-auto flex h-full items-end px-4 pb-8">
                 <Link href="/" className="absolute left-4 top-4">
                   <Button
                     variant="outline"
                     size="icon"
-                    className="bg-background/50 backdrop-blur-xs rounded-full"
-                  >
+                    className="bg-background/50 backdrop-blur-xs rounded-full">
                     <ArrowLeft className="h-4 w-4" />
                   </Button>
                 </Link>
@@ -136,12 +133,6 @@ export default function MovieDetails({ movie, reviews }) {
                       <Clock className="text-muted-foreground mr-1 h-4 w-4" />
                       <span>{movie.runtime} min</span>
                     </div>
-                    <div className="flex items-center">
-                      <Calendar className="text-muted-foreground mr-1 h-4 w-4" />
-                      <span>
-                        {new Date(movie.releaseDate).toLocaleDateString()}
-                      </span>
-                    </div>
                   </div>
 
                   <div className="flex flex-wrap gap-2">
@@ -164,6 +155,10 @@ export default function MovieDetails({ movie, reviews }) {
                     <p className="text-muted-foreground mt-2">
                       {movie.director}
                     </p>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold">Cast</h2>
+                    <p className="text-muted-foreground mt-2">{movie.cast}</p>
                   </div>
                 </div>
               </div>
@@ -223,8 +218,7 @@ export default function MovieDetails({ movie, reviews }) {
                   <h3 className="text-xl font-semibold">Write a Review</h3>
                   <form
                     onSubmit={handleSubmitReview}
-                    className="mt-4 space-y-4"
-                  >
+                    className="mt-4 space-y-4">
                     <div>
                       <div className="mb-2 flex items-center">
                         <span className="mr-2">Rating:</span>
@@ -234,8 +228,7 @@ export default function MovieDetails({ movie, reviews }) {
                               key={star}
                               type="button"
                               onClick={() => setRating(star)}
-                              className="p-1"
-                            >
+                              className="p-1">
                               <Star
                                 className={`h-5 w-5 ${
                                   star <= rating
@@ -258,8 +251,7 @@ export default function MovieDetails({ movie, reviews }) {
                       type="submit"
                       disabled={
                         isSubmitting || rating === 0 || !reviewText.trim()
-                      }
-                    >
+                      }>
                       {isSubmitting ? "Submitting..." : "Submit Review"}
                     </Button>
                   </form>

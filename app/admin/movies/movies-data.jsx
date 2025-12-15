@@ -25,6 +25,7 @@ export default async function MoviesData({ query = "" }) {
       runtime: movie.runtime,
       status: movie.status ?? "published",
       directors: movie.directors,
+      cast: movie.cast,
       releaseDate: movie.releaseDate ?? movie.year,
     }));
 

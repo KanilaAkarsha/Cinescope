@@ -155,7 +155,10 @@ export const getMovieById = async (movieId) => {
         rating: movie.imdb.rating ?? 0,
         genre: movie.genres,
         director: movie.directors[0],
-        releaseDate: movie.released,
+        cast: movie.cast,
+        language: movie.languages,
+        country: movie.countries,
+        releaseDate: movie.releaseDate ?? movie.year,
         overview: movie.fullplot ?? movie.plot,
         runtime: movie.runtime,
       };

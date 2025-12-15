@@ -26,6 +26,7 @@ export default function UpdateMovieForm({ showDialog, movie }) {
     title: movie?.title || "",
     year: movie?.year || null,
     director: movie?.directors?.at(0) || "",
+    cast: movie?.cast?.at(0) || "",
     genre: movie?.genres?.at(0) || null,
     rating: movie?.imdb?.rating || "",
     runtime: movie?.runtime || "",
@@ -54,6 +55,7 @@ export default function UpdateMovieForm({ showDialog, movie }) {
       title: formData.get("title"),
       year: formData.get("year"),
       directors: [formData.get("director")],
+      cast: [formData.get("cast")],
       genres: [formData.get("genre")],
       imdb: { rating: Number(formData.get("rating")) },
       runtime: formData.get("runtime"),
@@ -133,6 +135,16 @@ export default function UpdateMovieForm({ showDialog, movie }) {
             value={formState?.director}
             onChange={handleChange}
             placeholder="Director Name"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="cast">Cast</Label>
+          <Input
+            id="cast"
+            name="cast"
+            value={formState?.cast}
+            onChange={handleChange}
+            placeholder="Cast Name"
           />
         </div>
         <div className="space-y-2">
@@ -265,18 +277,6 @@ export default function UpdateMovieForm({ showDialog, movie }) {
               ))}
             </SelectContent>
           </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="date">
-            Release Date<span className="text-red-500">*</span>
-          </Label>
-          <Calendar22
-            id="releaseDate"
-            name="releaseDate"
-            value={formState?.releaseDate}
-            onChange={handleChange}
-            required
-          />
         </div>
       </div>
       <DialogFooter>

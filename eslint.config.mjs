@@ -1,6 +1,5 @@
-import next from "eslint-config-next";
-
-import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import next from "eslint-config-next/core-web-vitals.js";
+import coreWebVitals from "eslint-config-next/core-web-vitals.js";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -21,4 +20,4 @@ const eslintConfig = [
   },
 ];
 
-export default [next];
+export default [next, coreWebVitals];

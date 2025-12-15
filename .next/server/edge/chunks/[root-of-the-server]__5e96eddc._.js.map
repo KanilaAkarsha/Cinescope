@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 23, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/middleware.js"],"sourcesContent":["import { NextResponse } from \"next/server\";\nimport { getSessionCookie } from \"better-auth/cookies\";\n\n// This function can be marked `async` if using `await` inside\nexport function middleware(request) {\n  const SessionCookie = getSessionCookie(request);\n\n  if (!SessionCookie) {\n    return NextResponse.redirect(new URL(\"/login\", request.url));\n  }\n  return NextResponse.next();\n}\n\nexport const config = {\n  matcher: \"/admin/:path*\",\n};\n"],"names":[],"mappings":";;;;AAAA;AAAA;AACA;AAAA;;;AAGO,SAAS,WAAW,OAAO;IAChC,MAAM,gBAAgB,CAAA,GAAA,gOAAA,CAAA,mBAAgB,AAAD,EAAE;IAEvC,IAAI,CAAC,eAAe;QAClB,OAAO,6LAAA,CAAA,eAAY,CAAC,QAAQ,CAAC,IAAI,IAAI,UAAU,QAAQ,GAAG;IAC5D;IACA,OAAO,6LAAA,CAAA,eAAY,CAAC,IAAI;AAC1B;AAEO,MAAM,SAAS;IACpB,SAAS;AACX"}}]
-}
