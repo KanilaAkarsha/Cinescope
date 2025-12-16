@@ -11,14 +11,17 @@ export const getMovies = async () => {
   console.log("response");
   try {
     // Fetch movies from the API
-    const movieResponse = await fetch(`${process.env.API_BASE_URL}/v1/movies`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      cache: "no-store",
-    });
+    const movieResponse = await fetch(
+      `https://cinescope.vercel.app/api/v1/movies`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        cache: "no-store",
+      }
+    );
 
     if (!movieResponse.ok) {
       throw new Error("Failed to fetch movies");
