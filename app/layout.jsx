@@ -1,7 +1,8 @@
 import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 import { inter } from "./fonts";
-
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 export const metadata = {
   icon: "/logo.svg",
 
@@ -17,6 +18,8 @@ export default function RootLayout({ children }) {
       <html lang="en" className="light" suppressHydrationWarning>
         <head />
         <body className={`${inter.className} antialiased`}>
+          <Analytics />
+          <SpeedInsights />
           <NextTopLoader color="primary" />
           <ThemeProvider
             attribute="class"
