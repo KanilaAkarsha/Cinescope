@@ -21,7 +21,8 @@ export const getMovies = async () => {
     });
 
     if (!movieResponse.ok) {
-      throw new Error("Failed to fetch movies");
+      console.error("Failed to fetch movies:", movieResponse.status);
+      return [];
     }
 
     if (movieResponse.status === 200) {
