@@ -7,8 +7,7 @@ import { ObjectId } from "mongodb";
 import { it, run } from "node:test";
 
 // get all movies database - action
-export const dynamic = "force-static";
-const getMovies = async () => {
+export const getMovies = async () => {
   console.log("response");
   try {
     // Fetch movies from the API
