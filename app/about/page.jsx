@@ -3,20 +3,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Logo } from "@/components/logo"
 import Link from "next/link"
 import { Github, Mail, Twitter } from "lucide-react"
+import { auth } from "@clerk/nextjs"
+import { headers } from "next/headers"
+import HeaderNav from "@/components/header-nav"
+
 
 export default function AboutPage() {
+  const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+  
+    const isAuthenticated = session ? true : false;
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
-        <div className="container flex h-14 max-w-(--breakpoint-2xl) items-center">
-          <div className="mr-4 hidden md:flex">
-            <Link className="mr-6 flex items-center space-x-2" href="/">
-              <Logo />
-              <span className="hidden font-bold sm:inline-block">CineScope</span>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <HeaderNav isAuthenticated={isAuthenticated} />
 
       <div className="container py-8">
         <div className="flex flex-col items-center gap-8 text-center">

@@ -4,6 +4,8 @@ import HeaderNav from "@/components/header-nav";
 import FeaturedMovies from "@/components/home/featured-movies";
 import HeroBanner from "@/components/home/hero-banner";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const session = await auth.api.getSession({
     headers: await headers(),
