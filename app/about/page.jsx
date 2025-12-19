@@ -1,19 +1,24 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Logo } from "@/components/logo"
-import Link from "next/link"
-import { Github, Mail, Twitter } from "lucide-react"
-import { auth } from "@clerk/nextjs"
-import { headers } from "next/headers"
-import HeaderNav from "@/components/header-nav"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Logo } from "@/components/logo";
+import Link from "next/link";
+import { Github, Mail, Twitter } from "lucide-react";
+import { auth } from "@clerk/nextjs";
+import { headers } from "next/headers";
+import HeaderNav from "@/components/header-nav";
 
-
-export default function AboutPage() {
+export default async function AboutPage() {
   const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-  
-    const isAuthenticated = session ? true : false;
+    headers: await headers(),
+  });
+
+  const isAuthenticated = session ? true : false;
   return (
     <div className="min-h-screen bg-background">
       <HeaderNav isAuthenticated={isAuthenticated} />
@@ -42,8 +47,9 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  To provide movie enthusiasts with a comprehensive platform to discover, track, and share their
-                  favorite films while building a vibrant community of cinema lovers.
+                  To provide movie enthusiasts with a comprehensive platform to
+                  discover, track, and share their favorite films while building
+                  a vibrant community of cinema lovers.
                 </p>
               </CardContent>
             </Card>
@@ -72,7 +78,9 @@ export default function AboutPage() {
               <CardContent className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4" />
-                  <span className="text-muted-foreground">contact@cinescope.com</span>
+                  <span className="text-muted-foreground">
+                    contact@cinescope.com
+                  </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Twitter className="h-4 w-4" />
@@ -80,7 +88,9 @@ export default function AboutPage() {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Github className="h-4 w-4" />
-                  <span className="text-muted-foreground">github.com/cinescope</span>
+                  <span className="text-muted-foreground">
+                    github.com/cinescope
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -90,17 +100,20 @@ export default function AboutPage() {
             <div className="space-y-4">
               <h2 className="text-2xl font-bold">Our Story</h2>
               <p className="text-muted-foreground">
-                CineScope was born from a passion for cinema and a desire to create a better way for movie lovers to
-                discover and engage with films. What started as a simple movie tracking tool has grown into a
-                comprehensive platform used by thousands of film enthusiasts worldwide.
+                CineScope was born from a passion for cinema and a desire to
+                create a better way for movie lovers to discover and engage with
+                films. What started as a simple movie tracking tool has grown
+                into a comprehensive platform used by thousands of film
+                enthusiasts worldwide.
               </p>
             </div>
 
             <div className="space-y-4">
               <h2 className="text-2xl font-bold">Join Our Community</h2>
               <p className="text-muted-foreground">
-                Become part of our growing community of movie lovers. Share your thoughts, discover new films, and
-                connect with fellow enthusiasts.
+                Become part of our growing community of movie lovers. Share your
+                thoughts, discover new films, and connect with fellow
+                enthusiasts.
               </p>
               <div className="flex gap-4">
                 <Button>Sign Up Now</Button>
@@ -111,6 +124,5 @@ export default function AboutPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
