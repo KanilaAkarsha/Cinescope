@@ -16,23 +16,28 @@ import {
   Clock,
   ArrowRight,
 } from "lucide-react";
-import {  users, reviews } from "@/lib/data";
+import { users, reviews } from "@/lib/data";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import MoviesData from "./movies-data";
 import { getMovies } from "@/actions/movies";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboard() {
   const pendingReviews = reviews.filter(
-    (review) => review.status === "pending",
+    (review) => review.status === "pending"
   ).length;
   const movies = await getMovies();
 
-
-    if (!movies || movies.length === 0) {
-        return <div className=" text-foreground font-medium text-center py-12">No movies available.</div>;
-    }
+  if (!movies || movies.length === 0) {
+    return (
+      <div className=" text-foreground font-medium text-center py-12">
+        No movies available.
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -226,7 +231,7 @@ export default async function AdminDashboard() {
           <TabsTrigger value="recent-reviews">Recent Reviews</TabsTrigger>
         </TabsList>
         <TabsContent value="recent-movies" className="space-y-4">
-          <MoviesData/>
+          <MoviesData />
         </TabsContent>
         <TabsContent value="recent-users" className="space-y-4">
           <div className="rounded-md border">
@@ -240,8 +245,7 @@ export default async function AdminDashboard() {
               {users.slice(0, 5).map((user) => (
                 <div
                   key={user.id}
-                  className="flex items-center justify-between p-4"
-                >
+                  className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-9 w-9">
                       <AvatarImage src={user.avatar} alt={user.name} />
@@ -260,10 +264,9 @@ export default async function AdminDashboard() {
                         user.role === "admin"
                           ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
                           : user.role === "moderator"
-                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                            : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
-                      }`}
-                    >
+                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                          : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+                      }`}>
                       {user.role}
                     </span>
                   </div>
@@ -273,8 +276,7 @@ export default async function AdminDashboard() {
             <div className="p-4 text-right">
               <Link
                 href="/admin/users"
-                className="text-primary text-sm hover:underline"
-              >
+                className="text-primary text-sm hover:underline">
                 View All Users →
               </Link>
             </div>
@@ -313,10 +315,9 @@ export default async function AdminDashboard() {
                           review.status === "approved"
                             ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
                             : review.status === "pending"
-                              ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-                              : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                        }`}
-                      >
+                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+                            : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                        }`}>
                         {review.status}
                       </span>
                     </div>
@@ -337,8 +338,7 @@ export default async function AdminDashboard() {
             <div className="p-4 text-right">
               <Link
                 href="/admin/reviews"
-                className="text-primary text-sm hover:underline"
-              >
+                className="text-primary text-sm hover:underline">
                 View All Reviews →
               </Link>
             </div>
