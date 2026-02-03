@@ -11,14 +11,17 @@ export const getMovies = async () => {
   console.log("response");
   try {
     // Fetch movies from the API
-    const movieResponse = await fetch(`${process.env.API_BASE_URL}/v1/movies`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+    const movieResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/movies`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        cache: "no-store",
       },
-      cache: "no-store",
-    });
+    );
 
     if (!movieResponse.ok) {
       throw new Error("Failed to fetch movies");
@@ -94,7 +97,7 @@ export const updateMovie = async (movieDoc, movieId) => {
     const result = await db.collection("movies_n").updateOne(
       { _id: ObjectId.createFromHexString(movieId) }, // Filter to find the movie by its ID
       { $set: movieDoc },
-      { upsert: true } // Update the movie with the new data
+      { upsert: true }, // Update the movie with the new data
     );
 
     if (result.acknowledged) {
@@ -115,7 +118,7 @@ export const updateMovie = async (movieDoc, movieId) => {
 export const deleteMovie = async (movieId) => {
   try {
     const result = await db.collection("movies_n").deleteOne(
-      { _id: ObjectId.createFromHexString(movieId) } // Filter to find the movie by its ID
+      { _id: ObjectId.createFromHexString(movieId) }, // Filter to find the movie by its ID
     );
 
     if (result.acknowledged) {
@@ -142,7 +145,7 @@ export const getMovieById = async (movieId) => {
 
   try {
     const movie = await db.collection("movies_n").findOne(
-      { _id: ObjectId.createFromHexString(movieId) } // Filter to find the movie by its ID
+      { _id: ObjectId.createFromHexString(movieId) }, // Filter to find the movie by its ID
     );
 
     if (movie && Object.keys(movie).length > 0) {
