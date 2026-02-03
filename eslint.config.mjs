@@ -1,14 +1,4 @@
-import next from "eslint-config-next/core-web-vitals.js";
-import coreWebVitals from "eslint-config-next/core-web-vitals.js";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const eslintConfig = [
-  ...nextTypescript,
-  ...nextCoreWebVitals,
+export default [
   {
     ignores: [
       "node_modules/**",
@@ -19,5 +9,3 @@ const eslintConfig = [
     ],
   },
 ];
-
-export default [next, coreWebVitals];
