@@ -79,7 +79,7 @@ export default function LoginForm() {
                 message: ctx.error.message || "Login failed",
               });
             },
-          }
+          },
         );
       } catch (error) {
         setError({
