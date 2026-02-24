@@ -12,7 +12,7 @@ const Footer = () => {
           <div className="text-primary text-3xl font-bold">CineScope.lk</div>
         </Link>
         <div>
-          <nav className="ml-auto flex items-center justify-center mt-5 gap-4 text-stone-700 dark:text-white">
+          <nav className="ml-auto flex items-center justify-center mt-5 gap-7 text-stone-700 dark:text-white">
             <Link
               href="/movies"
               className="hover:text-primary text-sm font-medium transition-colors">
@@ -33,17 +33,17 @@ const Footer = () => {
       </div>
       <div className="border-t-2 border-primary/20" />
       <div className="container dark:text-white flex h-35  items-center justify-between dark:bg-black">
-        <div className="text-stone-700 dark:text-white">
+        <div className="text-stone-700 dark:text-white text-sm">
           © 2025 CineScope. All rights reserved.
         </div>
-        <div className="text-stone-700 dark:text-white">
-          <Link href="/terms" className="text-sm  hover:underline">
+        <div className="text-stone-700 dark:text-white gap-7">
+          <Link href="/terms" className="text-sm hover:underline">
             Terms
           </Link>
-          <Link href="/privacy" className="ml-4 text-sm  hover:underline">
+          <Link href="/privacy" className="ml-4 text-sm hover:underline">
             Privacy
           </Link>
-          <Link href="/cookies" className="ml-4 text-sm  hover:underline">
+          <Link href="/cookies" className="ml-4 text-sm hover:underline">
             Cookies
           </Link>
         </div>

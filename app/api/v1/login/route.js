@@ -1,8 +1,5 @@
 import { NextResponse } from "next/server";
 
-const VALID_EMAIL = "kanilasaman1@gmail.com";
-const VALID_PASSWORD = "12345678";
-
 const allowedOrigin =
   process.env.NODE_ENV === "production"
     ? "https://cinescope-mu.vercel.app"
@@ -24,7 +21,7 @@ export const POST = async (request) => {
   try {
     const { email, password } = await request.json();
 
-    if (email === VALID_EMAIL && password === VALID_PASSWORD) {
+    if (email === "kanilasaman1@gmail.com" && password === "kanila1234") {
       return NextResponse.json(
         { success: true, message: "Login successful" },
         { headers: corsHeaders },
