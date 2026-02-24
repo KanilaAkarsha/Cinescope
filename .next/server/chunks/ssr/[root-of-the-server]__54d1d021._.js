@@ -22,7 +22,7 @@ const db = client.db("sample_mflix"); // Access the database instance
 "[project]/actions/movies.js [app-rsc] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-/* __next_internal_action_entry_do_not_use__ [{"7f0f5acff8d116cf3f65bea493b57c34e936f7d592":"createReviewForMovie","7f18049e6afd9abed4f1475f3eb945187b6731091f":"updateMovie","7f2a45400d0080ec87edaf5c24a5243beb04ee2af2":"getAllGenres","7f59ecbb9d58efd28e85e630f4c3961b978724d13f":"deleteMovie","7f5f3353231cd98ad50212911649c99e421a8fafe7":"createMovie","7f91a450b09d56170389a218713320a8f19de84f5f":"getMovieById","7fad53d6bad37f05905d52d30f4b3c024e895368bc":"getReviewsForMovie","7fc1650b4d7ab961ec82dc3a2c3fc96f0c1aa68e22":"getMovies","7ff90a6c767c8bfbcdfa4a23e7a7171558688fa4cc":"searchMovies"},"",""] */ __turbopack_context__.s([
+/* __next_internal_action_entry_do_not_use__ [{"7f016f8313208c9764451ab836bd5ca212e97f4a7c":"deleteMovie","7f0ed97ef4d8a4957df90e718d1e1fca83d843b652":"updateMovie","7f5376666aaf94cd59a0d88ac0a6b149788eccce57":"createReviewForMovie","7f7bda4358269879b9664bfc1c6300bcb0fdbc9222":"getReviewsForMovie","7f8bc9b16c15c7b3c53462eac44bbfe2517b106e81":"searchMovies","7fe06a7eb503f0ca4e5c3b2b8c5bfdc4a3bdd20fe1":"createMovie","7fe9cf7dcab19135dd04018a00b7a1fcedc1b567c7":"getAllGenres","7ff2fc79da8d6d0f88009e45bf2e29c82ead127b71":"getMovies","7ff5440398aa708f41bbf43bacf8debdeff8581d83":"getMovieById"},"",""] */ __turbopack_context__.s([
     "createMovie",
     ()=>createMovie,
     "createReviewForMovie",
@@ -58,7 +58,7 @@ const getMovies = async ()=>{
     console.log("response");
     try {
         // Fetch movies from the API
-        const movieResponse = await fetch(`${("TURBOPACK compile-time value", "http://localhost:3000")}/api/v1/movies`, {
+        const movieResponse = await fetch(`${("TURBOPACK compile-time value", "https://cinescope-nxb9.onrender.com")}/api/v1/movies`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -300,15 +300,15 @@ const getAllGenres = async ()=>{
     getReviewsForMovie,
     getAllGenres
 ]);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getMovies, "7fc1650b4d7ab961ec82dc3a2c3fc96f0c1aa68e22", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(searchMovies, "7ff90a6c767c8bfbcdfa4a23e7a7171558688fa4cc", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(createMovie, "7f5f3353231cd98ad50212911649c99e421a8fafe7", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(updateMovie, "7f18049e6afd9abed4f1475f3eb945187b6731091f", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(deleteMovie, "7f59ecbb9d58efd28e85e630f4c3961b978724d13f", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getMovieById, "7f91a450b09d56170389a218713320a8f19de84f5f", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(createReviewForMovie, "7f0f5acff8d116cf3f65bea493b57c34e936f7d592", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getReviewsForMovie, "7fad53d6bad37f05905d52d30f4b3c024e895368bc", null);
-(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getAllGenres, "7f2a45400d0080ec87edaf5c24a5243beb04ee2af2", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getMovies, "7ff2fc79da8d6d0f88009e45bf2e29c82ead127b71", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(searchMovies, "7f8bc9b16c15c7b3c53462eac44bbfe2517b106e81", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(createMovie, "7fe06a7eb503f0ca4e5c3b2b8c5bfdc4a3bdd20fe1", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(updateMovie, "7f0ed97ef4d8a4957df90e718d1e1fca83d843b652", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(deleteMovie, "7f016f8313208c9764451ab836bd5ca212e97f4a7c", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getMovieById, "7ff5440398aa708f41bbf43bacf8debdeff8581d83", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(createReviewForMovie, "7f5376666aaf94cd59a0d88ac0a6b149788eccce57", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getReviewsForMovie, "7f7bda4358269879b9664bfc1c6300bcb0fdbc9222", null);
+(0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["registerServerReference"])(getAllGenres, "7fe9cf7dcab19135dd04018a00b7a1fcedc1b567c7", null);
 }),
 "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/actions/movies.js [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript) <locals>", ((__turbopack_context__) => {
 "use strict";
@@ -329,24 +329,24 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b
 "use strict";
 
 __turbopack_context__.s([
-    "7f0f5acff8d116cf3f65bea493b57c34e936f7d592",
-    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["createReviewForMovie"],
-    "7f18049e6afd9abed4f1475f3eb945187b6731091f",
-    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["updateMovie"],
-    "7f2a45400d0080ec87edaf5c24a5243beb04ee2af2",
-    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getAllGenres"],
-    "7f59ecbb9d58efd28e85e630f4c3961b978724d13f",
+    "7f016f8313208c9764451ab836bd5ca212e97f4a7c",
     ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["deleteMovie"],
-    "7f5f3353231cd98ad50212911649c99e421a8fafe7",
-    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["createMovie"],
-    "7f91a450b09d56170389a218713320a8f19de84f5f",
-    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getMovieById"],
-    "7fad53d6bad37f05905d52d30f4b3c024e895368bc",
+    "7f0ed97ef4d8a4957df90e718d1e1fca83d843b652",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["updateMovie"],
+    "7f5376666aaf94cd59a0d88ac0a6b149788eccce57",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["createReviewForMovie"],
+    "7f7bda4358269879b9664bfc1c6300bcb0fdbc9222",
     ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getReviewsForMovie"],
-    "7fc1650b4d7ab961ec82dc3a2c3fc96f0c1aa68e22",
+    "7f8bc9b16c15c7b3c53462eac44bbfe2517b106e81",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["searchMovies"],
+    "7fe06a7eb503f0ca4e5c3b2b8c5bfdc4a3bdd20fe1",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["createMovie"],
+    "7fe9cf7dcab19135dd04018a00b7a1fcedc1b567c7",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getAllGenres"],
+    "7ff2fc79da8d6d0f88009e45bf2e29c82ead127b71",
     ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getMovies"],
-    "7ff90a6c767c8bfbcdfa4a23e7a7171558688fa4cc",
-    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["searchMovies"]
+    "7ff5440398aa708f41bbf43bacf8debdeff8581d83",
+    ()=>__TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getMovieById"]
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f2e$next$2d$internal$2f$server$2f$app$2f$page$2f$actions$2e$js__$7b$__ACTIONS_MODULE0__$3d3e$__$225b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$2922$__$7d$__$5b$app$2d$rsc$5d$__$28$server__actions__loader$2c$__ecmascript$29$__$3c$locals$3e$__ = __turbopack_context__.i('[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => "[project]/actions/movies.js [app-rsc] (ecmascript)" } [app-rsc] (server actions loader, ecmascript) <locals>');
 var __TURBOPACK__imported__module__$5b$project$5d2f$actions$2f$movies$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/actions/movies.js [app-rsc] (ecmascript)");
