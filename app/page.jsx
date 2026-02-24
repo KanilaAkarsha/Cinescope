@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import HeaderNav from "@/components/header-nav";
 import FeaturedMovies from "@/components/home/featured-movies";
 import HeroBanner from "@/components/home/hero-banner";
+import Footer from "@/components/footer";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,7 @@ export default async function Home() {
         <HeroBanner />
         <FeaturedMovies />
       </main>
-      <footer className="flex-1 bg-amber-400">Footer Section</footer>
+      <Footer />
     </div>
   );
 }
