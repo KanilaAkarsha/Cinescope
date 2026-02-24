@@ -220,14 +220,6 @@
     --color-gray-300: #d1d5dc;
     --color-gray-500: #6a7282;
     --color-gray-800: #1e2939;
-    --color-gray-900: #101828;
-    --color-neutral-200: #e5e5e5;
-    --color-neutral-300: #d4d4d4;
-    --color-neutral-400: #a1a1a1;
-    --color-neutral-600: #525252;
-    --color-neutral-700: #404040;
-    --color-neutral-800: #262626;
-    --color-neutral-900: #171717;
     --color-stone-700: #44403b;
     --color-black: #000;
     --color-white: #fff;
@@ -316,14 +308,6 @@
       --color-gray-300: color(display-p3 .822033 .835264 .858521);
       --color-gray-500: color(display-p3 .421287 .446085 .504784);
       --color-gray-800: color(display-p3 .125854 .159497 .216835);
-      --color-gray-900: color(display-p3 .070423 .0928982 .151928);
-      --color-neutral-200: color(display-p3 .898161 .898161 .898161);
-      --color-neutral-300: color(display-p3 .831444 .831444 .831444);
-      --color-neutral-400: color(display-p3 .630163 .630163 .630163);
-      --color-neutral-600: color(display-p3 .321993 .321993 .321993);
-      --color-neutral-700: color(display-p3 .250471 .250471 .250471);
-      --color-neutral-800: color(display-p3 .149382 .149382 .149382);
-      --color-neutral-900: color(display-p3 .0905274 .0905274 .0905274);
       --color-stone-700: color(display-p3 .265384 .251047 .234362);
     }
   }
@@ -361,14 +345,6 @@
       --color-gray-300: lab(85.1236% -.612259 -3.7138);
       --color-gray-500: lab(47.7841% -.393182 -10.0268);
       --color-gray-800: lab(16.1051% -1.18239 -11.7533);
-      --color-gray-900: lab(8.11897% .811279 -12.254);
-      --color-neutral-200: lab(90.952% 0 -.0000119209);
-      --color-neutral-300: lab(84.92% 0 -.0000119209);
-      --color-neutral-400: lab(66.128% -.0000298023 .0000119209);
-      --color-neutral-600: lab(34.924% 0 0);
-      --color-neutral-700: lab(27.036% 0 0);
-      --color-neutral-800: lab(15.204% 0 -.00000596046);
-      --color-neutral-900: lab(7.78201% -.0000149012 0);
       --color-stone-700: lab(27.3812% 1.32917 3.57789);
     }
   }
@@ -1041,10 +1017,6 @@
     margin-right: calc(var(--spacing) * 6);
   }
 
-  .mr-9 {
-    margin-right: calc(var(--spacing) * 9);
-  }
-
   .mb-1 {
     margin-bottom: calc(var(--spacing) * 1);
   }
@@ -1055,10 +1027,6 @@
 
   .mb-8 {
     margin-bottom: calc(var(--spacing) * 8);
-  }
-
-  .mb-9 {
-    margin-bottom: calc(var(--spacing) * 9);
   }
 
   .ml-1 {
@@ -1266,10 +1234,6 @@
     height: calc(var(--spacing) * 20);
   }
 
-  .h-30 {
-    height: calc(var(--spacing) * 30);
-  }
-
   .h-32 {
     height: calc(var(--spacing) * 32);
   }
@@ -1280,18 +1244,6 @@
 
   .h-40 {
     height: calc(var(--spacing) * 40);
-  }
-
-  .h-50 {
-    height: calc(var(--spacing) * 50);
-  }
-
-  .h-70 {
-    height: calc(var(--spacing) * 70);
-  }
-
-  .h-500 {
-    height: calc(var(--spacing) * 500);
   }
 
   .h-\[1\.2rem\] {
@@ -1448,10 +1400,6 @@
 
   .w-20 {
     width: calc(var(--spacing) * 20);
-  }
-
-  .w-30 {
-    width: calc(var(--spacing) * 30);
   }
 
   .w-32 {
@@ -1974,16 +1922,6 @@
     border-width: 2px;
   }
 
-  .border-3 {
-    border-style: var(--tw-border-style);
-    border-width: 3px;
-  }
-
-  .border-4 {
-    border-style: var(--tw-border-style);
-    border-width: 4px;
-  }
-
   .border-\[1\.5px\] {
     border-style: var(--tw-border-style);
     border-width: 1.5px;
@@ -2002,11 +1940,6 @@
   .border-r {
     border-right-style: var(--tw-border-style);
     border-right-width: 1px;
-  }
-
-  .border-r-8 {
-    border-right-style: var(--tw-border-style);
-    border-right-width: 8px;
   }
 
   .border-b {
@@ -2170,14 +2103,6 @@
     .bg-muted\/50 {
       background-color: color-mix(in oklab, var(--muted) 50%, transparent);
     }
-  }
-
-  .bg-neutral-200 {
-    background-color: var(--color-neutral-200);
-  }
-
-  .bg-neutral-300 {
-    background-color: var(--color-neutral-300);
   }
 
   .bg-orange-400 {
@@ -2479,16 +2404,8 @@
     padding-top: calc(var(--spacing) * 4);
   }
 
-  .pt-6 {
-    padding-top: calc(var(--spacing) * 6);
-  }
-
   .pt-8 {
     padding-top: calc(var(--spacing) * 8);
-  }
-
-  .pt-9 {
-    padding-top: calc(var(--spacing) * 9);
   }
 
   .pt-12 {
@@ -2698,14 +2615,6 @@
 
   .text-muted-foreground {
     color: var(--muted-foreground);
-  }
-
-  .text-neutral-700 {
-    color: var(--color-neutral-700);
-  }
-
-  .text-neutral-800 {
-    color: var(--color-neutral-800);
   }
 
   .text-orange-600 {
@@ -4381,10 +4290,6 @@
     background-color: var(--color-gray-800);
   }
 
-  .dark\:bg-gray-900:where(.dark, .dark *) {
-    background-color: var(--color-gray-900);
-  }
-
   .dark\:bg-green-900:where(.dark, .dark *) {
     background-color: var(--color-green-900);
   }
@@ -4399,40 +4304,8 @@
     }
   }
 
-  .dark\:bg-neutral-600:where(.dark, .dark *) {
-    background-color: var(--color-neutral-600);
-  }
-
-  .dark\:bg-neutral-700:where(.dark, .dark *) {
-    background-color: var(--color-neutral-700);
-  }
-
-  .dark\:bg-neutral-900:where(.dark, .dark *) {
-    background-color: var(--color-neutral-900);
-  }
-
-  .dark\:bg-primary\/90:where(.dark, .dark *) {
-    background-color: var(--primary);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .dark\:bg-primary\/90:where(.dark, .dark *) {
-      background-color: color-mix(in oklab, var(--primary) 90%, transparent);
-    }
-  }
-
   .dark\:bg-red-900:where(.dark, .dark *) {
     background-color: var(--color-red-900);
-  }
-
-  .dark\:bg-secondary\/90:where(.dark, .dark *) {
-    background-color: var(--secondary);
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .dark\:bg-secondary\/90:where(.dark, .dark *) {
-      background-color: color-mix(in oklab, var(--secondary) 90%, transparent);
-    }
   }
 
   .dark\:bg-yellow-900:where(.dark, .dark *) {
@@ -4453,14 +4326,6 @@
 
   .dark\:text-muted-foreground:where(.dark, .dark *) {
     color: var(--muted-foreground);
-  }
-
-  .dark\:text-neutral-200:where(.dark, .dark *) {
-    color: var(--color-neutral-200);
-  }
-
-  .dark\:text-neutral-400:where(.dark, .dark *) {
-    color: var(--color-neutral-400);
   }
 
   .dark\:text-red-300:where(.dark, .dark *) {
