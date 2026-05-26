@@ -47,15 +47,19 @@ import { Label } from "@/components/ui/label";
 import { users } from "@/lib/data";
 
 export default function UsersPage() {
+  const currentUserRole = "admin";
+  const canManageRoles = currentUserRole === "admin";
+  const [usersData, setUsersData] = useState(users);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState("name");
   const [sortDirection, setSortDirection] = useState("asc");
   const [roleFilter, setRoleFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedRole, setSelectedRole] = useState("");
   const [showEditRole, setShowEditRole] = useState(false);
 
   // Filter and sort users
-  const filteredUsers = users
+  const filteredUsers = usersData
     .filter(
       (user) =>
         (roleFilter === "all" || user.role === roleFilter) &&
@@ -94,8 +98,21 @@ export default function UsersPage() {
   };
 
   const handleEditRole = (user) => {
+    if (!canManageRoles) return;
     setSelectedUser(user);
+    setSelectedRole(user.role);
     setShowEditRole(true);
+  };
+
+  const handleSaveRole = () => {
+    if (!canManageRoles || !selectedUser || !selectedRole) return;
+
+    setUsersData((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === selectedUser.id ? { ...user, role: selectedRole } : user
+      )
+    );
+    setShowEditRole(false);
   };
 
   return (
@@ -217,9 +234,11 @@ export default function UsersPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => handleEditRole(user)}>
-                        Edit Role
-                      </DropdownMenuItem>
+                      {canManageRoles && (
+                        <DropdownMenuItem onClick={() => handleEditRole(user)}>
+                          Edit Role
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem>View Profile</DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
@@ -250,7 +269,10 @@ export default function UsersPage() {
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
-              <Select defaultValue={selectedUser?.role}>
+              <Select
+                value={selectedRole}
+                onValueChange={setSelectedRole}
+                disabled={!canManageRoles}>
                 <SelectTrigger id="role">
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
@@ -269,7 +291,7 @@ export default function UsersPage() {
               onClick={() => setShowEditRole(false)}>
               Cancel
             </Button>
-            <Button type="button" onClick={() => setShowEditRole(false)}>
+            <Button type="button" onClick={handleSaveRole} disabled={!canManageRoles}>
               Save Changes
             </Button>
           </DialogFooter>
