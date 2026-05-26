@@ -148,12 +148,19 @@ export const deleteUser = async (userId) => {
 
 export const updateUserRole = async (userId, newRole) => {
   try {
+    const query =
+      typeof userId === "string" && ObjectId.isValid(userId)
+        ? { _id: new ObjectId(userId) }
+        : { _id: userId };
+
     const result = await db
       .collection("user")
-      .updateOne({ _id: userId }, { $set: { role: newRole } });
+      .updateOne(query, { $set: { role: newRole } });
 
-    if (result.acknowledged) {
-      console.log(`A user was updated with the _id: ${result.upsertedId}`);
+    if (result.acknowledged && result.matchedCount > 0) {
+      console.log(
+        `User role update matched ${result.matchedCount} and modified ${result.modifiedCount} document(s).`
+      );
 
       return {
         success: true,

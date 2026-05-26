@@ -45,17 +45,29 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { users } from "@/lib/data";
+import { useSession } from "@/lib/auth-client";
+import { updateUserRole } from "@/actions/users";
+import { toast } from "sonner";
+
+const MONGO_OBJECT_ID_HEX_REGEX = /^[a-f0-9]{24}$/i;
+
+const getUserIdentifier = (user) => user?.id ?? user?._id?.toString() ?? null;
 
 export default function UsersPage() {
+  const { data: session } = useSession();
+  const currentUserRole = session?.user?.role;
+  const canManageRoles = currentUserRole === "admin";
+  const [usersData, setUsersData] = useState(users);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState("name");
   const [sortDirection, setSortDirection] = useState("asc");
   const [roleFilter, setRoleFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedRole, setSelectedRole] = useState("");
   const [showEditRole, setShowEditRole] = useState(false);
 
   // Filter and sort users
-  const filteredUsers = users
+  const filteredUsers = usersData
     .filter(
       (user) =>
         (roleFilter === "all" || user.role === roleFilter) &&
@@ -94,8 +106,44 @@ export default function UsersPage() {
   };
 
   const handleEditRole = (user) => {
+    if (!canManageRoles) return;
     setSelectedUser(user);
+    setSelectedRole(user.role);
     setShowEditRole(true);
+  };
+
+  const handleSaveRole = async () => {
+    if (!canManageRoles || !selectedUser || !selectedRole) return;
+
+    const selectedUserId = getUserIdentifier(selectedUser);
+    const canPersistToDatabase =
+      typeof selectedUserId === "string" &&
+      MONGO_OBJECT_ID_HEX_REGEX.test(selectedUserId);
+
+    if (canPersistToDatabase) {
+      try {
+        const response = await updateUserRole(selectedUserId, selectedRole);
+        if (!response?.success) {
+          toast.error("Unable to update user role. Please try again.");
+          return;
+        }
+      } catch {
+        toast.error("Unable to update user role. Please try again.");
+        return;
+      }
+    }
+
+    setUsersData((prevUsers) =>
+      prevUsers.map((user) =>
+        getUserIdentifier(user) === selectedUserId
+          ? { ...user, role: selectedRole }
+          : user
+      )
+    );
+    if (!canPersistToDatabase) {
+      toast.info("Role updated locally for demo data.");
+    }
+    setShowEditRole(false);
   };
 
   return (
@@ -217,9 +265,11 @@ export default function UsersPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => handleEditRole(user)}>
-                        Edit Role
-                      </DropdownMenuItem>
+                      {canManageRoles && (
+                        <DropdownMenuItem onClick={() => handleEditRole(user)}>
+                          Edit Role
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem>View Profile</DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
@@ -250,7 +300,10 @@ export default function UsersPage() {
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
-              <Select defaultValue={selectedUser?.role}>
+              <Select
+                value={selectedRole}
+                onValueChange={setSelectedRole}
+                disabled={!canManageRoles}>
                 <SelectTrigger id="role">
                   <SelectValue placeholder="Select role" />
                 </SelectTrigger>
@@ -269,7 +322,7 @@ export default function UsersPage() {
               onClick={() => setShowEditRole(false)}>
               Cancel
             </Button>
-            <Button type="button" onClick={() => setShowEditRole(false)}>
+            <Button type="button" onClick={handleSaveRole} disabled={!canManageRoles}>
               Save Changes
             </Button>
           </DialogFooter>
