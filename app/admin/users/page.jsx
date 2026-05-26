@@ -49,7 +49,9 @@ import { useSession } from "@/lib/auth-client";
 import { updateUserRole } from "@/actions/users";
 import { toast } from "sonner";
 
-const MONGO_OBJECT_ID_LENGTH = 24;
+const MONGO_OBJECT_ID_HEX_REGEX = /^[a-f0-9]{24}$/i;
+
+const getUserIdentifier = (user) => user?.id ?? user?._id?.toString() ?? null;
 
 export default function UsersPage() {
   const { data: session } = useSession();
@@ -113,10 +115,10 @@ export default function UsersPage() {
   const handleSaveRole = async () => {
     if (!canManageRoles || !selectedUser || !selectedRole) return;
 
-    const selectedUserId = selectedUser.id ?? selectedUser._id?.toString();
+    const selectedUserId = getUserIdentifier(selectedUser);
     const canPersistToDatabase =
       typeof selectedUserId === "string" &&
-      selectedUserId.length === MONGO_OBJECT_ID_LENGTH;
+      MONGO_OBJECT_ID_HEX_REGEX.test(selectedUserId);
 
     if (canPersistToDatabase) {
       const response = await updateUserRole(selectedUserId, selectedRole);
@@ -128,7 +130,7 @@ export default function UsersPage() {
 
     setUsersData((prevUsers) =>
       prevUsers.map((user) =>
-        user.id === selectedUserId || user._id?.toString() === selectedUserId
+        getUserIdentifier(user) === selectedUserId
           ? { ...user, role: selectedRole }
           : user
       )
