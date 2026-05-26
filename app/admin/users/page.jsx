@@ -45,9 +45,15 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { users } from "@/lib/data";
+import { useSession } from "@/lib/auth-client";
+import { updateUserRole } from "@/actions/users";
+import { toast } from "sonner";
+
+const MONGO_OBJECT_ID_LENGTH = 24;
 
 export default function UsersPage() {
-  const currentUserRole = "admin";
+  const { data: session } = useSession();
+  const currentUserRole = session?.user?.role;
   const canManageRoles = currentUserRole === "admin";
   const [usersData, setUsersData] = useState(users);
   const [searchQuery, setSearchQuery] = useState("");
@@ -104,12 +110,27 @@ export default function UsersPage() {
     setShowEditRole(true);
   };
 
-  const handleSaveRole = () => {
+  const handleSaveRole = async () => {
     if (!canManageRoles || !selectedUser || !selectedRole) return;
+
+    const selectedUserId = selectedUser.id ?? selectedUser._id?.toString();
+    const canPersistToDatabase =
+      typeof selectedUserId === "string" &&
+      selectedUserId.length === MONGO_OBJECT_ID_LENGTH;
+
+    if (canPersistToDatabase) {
+      const response = await updateUserRole(selectedUserId, selectedRole);
+      if (!response?.success) {
+        toast.error("Unable to update user role. Please try again.");
+        return;
+      }
+    }
 
     setUsersData((prevUsers) =>
       prevUsers.map((user) =>
-        user.id === selectedUser.id ? { ...user, role: selectedRole } : user
+        user.id === selectedUserId || user._id?.toString() === selectedUserId
+          ? { ...user, role: selectedRole }
+          : user
       )
     );
     setShowEditRole(false);
