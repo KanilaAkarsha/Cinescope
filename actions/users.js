@@ -158,7 +158,9 @@ export const updateUserRole = async (userId, newRole) => {
       .updateOne(query, { $set: { role: newRole } });
 
     if (result.acknowledged && result.matchedCount > 0) {
-      console.log(`A user was updated with the _id: ${userId}`);
+      console.log(
+        `User role update matched ${result.matchedCount} and modified ${result.modifiedCount} document(s).`
+      );
 
       return {
         success: true,

@@ -121,8 +121,13 @@ export default function UsersPage() {
       MONGO_OBJECT_ID_HEX_REGEX.test(selectedUserId);
 
     if (canPersistToDatabase) {
-      const response = await updateUserRole(selectedUserId, selectedRole);
-      if (!response?.success) {
+      try {
+        const response = await updateUserRole(selectedUserId, selectedRole);
+        if (!response?.success) {
+          toast.error("Unable to update user role. Please try again.");
+          return;
+        }
+      } catch {
         toast.error("Unable to update user role. Please try again.");
         return;
       }
@@ -135,6 +140,9 @@ export default function UsersPage() {
           : user
       )
     );
+    if (!canPersistToDatabase) {
+      toast.info("Role updated locally for demo data.");
+    }
     setShowEditRole(false);
   };
 
