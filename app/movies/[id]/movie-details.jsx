@@ -9,8 +9,97 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const getDownloadOptions = (movie) => {
+  const rawLinks = movie?.movieFileLinks;
+
+  if (Array.isArray(rawLinks)) {
+    return rawLinks
+      .map((entry, index) => {
+        if (typeof entry === "string") {
+          return {
+            label: `Option ${index + 1}`,
+            value: entry,
+          };
+        }
+
+        if (!entry) {
+          return null;
+        }
+
+        return {
+          label:
+            entry.label ||
+            entry.resolution ||
+            entry.quality ||
+            `Option ${index + 1}`,
+          value: entry.url || entry.link || entry.href || "",
+        };
+      })
+      .filter((entry) => Boolean(entry?.value));
+  }
+
+  if (rawLinks && typeof rawLinks === "object") {
+    return Object.entries(rawLinks)
+      .map(([label, value]) => ({
+        label,
+        value:
+          typeof value === "string"
+            ? value
+            : value?.url || value?.link || value?.href || "",
+      }))
+      .filter((entry) => Boolean(entry.value));
+  }
+
+  if (movie?.movieFileLink) {
+    return [
+      {
+        label: "Default",
+        value: movie.movieFileLink,
+      },
+    ];
+  }
+
+  return [];
+};
+
+const getTrailerEmbedUrl = (url) => {
+  const value = String(url || "").trim();
+
+  if (!value) return "";
+
+  try {
+    const parsed = new URL(value);
+    const host = parsed.hostname.replace(/^www\./, "");
+
+    if (host.includes("youtube.com")) {
+      const videoId = parsed.searchParams.get("v");
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+    }
+
+    if (host === "youtu.be") {
+      const videoId = parsed.pathname.replace("/", "");
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+    }
+
+    return value;
+  } catch {
+    return value;
+  }
+};
 
 export default function MovieDetails({ movie, reviews, id }) {
   const isLoading = false;
@@ -20,6 +109,20 @@ export default function MovieDetails({ movie, reviews, id }) {
   const [movieReviews, setMovieReviews] = useState(
     Array.isArray(reviews) ? reviews : [],
   );
+  const downloadOptions = getDownloadOptions(movie);
+  const [selectedDownload, setSelectedDownload] = useState(
+    downloadOptions[0]?.value || "",
+  );
+  const trailerUrl = getTrailerEmbedUrl(
+    movie?.trailerVideoLink || movie?.trailerLink || movie?.videoLink,
+  );
+  const formatReviewDate = (value) =>
+    new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(new Date(value));
 
   const handleSubmitReview = async (e) => {
     e.preventDefault();
@@ -195,23 +298,66 @@ export default function MovieDetails({ movie, reviews, id }) {
                     <h2 className="text-xl font-semibold">Cast</h2>
                     <p className="text-muted-foreground mt-2">{movie.cast}</p>
                   </div>
+                </div>
+              </div>
 
-                  {movie.movieFileLink && (
+              {downloadOptions.length > 0 && (
+                <div className="mt-8">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    {downloadOptions.length > 1 && (
+                      <Select
+                        value={selectedDownload}
+                        onValueChange={setSelectedDownload}>
+                        <SelectTrigger className="w-full sm:w-56">
+                          <SelectValue placeholder="Choose resolution" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {downloadOptions.map((option) => (
+                            <SelectItem key={option.label} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                    <Button asChild>
+                      <a
+                        href={selectedDownload || downloadOptions[0]?.value}
+                        target="_blank"
+                        rel="noreferrer"
+                        download>
+                        <Download className="mr-2 h-4 w-4" />
+                        Download Movie
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {trailerUrl && (
+                <div className="mt-8 space-y-3">
+                  <h2 className="text-xl font-semibold">Trailer</h2>
+                  {trailerUrl.includes("youtube.com/embed/") ? (
+                    <div className="aspect-video overflow-hidden rounded-lg border">
+                      <iframe
+                        src={trailerUrl}
+                        title={`${movie.title} trailer`}
+                        className="h-full w-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                      />
+                    </div>
+                  ) : (
                     <div>
-                      <Button asChild>
-                        <a
-                          href={movie.movieFileLink}
-                          target="_blank"
-                          rel="noreferrer"
-                          download>
-                          <Download className="mr-2 h-4 w-4" />
-                          Download Movie
+                      <Button asChild variant="outline">
+                        <a href={trailerUrl} target="_blank" rel="noreferrer">
+                          Watch Trailer
                         </a>
                       </Button>
                     </div>
                   )}
                 </div>
-              </div>
+              )}
 
               <div className="mt-12">
                 <h2 className="text-2xl font-bold">Reviews</h2>
@@ -225,6 +371,7 @@ export default function MovieDetails({ movie, reviews, id }) {
                             <AvatarImage
                               src={
                                 review.userAvatar ||
+                                user?.pro ||
                                 "/placeholder.svg?height=40&width=40"
                               }
                               alt={review.userName || "Anonymous"}
@@ -246,9 +393,7 @@ export default function MovieDetails({ movie, reviews, id }) {
                                 •
                               </span>
                               <span className="text-muted-foreground text-xs">
-                                {new Date(
-                                  review.createdAt,
-                                ).toLocaleDateString()}
+                                {formatReviewDate(review.createdAt)}
                               </span>
                             </div>
                           </div>

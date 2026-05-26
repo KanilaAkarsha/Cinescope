@@ -1,10 +1,7 @@
 "use server";
 import { db } from "@/db";
 
-// import { MOVIES } from "@/lib/data";
-
 import { ObjectId } from "mongodb";
-import { it, run } from "node:test";
 
 const normalizeReview = (review) => ({
   id: review?._id?.toString?.() || review?.id,
@@ -167,6 +164,9 @@ export const getMovieById = async (movieId) => {
         backdrop: movie.backdrop,
         poster: movie.poster,
         movieFileLink: movie.movieFileLink || movie.fileLink || "",
+        movieFileLinks: movie.movieFileLinks || movie.downloadLinks || null,
+        trailerVideoLink:
+          movie.trailerVideoLink || movie.trailerLink || movie.videoLink || "",
         year: movie.year,
         rating: movie.imdb.rating ?? 0,
         genre: movie.genres,

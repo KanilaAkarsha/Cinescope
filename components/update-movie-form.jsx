@@ -13,7 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getAllMovieStatus, getAllYears } from "@/lib/utils";
+import { getAllMovieStatus, getAllYears, cn } from "@/lib/utils";
+import { getAllGenres } from "@/lib/data";
 import { Textarea } from "@/components/ui/textarea";
 import { updateMovie } from "@/actions/movies";
 
@@ -33,6 +34,70 @@ const buildMultiValueFields = ({ castInput, genreInput }) => {
   };
 };
 
+function TagInput({ tags, setTags, placeholder, className }) {
+  const [inputValue, setInputValue] = useState("");
+
+  const addTag = (value) => {
+    const v = String(value || "").trim();
+    if (!v) return;
+    if (tags.includes(v)) return;
+    setTags((prev) => [...prev, v]);
+  };
+
+  const removeTag = (index) => {
+    setTags((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const onKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      addTag(inputValue);
+      setInputValue("");
+    }
+    if (e.key === "Backspace" && !inputValue) {
+      // remove last
+      setTags((prev) => prev.slice(0, -1));
+    }
+  };
+
+  const onBlur = () => {
+    if (inputValue) {
+      addTag(inputValue);
+      setInputValue("");
+    }
+  };
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 rounded-md border border-primary/20  px-3 py-2">
+      {tags.map((tag, idx) => (
+        <span key={`${tag}-${idx}`}>
+          <span className="truncate max-w-32">{tag}</span>
+          <button
+            type="button"
+            onClick={() => removeTag(idx)}
+            aria-label={`Remove ${tag}`}
+            className="ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary text-white text-[10px]">
+            ×
+          </button>
+        </span>
+      ))}
+      <input
+        className={cn(
+          "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 min-w-0 flex-1 bg-transparent text-base outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-0",
+          "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+          className,
+        )}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={onKeyDown}
+        onBlur={onBlur}
+        placeholder={placeholder}
+      />
+    </div>
+  );
+}
+
 export default function UpdateMovieForm({ showDialog, movie }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,6 +105,7 @@ export default function UpdateMovieForm({ showDialog, movie }) {
     title: movie?.title || "",
     year: movie?.year || null,
     director: movie?.directors?.at(0) || "",
+    // retain for backward compatibility but we use tag arrays below
     cast: Array.isArray(movie?.cast) ? movie.cast.join(", ") : "",
     genre: Array.isArray(movie?.genres) ? movie.genres.join(", ") : "",
     rating: movie?.imdb?.rating || "",
@@ -48,11 +114,31 @@ export default function UpdateMovieForm({ showDialog, movie }) {
     poster: movie?.poster || "",
     backdrop: movie?.backdrop || "",
     movieFileLink: movie?.movieFileLink || movie?.fileLink || "",
+    trailerVideoLink:
+      movie?.trailerVideoLink || movie?.trailerLink || movie?.videoLink || "",
     status: movie?.status || "",
     releaseDate: movie?.releaseDate || "",
   });
+
+  const [castTags, setCastTags] = useState(
+    Array.isArray(movie?.cast)
+      ? movie.cast
+      : parseCommaSeparated(movie?.cast || movie?.cast?.toString?.() || ""),
+  );
+  const [genreTags, setGenreTags] = useState(
+    Array.isArray(movie?.genres)
+      ? movie.genres
+      : parseCommaSeparated(movie?.genres || movie?.genre || ""),
+  );
   const years = getAllYears();
   const statuses = getAllMovieStatus();
+  const allGenres = getAllGenres();
+
+  const toggleGenre = (genre) => {
+    setGenreTags((prev) =>
+      prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre],
+    );
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,23 +152,25 @@ export default function UpdateMovieForm({ showDialog, movie }) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
+    // prefer tag states if present, fallback to comma-separated form values
     const multiValueFields = buildMultiValueFields({
-      castInput: formData.get("cast"),
-      genreInput: formData.get("genre"),
+      castInput: formData.get("cast") || castTags.join(", "),
+      genreInput: formData.get("genre") || genreTags.join(", "),
     });
 
     const movieDoc = {
       title: formData.get("title"),
       year: formData.get("year"),
       directors: [formData.get("director")],
-      cast: multiValueFields.cast,
-      genres: multiValueFields.genres,
+      cast: castTags?.length ? castTags : multiValueFields.cast,
+      genres: genreTags?.length ? genreTags : multiValueFields.genres,
       imdb: { rating: Number(formData.get("rating")) },
       runtime: formData.get("runtime"),
       plot: formData.get("overview"),
       poster: formData.get("poster"),
       backdrop: formData.get("backdrop"),
       movieFileLink: formData.get("movieFileLink"),
+      trailerVideoLink: formData.get("trailerVideoLink"),
       status: formData.get("status"),
       releaseDate: formData.get("releaseDate"),
     };
@@ -160,26 +248,35 @@ export default function UpdateMovieForm({ showDialog, movie }) {
         </div>
         <div className="space-y-2">
           <Label htmlFor="cast">Cast</Label>
-          <Input
-            id="cast"
-            name="cast"
-            value={formState?.cast}
-            onChange={handleChange}
-            placeholder="Cast names (comma separated)"
-          />
+          <div>
+            <TagInput
+              tags={castTags}
+              setTags={setCastTags}
+              placeholder="Type a name and press Enter or comma"
+            />
+            <input type="hidden" name="cast" value={castTags.join(", ")} />
+          </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="genre">
+        <div className="col-span-2 space-y-2">
+          <Label>
             Genre<span className="text-red-500">*</span>
           </Label>
-          <Input
-            id="genre"
-            name="genre"
-            placeholder="Genres (comma separated)"
-            value={formState?.genre}
-            onChange={handleChange}
-            required
-          />
+          <div className="flex flex-wrap gap-2">
+            {allGenres.map((genre) => (
+              <button
+                key={genre}
+                type="button"
+                onClick={() => toggleGenre(genre)}
+                className={`rounded-md px-3 py-2 text-sm font-medium transition-all ${
+                  genreTags.includes(genre)
+                    ? "bg-primary text-white"
+                    : "border border-primary/20 text-foreground hover:border-primary/50"
+                }`}>
+                {genre}
+              </button>
+            ))}
+          </div>
+          <input type="hidden" name="genre" value={genreTags.join(", ")} />
         </div>
         <div className="space-y-2">
           <Label htmlFor="rating">
@@ -265,6 +362,17 @@ export default function UpdateMovieForm({ showDialog, movie }) {
             name="movieFileLink"
             placeholder="URL to downloadable movie file"
             value={formState?.movieFileLink}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="trailerVideoLink">Trailer Video Link</Label>
+          <Input
+            id="trailerVideoLink"
+            name="trailerVideoLink"
+            placeholder="URL to trailer video or YouTube link"
+            value={formState?.trailerVideoLink}
             onChange={handleChange}
           />
         </div>
