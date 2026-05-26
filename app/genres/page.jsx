@@ -5,34 +5,52 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getAllGenres, movies } from "@/lib/data";
+import { getAllGenres } from "@/lib/data";
 import Link from "next/link";
-import { Logo } from "@/components/logo";
 
-export default function GenresPage() {
+import { getMovies } from "@/actions/movies";
+import HeaderNav from "@/components/header-nav";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+
+export default async function GenresPage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const isAuthenticated = Boolean(session);
+  const movies = await getMovies(); // Fetch or pass movies data here
+
+  if (!movies || movies.length === 0) {
+    return (
+      <div className=" text-foreground font-medium text-center py-12">
+        No movies available.
+      </div>
+    );
+  }
+
   const genres = getAllGenres();
+
+  const getMovieGenres = (movie) => {
+    if (Array.isArray(movie?.genre)) return movie.genre;
+    if (Array.isArray(movie?.genres)) return movie.genres;
+    if (typeof movie?.genre === "string") return [movie.genre];
+    if (typeof movie?.genres === "string") return [movie.genres];
+    return [];
+  };
 
   // Count movies per genre
   const genreCounts = genres.map((genre) => ({
     name: genre,
-    count: movies.filter((movie) => movie.genre.includes(genre)).length,
-    movies: movies.filter((movie) => movie.genre.includes(genre)).slice(0, 4),
+    count: movies.filter((movie) => getMovieGenres(movie).includes(genre))
+      .length,
+    movies: movies
+      .filter((movie) => getMovieGenres(movie).includes(genre))
+      .slice(0, 4),
   }));
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
-        <div className="container flex h-14 max-w-(--breakpoint-2xl) items-center">
-          <div className="mr-4 hidden md:flex">
-            <Link className="mr-6 flex items-center space-x-2" href="/">
-              <Logo />
-              <span className="hidden font-bold sm:inline-block">
-                CineScope
-              </span>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <HeaderNav isAuthenticated={isAuthenticated} />
 
       <div className="container py-8">
         <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
@@ -55,20 +73,25 @@ export default function GenresPage() {
               </CardHeader>
               <CardContent className="flex-1 pt-4">
                 <div className="grid grid-cols-2 gap-2">
-                  {genre.movies.map((movie) => (
-                    <Link
-                      key={movie.id}
-                      href={`/movies/${movie.id}`}
-                      className="overflow-hidden rounded-md">
-                      <img
-                        src={movie.poster || "/placeholder.svg"}
-                        alt={movie.title}
-                        className="aspect-2/3 h-auto w-full object-cover transition-all hover:scale-105"
-                        width={200}
-                        height={300}
-                      />
-                    </Link>
-                  ))}
+                  {genre.movies.map((movie, idx) => {
+                    const key =
+                      movie?.id || movie?._id || `${genre.name}-${idx}`;
+                    const href = `/movies/${movie?.id || movie?._id || ""}`;
+                    return (
+                      <Link
+                        key={key}
+                        href={href}
+                        className="overflow-hidden rounded-md">
+                        <img
+                          src={movie.poster || "/placeholder.svg"}
+                          alt={movie.title}
+                          className="aspect-2/3 h-auto w-full object-cover transition-all hover:scale-105"
+                          width={200}
+                          height={300}
+                        />
+                      </Link>
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>

@@ -1,18 +1,15 @@
 "use client";
 
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-import { SelectItem } from "@/components/ui/select";
-
-import { SelectContent } from "@/components/ui/select";
-
-import { SelectValue } from "@/components/ui/select";
-
-import { SelectTrigger } from "@/components/ui/select";
-
-import { Select } from "@/components/ui/select";
-
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Camera,
   Check,
@@ -39,22 +36,192 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
+import { signIn, useSession } from "@/lib/auth-client";
 
 export default function ProfilePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const avatarInputRef = useRef(null);
+  const { data: session } = useSession();
+  const user = session?.user;
+  const [profile, setProfile] = useState({
+    avatarUrl: "/placeholder.svg?height=128&width=128",
+    firstName: "Admin",
+    lastName: "User",
+    email: "admin@cinescope.com",
+    bio: "Administrator of the CineScope platform. Movie enthusiast and critic.",
+    language: "en",
+    timezone: "utc",
+  });
+  const [password, setPassword] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [isCurrentPasswordVerified, setIsCurrentPasswordVerified] =
+    useState(false);
+  const [isVerifyingPassword, setIsVerifyingPassword] = useState(false);
 
-  const handleSaveProfile = () => {
+  const handleAvatarUpload = (event) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please choose an image file.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setProfile((current) => ({
+        ...current,
+        avatarUrl:
+          typeof reader.result === "string" ? reader.result : current.avatarUrl,
+      }));
+    };
+    reader.readAsDataURL(file);
+
+    event.target.value = "";
+  };
+
+  const openAvatarPicker = () => {
+    if (!isEditing) {
+      return;
+    }
+
+    avatarInputRef.current?.click();
+  };
+
+  useEffect(() => {
+    const nameParts = (user?.name || "Admin User").trim().split(/\s+/);
+    const firstName = nameParts[0] || "Admin";
+    const lastName = nameParts.slice(1).join(" ") || "User";
+
+    setProfile((current) => ({
+      ...current,
+      avatarUrl: user?.image || current.avatarUrl,
+      firstName,
+      lastName,
+      email: user?.email || current.email,
+      bio: user?.bio ?? current.bio,
+      language: user?.language ?? current.language,
+      timezone: user?.timezone ?? current.timezone,
+      role: user?.role ?? current.role,
+      updatedAt: user?.updatedAt ?? current.updatedAt,
+    }));
+  }, [user?.email, user?.name]);
+
+  const updateProfileField = (field) => (event) => {
+    const value = event.target.value;
+    setProfile((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const updatePasswordField = (field) => (event) => {
+    const value = event.target.value;
+    setPassword((current) => ({
+      ...current,
+      [field]: value,
+    }));
+
+    if (field === "currentPassword") {
+      setIsCurrentPasswordVerified(false);
+    }
+  };
+
+  const handleVerifyCurrentPassword = async () => {
+    if (!user?.email) {
+      toast.error("No active session found.");
+      return;
+    }
+
+    if (!password.currentPassword) {
+      toast.error("Enter your current password first.");
+      return;
+    }
+
+    setIsVerifyingPassword(true);
+
+    // Use callbacks to reliably capture success/failure from the auth client
+    try {
+      await signIn.email(
+        { email: user.email, password: password.currentPassword },
+        {
+          onSuccess: () => {
+            setIsCurrentPasswordVerified(true);
+            toast.success("Current password verified. You can now change it.");
+          },
+          onError: (context) => {
+            setIsCurrentPasswordVerified(false);
+            toast.error(
+              context?.error?.message || "Current password is invalid",
+            );
+          },
+        },
+      );
+    } catch (e) {
+      // Some implementations may still throw — handle defensively
+      setIsCurrentPasswordVerified(false);
+      toast.error(
+        e instanceof Error ? e.message : "Current password is invalid",
+      );
+    } finally {
+      setIsVerifyingPassword(false);
+    }
+  };
+
+  const formatDisplayDate = (value) => {
+    if (!value) {
+      return "Never";
+    }
+
+    const date = value instanceof Date ? value : new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return String(value);
+    }
+
+    return date.toLocaleString();
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user?.id) {
+      toast.error("No active session found.");
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/admin/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          ...profile,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result?.success) {
+        throw new Error(result?.message || "Failed to update profile");
+      }
+
+      // Merge returned updates into local profile state so UI reflects saved values
+      if (result?.data) {
+        setProfile((current) => ({ ...current, ...result.data }));
+      }
+
       setIsSubmitting(false);
       setIsEditing(false);
-      // toast({
-      //   title: "Profile updated",
-      //   description: "Your profile has been updated successfully.",
-      // });
       toast.success("Profile updated!", {
         className: "success",
         description: "Your profile has been updated successfully.",
@@ -64,21 +231,69 @@ export default function ProfilePage() {
           onClick: () => console.log("Dismiss"),
         },
       });
-    }, 1000);
+    } catch (error) {
+      setIsSubmitting(false);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update profile",
+      );
+    }
   };
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
+    if (!user?.id) {
+      toast.error("No active session found.");
+      return;
+    }
+
+    if (!password.currentPassword || !password.newPassword) {
+      toast.error("Please enter your current and new password.");
+      return;
+    }
+
+    if (!isCurrentPasswordVerified) {
+      toast.error("Verify your current password before changing it.");
+      return;
+    }
+
+    if (password.newPassword !== password.confirmPassword) {
+      toast.error("New passwords do not match.");
+      return;
+    }
     setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/admin/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          currentPassword: password.currentPassword,
+          newPassword: password.newPassword,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result?.success) {
+        throw new Error(result?.message || "Failed to change password");
+      }
+
+      setPassword({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setIsCurrentPasswordVerified(false);
+      toast.success("Password changed successfully.");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to change password",
+      );
+    } finally {
       setIsSubmitting(false);
-      // toast({
-      //   title: "Password changed",
-      //   description: "Your password has been changed successfully.",
-      // });
-      toast("Password changed");
-    }, 1000);
+    }
   };
 
   return (
@@ -96,24 +311,61 @@ export default function ProfilePage() {
           <CardContent className="p-6">
             <div className="flex flex-col items-center space-y-4">
               <div className="relative">
-                <Avatar className="h-32 w-32">
+                <input
+                  ref={avatarInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                />
+                <Avatar
+                  className={`h-32 w-32 ${
+                    isEditing ? "cursor-pointer ring-2 ring-primary/40" : ""
+                  }`}
+                  onClick={openAvatarPicker}
+                  role="button"
+                  aria-label="Upload profile picture"
+                  tabIndex={0}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      openAvatarPicker();
+                    }
+                  }}>
                   <AvatarImage
-                    src="/placeholder.svg?height=128&width=128"
-                    alt="Admin User"
+                    src={
+                      profile.avatarUrl ||
+                      user?.image ||
+                      "/placeholder.svg?height=128&width=128"
+                    }
+                    alt={user?.name || "Admin User"}
                   />
-                  <AvatarFallback className="text-4xl">AD</AvatarFallback>
+                  <AvatarFallback className="text-4xl">
+                    {(user?.name || "AD")
+                      .split(" ")
+                      .map((part) => part[0])
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full">
+                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full"
+                  onClick={openAvatarPicker}
+                  disabled={!isEditing}>
                   <Camera className="h-4 w-4" />
                 </Button>
               </div>
               <div className="text-center">
-                <h3 className="text-xl font-bold">Admin User</h3>
+                <h3 className="text-xl font-bold">
+                  {`${profile.firstName} ${profile.lastName}`.trim() ||
+                    user?.name ||
+                    "Admin User"}
+                </h3>
                 <p className="text-muted-foreground text-sm">
-                  admin@cinescope.com
+                  {profile.email || user?.email || "admin@cinescope.com"}
                 </p>
               </div>
               <div className="w-full">
@@ -142,7 +394,9 @@ export default function ProfilePage() {
               <div className="flex items-center gap-3">
                 <User className="text-muted-foreground h-5 w-5" />
                 <div>
-                  <p className="text-sm font-medium">Admin</p>
+                  <p className="text-sm font-medium">
+                    {profile.role || user?.role || "Admin"}
+                  </p>
                   <p className="text-muted-foreground text-xs">Role</p>
                 </div>
               </div>
@@ -150,23 +404,19 @@ export default function ProfilePage() {
               <div className="flex items-center gap-3">
                 <Mail className="text-muted-foreground h-5 w-5" />
                 <div>
-                  <p className="text-sm font-medium">admin@cinescope.com</p>
+                  <p className="text-sm font-medium">
+                    {profile.email || user?.email || "Not provided"}
+                  </p>
                   <p className="text-muted-foreground text-xs">Email</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Smartphone className="text-muted-foreground h-5 w-5" />
-                <div>
-                  <p className="text-sm font-medium">+1 (555) 123-4567</p>
-                  <p className="text-muted-foreground text-xs">Phone</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
                 <Key className="text-muted-foreground h-5 w-5" />
                 <div>
-                  <p className="text-sm font-medium">Last login: 2 hours ago</p>
+                  <p className="text-sm font-medium">
+                    {formatDisplayDate(profile.updatedAt || user?.updatedAt)}
+                  </p>
                   <p className="text-muted-foreground text-xs">
                     Account Activity
                   </p>
@@ -198,7 +448,8 @@ export default function ProfilePage() {
                       <Label htmlFor="first-name">First Name</Label>
                       <Input
                         id="first-name"
-                        defaultValue="Admin"
+                        value={profile.firstName}
+                        onChange={updateProfileField("firstName")}
                         disabled={!isEditing}
                       />
                     </div>
@@ -206,7 +457,8 @@ export default function ProfilePage() {
                       <Label htmlFor="last-name">Last Name</Label>
                       <Input
                         id="last-name"
-                        defaultValue="User"
+                        value={profile.lastName}
+                        onChange={updateProfileField("lastName")}
                         disabled={!isEditing}
                       />
                     </div>
@@ -217,27 +469,21 @@ export default function ProfilePage() {
                     <Input
                       id="email"
                       type="email"
-                      defaultValue="admin@cinescope.com"
+                      value={profile.email}
+                      onChange={updateProfileField("email")}
                       disabled={!isEditing}
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      defaultValue="+1 (555) 123-4567"
-                      disabled={!isEditing}
-                    />
-                  </div>
+                  <div className="space-y-2"></div>
 
                   <div className="space-y-2">
                     <Label htmlFor="bio">Bio</Label>
                     <Textarea
                       id="bio"
-                      className="min-h-[100px]"
-                      defaultValue="Administrator of the CineScope platform. Movie enthusiast and critic."
+                      className="min-h-25"
+                      value={profile.bio}
+                      onChange={updateProfileField("bio")}
                       disabled={!isEditing}
                     />
                   </div>
@@ -262,7 +508,15 @@ export default function ProfilePage() {
                 <CardContent className="space-y-6">
                   <div className="space-y-2">
                     <Label htmlFor="language">Language</Label>
-                    <Select defaultValue="en" disabled={!isEditing}>
+                    <Select
+                      value={profile.language}
+                      onValueChange={(value) =>
+                        setProfile((current) => ({
+                          ...current,
+                          language: value,
+                        }))
+                      }
+                      disabled={!isEditing}>
                       <SelectTrigger id="language">
                         <SelectValue placeholder="Select language" />
                       </SelectTrigger>
@@ -278,7 +532,15 @@ export default function ProfilePage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="timezone">Timezone</Label>
-                    <Select defaultValue="utc" disabled={!isEditing}>
+                    <Select
+                      value={profile.timezone}
+                      onValueChange={(value) =>
+                        setProfile((current) => ({
+                          ...current,
+                          timezone: value,
+                        }))
+                      }
+                      disabled={!isEditing}>
                       <SelectTrigger id="timezone">
                         <SelectValue placeholder="Select timezone" />
                       </SelectTrigger>
@@ -322,25 +584,59 @@ export default function ProfilePage() {
                 <CardContent className="space-y-6">
                   <div className="space-y-2">
                     <Label htmlFor="current-password">Current Password</Label>
-                    <Input id="current-password" type="password" />
+                    <Input
+                      id="current-password"
+                      type="password"
+                      value={password.currentPassword}
+                      onChange={updatePasswordField("currentPassword")}
+                    />
+                    <div className="flex items-center justify-between gap-3 pt-2">
+                      <p className="text-muted-foreground text-xs">
+                        {isCurrentPasswordVerified
+                          ? "Current password verified."
+                          : "Verify your current password to unlock change access."}
+                      </p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleVerifyCurrentPassword}
+                        disabled={
+                          isVerifyingPassword || !password.currentPassword
+                        }>
+                        {isVerifyingPassword ? "Verifying..." : "Verify"}
+                      </Button>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="new-password">New Password</Label>
-                    <Input id="new-password" type="password" />
+                    <Input
+                      id="new-password"
+                      type="password"
+                      value={password.newPassword}
+                      onChange={updatePasswordField("newPassword")}
+                      disabled={!isCurrentPasswordVerified}
+                    />
                   </div>
 
                   <div className="space-y-2">
                     <Label htmlFor="confirm-password">
                       Confirm New Password
                     </Label>
-                    <Input id="confirm-password" type="password" />
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      value={password.confirmPassword}
+                      onChange={updatePasswordField("confirmPassword")}
+                      disabled={!isCurrentPasswordVerified}
+                    />
                   </div>
                 </CardContent>
                 <CardFooter>
                   <Button
                     onClick={handleChangePassword}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !isCurrentPasswordVerified}
                     className="ml-auto">
                     {isSubmitting ? "Changing..." : "Change Password"}
                   </Button>

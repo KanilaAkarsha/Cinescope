@@ -1,7 +1,15 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useEffect, useMemo, useState } from "react";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   BarChart,
   Bar,
@@ -16,11 +24,89 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts"
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { analyticsData } from "@/lib/data"
+} from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { analyticsData } from "@/lib/data";
 
 export default function AnalyticsPage() {
+  const [analytics, setAnalytics] = useState(analyticsData);
+  const [stats, setStats] = useState({
+    totalViews: 0,
+    viewsChange: 0,
+    newUsers: 0,
+    usersChange: 0,
+    reviewCount: 0,
+    reviewsChange: 0,
+    averageRating: 0,
+    ratingChange: 0,
+  });
+
+  useEffect(() => {
+    const loadAnalytics = async () => {
+      try {
+        const response = await fetch("/api/admin/analytics", {
+          method: "GET",
+          cache: "no-store",
+        });
+        const result = await response.json();
+
+        if (!response.ok || !result?.success || !result?.data) {
+          return;
+        }
+
+        setAnalytics({
+          viewsByMonth: result.data.viewsByMonth || analyticsData.viewsByMonth,
+          genreDistribution:
+            result.data.genreDistribution || analyticsData.genreDistribution,
+          ratingDistribution:
+            result.data.ratingDistribution || analyticsData.ratingDistribution,
+          topMovies: result.data.topMovies || analyticsData.topMovies,
+        });
+
+        setStats({
+          totalViews: result.data.totalViews || 0,
+          viewsChange: result.data.viewsChange || 0,
+          newUsers: result.data.newUsers || 0,
+          usersChange: result.data.usersChange || 0,
+          reviewCount: result.data.reviewCount || 0,
+          reviewsChange: result.data.reviewsChange || 0,
+          averageRating: result.data.averageRating || 0,
+          ratingChange: result.data.ratingChange || 0,
+        });
+      } catch (error) {
+        console.error("Failed to load analytics:", error);
+      }
+    };
+
+    loadAnalytics();
+  }, []);
+
+  const formattedTotalViews = useMemo(() => {
+    const views = Number(stats.totalViews || 0);
+    return views >= 1000 ? `${(views / 1000).toFixed(1)}K` : `${views}`;
+  }, [stats.totalViews]);
+
+  const formattedAverageRating = useMemo(
+    () => `${Number(stats.averageRating || 0).toFixed(1)}/10`,
+    [stats.averageRating],
+  );
+
+  const formatPercent = (value) => {
+    const numeric = Number(value || 0);
+    const sign = numeric >= 0 ? "+" : "";
+    return `${sign}${numeric.toFixed(1)}% from last month`;
+  };
+
+  const formatRatingChange = (value) => {
+    const numeric = Number(value || 0);
+    const sign = numeric >= 0 ? "+" : "";
+    return `${sign}${numeric.toFixed(1)} from last month`;
+  };
+
   const COLORS = [
     "hsl(var(--chart-1))",
     "hsl(var(--chart-2))",
@@ -29,13 +115,15 @@ export default function AnalyticsPage() {
     "hsl(var(--chart-5))",
     "#8884d8",
     "#82ca9d",
-  ]
+  ];
 
   return (
     <div className="space-y-4">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">Analytics</h2>
-        <p className="text-muted-foreground">View insights and statistics about your movie platform</p>
+        <p className="text-muted-foreground">
+          View insights and statistics about your movie platform
+        </p>
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
@@ -49,11 +137,15 @@ export default function AnalyticsPage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Views
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">85.4K</div>
-                <p className="text-xs text-muted-foreground">+12.5% from last month</p>
+                <div className="text-2xl font-bold">{formattedTotalViews}</div>
+                <p className="text-xs text-muted-foreground">
+                  {formatPercent(stats.viewsChange)}
+                </p>
               </CardContent>
             </Card>
             <Card>
@@ -61,8 +153,12 @@ export default function AnalyticsPage() {
                 <CardTitle className="text-sm font-medium">New Users</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">1,247</div>
-                <p className="text-xs text-muted-foreground">+5.2% from last month</p>
+                <div className="text-2xl font-bold">
+                  {stats.newUsers.toLocaleString()}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {formatPercent(stats.usersChange)}
+                </p>
               </CardContent>
             </Card>
             <Card>
@@ -70,17 +166,27 @@ export default function AnalyticsPage() {
                 <CardTitle className="text-sm font-medium">Reviews</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">3,456</div>
-                <p className="text-xs text-muted-foreground">+18.7% from last month</p>
+                <div className="text-2xl font-bold">
+                  {stats.reviewCount.toLocaleString()}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {formatPercent(stats.reviewsChange)}
+                </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Avg. Rating</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Avg. Rating
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">8.2/10</div>
-                <p className="text-xs text-muted-foreground">+0.3 from last month</p>
+                <div className="text-2xl font-bold">
+                  {formattedAverageRating}
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {formatRatingChange(stats.ratingChange)}
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -89,10 +195,12 @@ export default function AnalyticsPage() {
             <Card className="flex flex-col">
               <CardHeader>
                 <CardTitle>Monthly Views</CardTitle>
-                <CardDescription>Total views per month for the current year</CardDescription>
+                <CardDescription>
+                  Total views per month for the current year
+                </CardDescription>
               </CardHeader>
               <CardContent className="flex-1 pb-6">
-                <div className="h-[300px] w-full">
+                <div className="h-75 w-full">
                   <ChartContainer
                     config={{
                       views: {
@@ -100,16 +208,20 @@ export default function AnalyticsPage() {
                         color: "hsl(var(--chart-1))",
                       },
                     }}
-                    className="h-full w-full"
-                  >
+                    className="h-full w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={analyticsData.viewsByMonth}>
+                      <LineChart data={analytics.viewsByMonth}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="month" />
                         <YAxis />
                         <ChartTooltip content={<ChartTooltipContent />} />
                         <Legend />
-                        <Line type="monotone" dataKey="views" stroke="var(--color-views)" activeDot={{ r: 8 }} />
+                        <Line
+                          type="monotone"
+                          dataKey="views"
+                          stroke="var(--color-views)"
+                          activeDot={{ r: 8 }}
+                        />
                       </LineChart>
                     </ResponsiveContainer>
                   </ChartContainer>
@@ -120,24 +232,30 @@ export default function AnalyticsPage() {
             <Card className="flex flex-col">
               <CardHeader>
                 <CardTitle>Genre Distribution</CardTitle>
-                <CardDescription>Distribution of movies by genre</CardDescription>
+                <CardDescription>
+                  Distribution of movies by genre
+                </CardDescription>
               </CardHeader>
               <CardContent className="flex-1 pb-6">
-                <div className="h-[300px] w-full">
+                <div className="h-75 w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
-                        data={analyticsData.genreDistribution}
+                        data={analytics.genreDistribution}
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent }) =>
+                          `${name}: ${(percent * 100).toFixed(0)}%`
+                        }
                         outerRadius={100}
                         fill="#8884d8"
-                        dataKey="count"
-                      >
-                        {analyticsData.genreDistribution.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        dataKey="count">
+                        {analytics.genreDistribution.map((entry, index) => (
+                          <Cell
+                            key={entry.name}
+                            fill={COLORS[index % COLORS.length]}
+                          />
                         ))}
                       </Pie>
                       <Tooltip />
@@ -153,10 +271,12 @@ export default function AnalyticsPage() {
             <Card className="flex flex-col">
               <CardHeader>
                 <CardTitle>Rating Distribution</CardTitle>
-                <CardDescription>Distribution of movies by rating</CardDescription>
+                <CardDescription>
+                  Distribution of movies by rating
+                </CardDescription>
               </CardHeader>
               <CardContent className="flex-1 pb-6">
-                <div className="h-[300px] w-full">
+                <div className="h-75 w-full">
                   <ChartContainer
                     config={{
                       count: {
@@ -164,10 +284,9 @@ export default function AnalyticsPage() {
                         color: "hsl(var(--chart-3))",
                       },
                     }}
-                    className="h-full w-full"
-                  >
+                    className="h-full w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={analyticsData.ratingDistribution}>
+                      <BarChart data={analytics.ratingDistribution}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="rating" />
                         <YAxis />
@@ -184,10 +303,12 @@ export default function AnalyticsPage() {
             <Card className="flex flex-col">
               <CardHeader>
                 <CardTitle>Top Movies</CardTitle>
-                <CardDescription>Most viewed movies on the platform</CardDescription>
+                <CardDescription>
+                  Most viewed movies on the platform
+                </CardDescription>
               </CardHeader>
               <CardContent className="flex-1 pb-6">
-                <div className="h-[300px] w-full">
+                <div className="h-75 w-full">
                   <ChartContainer
                     config={{
                       views: {
@@ -195,19 +316,17 @@ export default function AnalyticsPage() {
                         color: "hsl(var(--chart-2))",
                       },
                     }}
-                    className="h-full w-full"
-                  >
+                    className="h-full w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart
                         layout="vertical"
-                        data={analyticsData.topMovies}
+                        data={analytics.topMovies}
                         margin={{
                           top: 5,
                           right: 30,
                           left: 100,
                           bottom: 5,
-                        }}
-                      >
+                        }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis type="number" />
                         <YAxis type="category" dataKey="title" width={100} />
@@ -227,7 +346,9 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle>Movie Analytics</CardTitle>
-              <CardDescription>Detailed analytics about your movie catalog</CardDescription>
+              <CardDescription>
+                Detailed analytics about your movie catalog
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
@@ -241,7 +362,9 @@ export default function AnalyticsPage() {
           <Card>
             <CardHeader>
               <CardTitle>User Analytics</CardTitle>
-              <CardDescription>Detailed analytics about your user base</CardDescription>
+              <CardDescription>
+                Detailed analytics about your user base
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
@@ -252,6 +375,5 @@ export default function AnalyticsPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
-

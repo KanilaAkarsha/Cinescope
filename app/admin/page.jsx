@@ -1,4 +1,3 @@
-import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -16,20 +15,231 @@ import {
   Clock,
   ArrowRight,
 } from "lucide-react";
-import { users, reviews } from "@/lib/data";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import MoviesData from "./movies-data";
 import { getMovies } from "@/actions/movies";
+import { getUsers } from "@/actions/users";
+import { db } from "@/db";
+import { ObjectId } from "mongodb";
 
 export const dynamic = "force-dynamic";
 
+const formatViews = (value) => {
+  const views = Number(value || 0);
+
+  if (views >= 1000000) {
+    return `${(views / 1000000).toFixed(1)}M`;
+  }
+
+  if (views >= 1000) {
+    return `${(views / 1000).toFixed(1)}K`;
+  }
+
+  return `${views}`;
+};
+
+const parseDate = (value) => {
+  if (!value) return null;
+
+  const date = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const normalizeUserForDashboard = (user) => ({
+  id: user?.id || user?._id?.toString?.() || "",
+  name: user?.name || "Unknown User",
+  email: user?.email || "",
+  role: user?.role || "user",
+  status: user?.status || "active",
+  avatar: user?.avatar || user?.image || "/placeholder.svg?height=40&width=40",
+  createdAt: user?.createdAt || new Date().toISOString(),
+});
+
+const normalizeReviewForDashboard = (review, movieTitleMap) => {
+  const movieId =
+    review?.movieId?.toString?.() || String(review?.movieId || "");
+
+  return {
+    id: review?._id?.toString?.() || review?.id || "",
+    movieId,
+    movieTitle: movieTitleMap.get(movieId) || "Unknown Movie",
+    userName: review?.userName || "Anonymous",
+    userAvatar: review?.userAvatar || "/placeholder.svg?height=40&width=40",
+    rating: Number(review?.rating || 0),
+    comment: review?.comment || "",
+    status: review?.status || "pending",
+    createdAt: review?.createdAt || new Date().toISOString(),
+  };
+};
+
+const getUserRoleClass = (role) => {
+  if (role === "admin") {
+    return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+  }
+
+  if (role === "moderator") {
+    return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+  }
+
+  return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
+};
+
+const getReviewStatusClass = (status) => {
+  if (status === "approved") {
+    return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+  }
+
+  if (status === "pending") {
+    return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+  }
+
+  return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+};
+
+const buildMovieTitleMap = async (reviewDocs) => {
+  const ids = [];
+
+  for (const review of reviewDocs) {
+    const movieId =
+      review?.movieId?.toString?.() || String(review?.movieId || "");
+    if (ObjectId.isValid(movieId)) {
+      ids.push(ObjectId.createFromHexString(movieId));
+    }
+  }
+
+  if (ids.length === 0) {
+    return new Map();
+  }
+
+  const uniqueIds = new Map();
+  for (const id of ids) {
+    uniqueIds.set(id.toString(), id);
+  }
+
+  const movieDocs = await db
+    .collection("movies_n")
+    .find(
+      { _id: { $in: Array.from(uniqueIds.values()) } },
+      { projection: { title: 1 } },
+    )
+    .toArray();
+
+  const movieTitleMap = new Map();
+  for (const movie of movieDocs) {
+    movieTitleMap.set(movie._id.toString(), movie.title || "Unknown Movie");
+  }
+
+  return movieTitleMap;
+};
+
 export default async function AdminDashboard() {
+  const [movies, usersResult, reviewDocs] = await Promise.all([
+    getMovies(),
+    getUsers(),
+    db.collection("reviews").find({}).sort({ createdAt: -1 }).toArray(),
+  ]);
+
+  const users = Array.isArray(usersResult?.data)
+    ? usersResult.data.map(normalizeUserForDashboard)
+    : [];
+
+  const movieTitleMap = await buildMovieTitleMap(reviewDocs);
+  const reviews = reviewDocs.map((review) =>
+    normalizeReviewForDashboard(review, movieTitleMap),
+  );
+
   const pendingReviews = reviews.filter(
-    (review) => review.status === "pending"
+    (review) => review.status === "pending",
   ).length;
-  const movies = await getMovies();
+  const approvedReviews = reviews.filter(
+    (review) => review.status === "approved",
+  ).length;
+
+  const totalViews = Array.isArray(movies)
+    ? movies.reduce((sum, movie) => sum + Number(movie?.imdb?.votes || 0), 0)
+    : 0;
+
+  const now = new Date();
+  const thisMonth = now.getMonth();
+  const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
+  const monthViews = Array.from({ length: 12 }, () => 0);
+
+  if (Array.isArray(movies)) {
+    for (const movie of movies) {
+      const releaseDate =
+        parseDate(movie?.released) || parseDate(movie?.releaseDate);
+      if (!releaseDate) continue;
+      monthViews[releaseDate.getMonth()] += Number(movie?.imdb?.votes || 0);
+    }
+  }
+
+  const currentViews = monthViews[thisMonth] || 0;
+  const previousViews = monthViews[lastMonth] || 0;
+  let viewsDelta = 0;
+
+  if (previousViews) {
+    viewsDelta = ((currentViews - previousViews) / previousViews) * 100;
+  } else if (currentViews > 0) {
+    viewsDelta = 100;
+  }
+
+  // Build recent activity from real data sources: movies, users, reviews
+  const timeAgo = (date) => {
+    if (!date) return "Unknown";
+    const ms = Date.now() - date.getTime();
+    const s = Math.floor(ms / 1000);
+    const m = Math.floor(s / 60);
+    const h = Math.floor(m / 60);
+    const d = Math.floor(h / 24);
+
+    if (d > 0) return `${d} day${d > 1 ? "s" : ""} ago`;
+    if (h > 0) return `${h} hour${h > 1 ? "s" : ""} ago`;
+    if (m > 0) return `${m} minute${m > 1 ? "s" : ""} ago`;
+    return `${s} second${s !== 1 ? "s" : ""} ago`;
+  };
+
+  const movieActivities = Array.isArray(movies)
+    ? movies.map((m) => ({
+        type: "movie",
+        title: m.title || "Untitled",
+        actor: "",
+        date: parseDate(m.createdAt) || parseDate(m.releaseDate) || new Date(),
+        description: "New movie added",
+        href: "/admin/movies",
+      }))
+    : [];
+
+  const userActivities = Array.isArray(users)
+    ? users.map((u) => ({
+        type: "user",
+        title: u.name,
+        actor: u.email,
+        date: parseDate(u.createdAt) || new Date(),
+        description: "User registered",
+        href: "/admin/users",
+      }))
+    : [];
+
+  const reviewActivities = Array.isArray(reviews)
+    ? reviews.map((r) => ({
+        type: "review",
+        title: r.userName,
+        actor: r.movieTitle,
+        date: parseDate(r.createdAt) || new Date(),
+        description: "New review submitted",
+        href: "/admin/reviews",
+      }))
+    : [];
+
+  const recentActivity = [
+    ...movieActivities,
+    ...userActivities,
+    ...reviewActivities,
+  ]
+    .sort((a, b) => b.date - a.date)
+    .slice(0, 4);
 
   if (!movies || movies.length === 0) {
     return (
@@ -85,8 +295,7 @@ export default async function AdminDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{pendingReviews}</div>
             <p className="text-muted-foreground text-xs">
-              {reviews.filter((review) => review.status === "approved").length}{" "}
-              approved reviews
+              {approvedReviews} approved reviews
             </p>
           </CardContent>
         </Card>
@@ -96,9 +305,9 @@ export default async function AdminDashboard() {
             <Eye className="text-primary h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">85.4K</div>
+            <div className="text-2xl font-bold">{formatViews(totalViews)}</div>
             <p className="text-muted-foreground text-xs">
-              +12.5% from last month
+              {`${viewsDelta >= 0 ? "+" : ""}${viewsDelta.toFixed(1)}% from last month`}
             </p>
           </CardContent>
         </Card>
@@ -187,38 +396,36 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <Clock className="text-muted-foreground h-5 w-5" />
-                <div>
-                  <p className="text-sm font-medium">New movie added</p>
-                  <p className="text-muted-foreground text-xs">
-                    10 minutes ago
-                  </p>
+              {recentActivity.length === 0 ? (
+                <div className="text-muted-foreground text-sm">
+                  No recent activity
                 </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Clock className="text-muted-foreground h-5 w-5" />
-                <div>
-                  <p className="text-sm font-medium">User role updated</p>
-                  <p className="text-muted-foreground text-xs">
-                    30 minutes ago
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Clock className="text-muted-foreground h-5 w-5" />
-                <div>
-                  <p className="text-sm font-medium">New review submitted</p>
-                  <p className="text-muted-foreground text-xs">1 hour ago</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Clock className="text-muted-foreground h-5 w-5" />
-                <div>
-                  <p className="text-sm font-medium">User registered</p>
-                  <p className="text-muted-foreground text-xs">2 hours ago</p>
-                </div>
-              </div>
+              ) : (
+                recentActivity.map((item, idx) => (
+                  <div
+                    key={`${item.type}-${idx}`}
+                    className="flex items-center gap-4">
+                    <div className="bg-primary/10 rounded-full p-2">
+                      {item.type === "movie" ? (
+                        <Film className="text-primary h-5 w-5" />
+                      ) : item.type === "user" ? (
+                        <Users className="text-primary h-5 w-5" />
+                      ) : (
+                        <MessageSquare className="text-primary h-5 w-5" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">
+                        {item.description}
+                        {item.title ? ` — ${item.title}` : ""}
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        {timeAgo(item.date)}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
@@ -260,13 +467,7 @@ export default async function AdminDashboard() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`rounded-full px-2 py-1 text-xs ${
-                        user.role === "admin"
-                          ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-                          : user.role === "moderator"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                          : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
-                      }`}>
+                      className={`rounded-full px-2 py-1 text-xs ${getUserRoleClass(user.role)}`}>
                       {user.role}
                     </span>
                   </div>
@@ -292,7 +493,6 @@ export default async function AdminDashboard() {
             </div>
             <div className="divide-y">
               {reviews.slice(0, 5).map((review) => {
-                const movie = movies.find((m) => m.id === review.movieId);
                 return (
                   <div key={review.id} className="p-4">
                     <div className="mb-2 flex items-center justify-between">
@@ -311,18 +511,13 @@ export default async function AdminDashboard() {
                         </span>
                       </div>
                       <span
-                        className={`rounded-full px-2 py-1 text-xs ${
-                          review.status === "approved"
-                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                            : review.status === "pending"
-                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-                            : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                        }`}>
+                        className={`rounded-full px-2 py-1 text-xs ${getReviewStatusClass(review.status)}`}>
                         {review.status}
                       </span>
                     </div>
                     <p className="mb-1 text-sm">
-                      <span className="font-medium">Movie:</span> {movie?.title}
+                      <span className="font-medium">Movie:</span>{" "}
+                      {review.movieTitle}
                     </p>
                     <p className="mb-2 text-sm">
                       <span className="font-medium">Rating:</span>{" "}

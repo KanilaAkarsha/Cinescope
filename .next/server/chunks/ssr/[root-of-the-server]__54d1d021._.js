@@ -54,11 +54,22 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 ;
 ;
 ;
+const normalizeReview = (review)=>({
+        id: review?._id?.toString?.() || review?.id,
+        movieId: review?.movieId?.toString?.() || review?.movieId || "",
+        userId: review?.userId || "",
+        userName: review?.userName || "Anonymous",
+        userAvatar: review?.userAvatar || "/placeholder.svg?height=40&width=40",
+        rating: Number(review?.rating || 0),
+        comment: review?.comment || "",
+        status: review?.status || "approved",
+        createdAt: review?.createdAt || new Date().toISOString()
+    });
 const getMovies = async ()=>{
     console.log("response");
     try {
         // Fetch movies from the API
-        const movieResponse = await fetch(`${("TURBOPACK compile-time value", "https://cinescope-nxb9.onrender.com")}/api/v1/movies`, {
+        const movieResponse = await fetch(`${("TURBOPACK compile-time value", "http://localhost:3000")}/api/v1/movies`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -184,6 +195,7 @@ const getMovieById = async (movieId)=>{
                 title: movie.title,
                 backdrop: movie.backdrop,
                 poster: movie.poster,
+                movieFileLink: movie.movieFileLink || movie.fileLink || "",
                 year: movie.year,
                 rating: movie.imdb.rating ?? 0,
                 genre: movie.genres,
@@ -219,8 +231,16 @@ const getMovieById = async (movieId)=>{
 };
 const createReviewForMovie = async (movieId, review)=>{
     try {
+        if (!__TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["ObjectId"].isValid(movieId)) {
+            return {
+                success: false,
+                message: "Invalid movie id"
+            };
+        }
         const result = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("reviews").insertOne({
             movieId: __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["ObjectId"].createFromHexString(movieId),
+            createdAt: new Date().toISOString(),
+            status: "approved",
             ...review
         });
         if (result.acknowledged) {
@@ -239,15 +259,24 @@ const createReviewForMovie = async (movieId, review)=>{
 };
 const getReviewsForMovie = async (movieId)=>{
     try {
+        if (!__TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["ObjectId"].isValid(movieId)) {
+            return {
+                success: false,
+                message: "Invalid movie id",
+                data: []
+            };
+        }
         const reviews = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("reviews").find({
             movieId: __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["ObjectId"].createFromHexString(movieId)
+        }).sort({
+            createdAt: -1
         }).toArray();
-        console.log("reviews", reviews);
+        const normalizedReviews = reviews.map(normalizeReview);
         if (reviews && reviews.length > 0) {
             return {
                 success: true,
                 message: "Reviews fetched successfully",
-                data: reviews
+                data: normalizedReviews
             };
         } else {
             return {

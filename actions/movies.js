@@ -6,6 +6,18 @@ import { db } from "@/db";
 import { ObjectId } from "mongodb";
 import { it, run } from "node:test";
 
+const normalizeReview = (review) => ({
+  id: review?._id?.toString?.() || review?.id,
+  movieId: review?.movieId?.toString?.() || review?.movieId || "",
+  userId: review?.userId || "",
+  userName: review?.userName || "Anonymous",
+  userAvatar: review?.userAvatar || "/placeholder.svg?height=40&width=40",
+  rating: Number(review?.rating || 0),
+  comment: review?.comment || "",
+  status: review?.status || "approved",
+  createdAt: review?.createdAt || new Date().toISOString(),
+});
+
 // get all movies database - action
 export const getMovies = async () => {
   console.log("response");
@@ -154,6 +166,7 @@ export const getMovieById = async (movieId) => {
         title: movie.title,
         backdrop: movie.backdrop,
         poster: movie.poster,
+        movieFileLink: movie.movieFileLink || movie.fileLink || "",
         year: movie.year,
         rating: movie.imdb.rating ?? 0,
         genre: movie.genres,
@@ -190,8 +203,17 @@ export const getMovieById = async (movieId) => {
 
 export const createReviewForMovie = async (movieId, review) => {
   try {
+    if (!ObjectId.isValid(movieId)) {
+      return {
+        success: false,
+        message: "Invalid movie id",
+      };
+    }
+
     const result = await db.collection("reviews").insertOne({
       movieId: ObjectId.createFromHexString(movieId),
+      createdAt: new Date().toISOString(),
+      status: "approved",
       ...review,
     });
 
@@ -213,16 +235,27 @@ export const createReviewForMovie = async (movieId, review) => {
 
 export const getReviewsForMovie = async (movieId) => {
   try {
+    if (!ObjectId.isValid(movieId)) {
+      return {
+        success: false,
+        message: "Invalid movie id",
+        data: [],
+      };
+    }
+
     const reviews = await db
       .collection("reviews")
       .find({ movieId: ObjectId.createFromHexString(movieId) })
+      .sort({ createdAt: -1 })
       .toArray();
-    console.log("reviews", reviews);
+
+    const normalizedReviews = reviews.map(normalizeReview);
+
     if (reviews && reviews.length > 0) {
       return {
         success: true,
         message: "Reviews fetched successfully",
-        data: reviews,
+        data: normalizedReviews,
       };
     } else {
       return {

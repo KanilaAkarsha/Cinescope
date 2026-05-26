@@ -13,11 +13,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getAllGenres, getAllMovieStatus, getAllYears } from "@/lib/utils";
+import { getAllMovieStatus, getAllYears } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { updateMovie } from "@/actions/movies";
-import { on } from "events";
-import { Calendar22 } from "@/components/date";
+
+const parseCommaSeparated = (value) =>
+  String(value || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+const buildMultiValueFields = ({ castInput, genreInput }) => {
+  const parsedCast = parseCommaSeparated(castInput);
+  const parsedGenres = parseCommaSeparated(genreInput);
+
+  return {
+    cast: parsedCast,
+    genres: parsedGenres,
+  };
+};
 
 export default function UpdateMovieForm({ showDialog, movie }) {
   const router = useRouter();
@@ -26,18 +40,18 @@ export default function UpdateMovieForm({ showDialog, movie }) {
     title: movie?.title || "",
     year: movie?.year || null,
     director: movie?.directors?.at(0) || "",
-    cast: movie?.cast?.at(0) || "",
-    genre: movie?.genres?.at(0) || null,
+    cast: Array.isArray(movie?.cast) ? movie.cast.join(", ") : "",
+    genre: Array.isArray(movie?.genres) ? movie.genres.join(", ") : "",
     rating: movie?.imdb?.rating || "",
     runtime: movie?.runtime || "",
     overview: movie?.plot || "",
     poster: movie?.poster || "",
     backdrop: movie?.backdrop || "",
+    movieFileLink: movie?.movieFileLink || movie?.fileLink || "",
     status: movie?.status || "",
     releaseDate: movie?.releaseDate || "",
   });
   const years = getAllYears();
-  const genres = getAllGenres();
   const statuses = getAllMovieStatus();
 
   const handleChange = (e) => {
@@ -51,17 +65,24 @@ export default function UpdateMovieForm({ showDialog, movie }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+
+    const multiValueFields = buildMultiValueFields({
+      castInput: formData.get("cast"),
+      genreInput: formData.get("genre"),
+    });
+
     const movieDoc = {
       title: formData.get("title"),
       year: formData.get("year"),
       directors: [formData.get("director")],
-      cast: [formData.get("cast")],
-      genres: [formData.get("genre")],
+      cast: multiValueFields.cast,
+      genres: multiValueFields.genres,
       imdb: { rating: Number(formData.get("rating")) },
       runtime: formData.get("runtime"),
       plot: formData.get("overview"),
       poster: formData.get("poster"),
       backdrop: formData.get("backdrop"),
+      movieFileLink: formData.get("movieFileLink"),
       status: formData.get("status"),
       releaseDate: formData.get("releaseDate"),
     };
@@ -69,7 +90,7 @@ export default function UpdateMovieForm({ showDialog, movie }) {
     setIsSubmitting(true);
 
     try {
-      const response = await updateMovie(movie?.id, movieDoc);
+      const response = await updateMovie(movieDoc, movie?.id);
 
       if (response?.success) {
         router.refresh();
@@ -144,35 +165,21 @@ export default function UpdateMovieForm({ showDialog, movie }) {
             name="cast"
             value={formState?.cast}
             onChange={handleChange}
-            placeholder="Cast Name"
+            placeholder="Cast names (comma separated)"
           />
         </div>
         <div className="space-y-2">
           <Label htmlFor="genre">
             Genre<span className="text-red-500">*</span>
           </Label>
-          <Select
+          <Input
             id="genre"
             name="genre"
+            placeholder="Genres (comma separated)"
             value={formState?.genre}
-            onValueChange={(value) =>
-              setFormState((prevState) => ({
-                ...prevState,
-                genre: value,
-              }))
-            }
-            required>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Genre" />
-            </SelectTrigger>
-            <SelectContent>
-              {genres.map((genre, index) => (
-                <SelectItem key={`${genre}-${index}`} value={genre}>
-                  {genre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            onChange={handleChange}
+            required
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="rating">
@@ -214,8 +221,8 @@ export default function UpdateMovieForm({ showDialog, movie }) {
         <Textarea
           id="overview"
           name="overview"
-          placeholder="Movie discription"
-          className="h-[6.25rem]"
+          placeholder="Movie description"
+          className="h-25"
           value={formState?.overview}
           onChange={handleChange}
           required
@@ -252,6 +259,17 @@ export default function UpdateMovieForm({ showDialog, movie }) {
         </div>
 
         <div className="space-y-2">
+          <Label htmlFor="movieFileLink">Movie File Link</Label>
+          <Input
+            id="movieFileLink"
+            name="movieFileLink"
+            placeholder="URL to downloadable movie file"
+            value={formState?.movieFileLink}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="space-y-2">
           <Label htmlFor="status">
             Status<span className="text-red-500">*</span>
           </Label>
@@ -283,15 +301,12 @@ export default function UpdateMovieForm({ showDialog, movie }) {
         <Button
           type="reset"
           variant="outline"
-          className="min-w-[6.375rem] "
+          className="min-w-25.5 "
           disabled={isSubmitting}
           onClick={() => showDialog(false)}>
           Cancel
         </Button>
-        <Button
-          type="submit"
-          className="min-w-[6.375rem]"
-          disabled={isSubmitting}>
+        <Button type="submit" className="min-w-25.5" disabled={isSubmitting}>
           {isSubmitting ? "Updating..." : "Update Movie"}
         </Button>
       </DialogFooter>

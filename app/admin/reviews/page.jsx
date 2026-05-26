@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Check,
   ChevronDown,
@@ -37,39 +37,139 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { reviews, movies } from "@/lib/data";
-import { Review } from "@/lib/data";
+import { toast } from "sonner";
 
 export default function ReviewsPage() {
+  const [reviews, setReviews] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortField, setSortField] = useState("createdAt");
   const [sortDirection, setSortDirection] = useState("desc");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  // Filter and sort reviews
-  const filteredReviews = reviews
-    .filter(
-      (review) =>
-        (statusFilter === "all" || review.status === statusFilter) &&
-        (review.userName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          review.comment.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          movies
-            .find((m) => m.id === review.movieId)
-            ?.title.toLowerCase()
-            .includes(searchQuery.toLowerCase()))
-    )
-    .sort((a, b) => {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
+  useEffect(() => {
+    const loadReviews = async () => {
+      try {
+        const response = await fetch("/api/admin/reviews", {
+          method: "GET",
+          cache: "no-store",
+        });
 
-      if (typeof aValue === "string" && typeof bValue === "string") {
+        const result = await response.json();
+
+        if (!response.ok || !result?.success) {
+          throw new Error(result?.message || "Failed to fetch reviews");
+        }
+
+        setReviews(Array.isArray(result.data) ? result.data : []);
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : "Failed to fetch reviews",
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadReviews();
+  }, []);
+
+  // Filter and sort reviews
+  const filteredReviews = useMemo(() => {
+    const loweredQuery = searchQuery.toLowerCase();
+
+    return reviews
+      .filter(
+        (review) =>
+          (statusFilter === "all" || review.status === statusFilter) &&
+          (String(review.userName || "")
+            .toLowerCase()
+            .includes(loweredQuery) ||
+            String(review.comment || "")
+              .toLowerCase()
+              .includes(loweredQuery) ||
+            String(review.movieTitle || "")
+              .toLowerCase()
+              .includes(loweredQuery)),
+      )
+      .sort((a, b) => {
+        if (sortField === "createdAt") {
+          const aTime = new Date(a.createdAt).getTime();
+          const bTime = new Date(b.createdAt).getTime();
+          return sortDirection === "asc" ? aTime - bTime : bTime - aTime;
+        }
+
+        if (sortField === "rating") {
+          const aRating = Number(a.rating || 0);
+          const bRating = Number(b.rating || 0);
+          return sortDirection === "asc"
+            ? aRating - bRating
+            : bRating - aRating;
+        }
+
+        const aValue = String(a?.[sortField] || "");
+        const bValue = String(b?.[sortField] || "");
+
         return sortDirection === "asc"
           ? aValue.localeCompare(bValue)
           : bValue.localeCompare(aValue);
+      });
+  }, [reviews, searchQuery, sortDirection, sortField, statusFilter]);
+
+  const handleReviewStatus = async (reviewId, status) => {
+    try {
+      const response = await fetch("/api/admin/reviews", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ reviewId, status }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result?.success) {
+        throw new Error(result?.message || "Failed to update review");
       }
 
-      return 0;
-    });
+      setReviews((current) =>
+        current.map((review) =>
+          review.id === reviewId ? { ...review, status } : review,
+        ),
+      );
+      toast.success(`Review ${status}.`);
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update review",
+      );
+    }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      const response = await fetch(
+        `/api/admin/reviews?reviewId=${encodeURIComponent(reviewId)}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || !result?.success) {
+        throw new Error(result?.message || "Failed to delete review");
+      }
+
+      setReviews((current) =>
+        current.filter((review) => review.id !== reviewId),
+      );
+      toast.success("Review deleted.");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete review",
+      );
+    }
+  };
 
   const handleSort = (field) => {
     if (field === sortField) {
@@ -86,6 +186,18 @@ export default function ReviewsPage() {
     ) : (
       <ChevronDown className="ml-1 h-4 w-4" />
     );
+  };
+
+  const getStatusBadgeClass = (status) => {
+    if (status === "approved") {
+      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+    }
+
+    if (status === "pending") {
+      return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+    }
+
+    return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
   };
 
   return (
@@ -109,7 +221,7 @@ export default function ReviewsPage() {
         </div>
         <div className="flex items-center gap-2">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="h-9 w-[180px]">
+            <SelectTrigger className="h-9 w-45">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -130,7 +242,7 @@ export default function ReviewsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[80px]">ID</TableHead>
+              <TableHead className="w-20">ID</TableHead>
               <TableHead>User</TableHead>
               <TableHead>Movie</TableHead>
               <TableHead>Rating</TableHead>
@@ -148,8 +260,14 @@ export default function ReviewsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
+            {!isLoading && filteredReviews.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8} className="h-24 text-center">
+                  No reviews found.
+                </TableCell>
+              </TableRow>
+            )}
             {filteredReviews.map((review) => {
-              const movie = movies.find((m) => m.id === review.movieId);
               return (
                 <TableRow key={review.id}>
                   <TableCell className="font-medium">{review.id}</TableCell>
@@ -167,20 +285,13 @@ export default function ReviewsPage() {
                       <span>{review.userName}</span>
                     </div>
                   </TableCell>
-                  <TableCell>{movie?.title}</TableCell>
+                  <TableCell>{review.movieTitle}</TableCell>
                   <TableCell>{review.rating}/10</TableCell>
-                  <TableCell className="max-w-[300px]">
+                  <TableCell className="max-w-75">
                     <p className="truncate">{review.comment}</p>
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      className={
-                        review.status === "approved"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                          : review.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-                          : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                      }>
+                    <Badge className={getStatusBadgeClass(review.status)}>
                       {review.status}
                     </Badge>
                   </TableCell>
@@ -194,13 +305,19 @@ export default function ReviewsPage() {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="h-8 w-8">
+                            className="h-8 w-8"
+                            onClick={() =>
+                              handleReviewStatus(review.id, "approved")
+                            }>
                             <Check className="h-4 w-4 text-green-600" />
                           </Button>
                           <Button
                             variant="outline"
                             size="icon"
-                            className="h-8 w-8">
+                            className="h-8 w-8"
+                            onClick={() =>
+                              handleReviewStatus(review.id, "rejected")
+                            }>
                             <X className="h-4 w-4 text-red-600" />
                           </Button>
                         </>
@@ -218,7 +335,9 @@ export default function ReviewsPage() {
                           <DropdownMenuItem>View Movie</DropdownMenuItem>
                           <DropdownMenuItem>View User</DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive">
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onSelect={() => handleDeleteReview(review.id)}>
                             Delete Review
                           </DropdownMenuItem>
                         </DropdownMenuContent>

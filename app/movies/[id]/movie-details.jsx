@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-// import { useParams } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, Clock, Star } from "lucide-react";
+import { ArrowLeft, Clock, Download, Star } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,35 +12,68 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function MovieDetails({ movie, reviews }) {
-  // const { id } = useParams();
-  const [isLoading, setIsLoading] = useState(false);
+export default function MovieDetails({ movie, reviews, id }) {
+  const isLoading = false;
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [movieReviews, setMovieReviews] = useState(
+    Array.isArray(reviews) ? reviews : [],
+  );
 
-  // useEffect(() => {
-  //   // Simulate loading
-  //   const timer = setTimeout(() => {
-  //     setIsLoading(false);
-  //   }, 1500);
-
-  //   return () => clearTimeout(timer);
-  // }, []);
-
-  const handleSubmitReview = (e) => {
+  const handleSubmitReview = async (e) => {
     e.preventDefault();
+
+    if (!id) {
+      toast.error("Movie id is missing.");
+      return;
+    }
+
+    if (rating < 1 || rating > 10) {
+      toast.error("Please select a rating between 1 and 10.");
+      return;
+    }
+
+    if (!reviewText.trim()) {
+      toast.error("Please add your review comment.");
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetch("/api/v1/reviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          movieId: id,
+          rating,
+          comment: reviewText.trim(),
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result?.success) {
+        throw new Error(result?.message || "Failed to submit review");
+      }
+
+      if (result?.data) {
+        setMovieReviews((current) => [result.data, ...current]);
+      }
+
       setIsSubmitting(false);
       setReviewText("");
       setRating(0);
-      alert(
-        "Review submitted successfully! It will be visible after moderation."
+      toast.success("Review submitted successfully.");
+    } catch (error) {
+      setIsSubmitting(false);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to submit review",
       );
-    }, 1000);
+    }
   };
 
   if (!movie && !isLoading) {
@@ -66,7 +99,7 @@ export default function MovieDetails({ movie, reviews }) {
           <Skeleton className="aspect-21/9 w-full" />
           <div className="container mx-auto px-4 py-8">
             <div className="flex flex-col md:flex-row md:gap-8">
-              <Skeleton className="h-[400px] w-[300px] rounded-lg" />
+              <Skeleton className="h-100 w-75 rounded-lg" />
               <div className="mt-6 flex-1 space-y-4 md:mt-0">
                 <Skeleton className="h-10 w-3/4" />
                 <Skeleton className="h-6 w-1/2" />
@@ -108,7 +141,7 @@ export default function MovieDetails({ movie, reviews }) {
 
             <div className="container mx-auto px-4 py-8">
               <div className="flex flex-col md:flex-row md:gap-8">
-                <div className="relative -mt-32 overflow-hidden rounded-lg border md:w-[300px]">
+                <div className="relative -mt-32 overflow-hidden rounded-lg border md:w-75">
                   <img
                     src={movie.poster || "/placeholder.svg"}
                     alt={movie.title}
@@ -136,11 +169,13 @@ export default function MovieDetails({ movie, reviews }) {
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    {movie.genre.map((genre) => (
-                      <Badge key={genre} variant="secondary">
-                        {genre}
-                      </Badge>
-                    ))}
+                    {(Array.isArray(movie.genre) ? movie.genre : []).map(
+                      (genre) => (
+                        <Badge key={genre} variant="secondary">
+                          {genre}
+                        </Badge>
+                      ),
+                    )}
                   </div>
 
                   <div>
@@ -160,6 +195,21 @@ export default function MovieDetails({ movie, reviews }) {
                     <h2 className="text-xl font-semibold">Cast</h2>
                     <p className="text-muted-foreground mt-2">{movie.cast}</p>
                   </div>
+
+                  {movie.movieFileLink && (
+                    <div>
+                      <Button asChild>
+                        <a
+                          href={movie.movieFileLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          download>
+                          <Download className="mr-2 h-4 w-4" />
+                          Download Movie
+                        </a>
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -167,22 +217,25 @@ export default function MovieDetails({ movie, reviews }) {
                 <h2 className="text-2xl font-bold">Reviews</h2>
 
                 <div className="mt-6 space-y-6">
-                  {reviews.length > 0 ? (
-                    reviews.map((review) => (
-                      <Card key={review.id}>
+                  {movieReviews.length > 0 ? (
+                    movieReviews.map((review) => (
+                      <Card key={review.id || review._id}>
                         <CardHeader className="flex flex-row items-center gap-4 space-y-0">
                           <Avatar>
                             <AvatarImage
-                              src={review.userAvatar}
-                              alt={review.userName}
+                              src={
+                                review.userAvatar ||
+                                "/placeholder.svg?height=40&width=40"
+                              }
+                              alt={review.userName || "Anonymous"}
                             />
                             <AvatarFallback>
-                              {review.userName.charAt(0)}
+                              {(review.userName || "A").charAt(0)}
                             </AvatarFallback>
                           </Avatar>
                           <div>
                             <CardTitle className="text-base">
-                              {review.userName}
+                              {review.userName || "Anonymous"}
                             </CardTitle>
                             <div className="flex items-center">
                               <Star className="mr-1 h-4 w-4 fill-yellow-500 text-yellow-500" />
@@ -194,7 +247,7 @@ export default function MovieDetails({ movie, reviews }) {
                               </span>
                               <span className="text-muted-foreground text-xs">
                                 {new Date(
-                                  review.createdAt
+                                  review.createdAt,
                                 ).toLocaleDateString()}
                               </span>
                             </div>
@@ -245,7 +298,7 @@ export default function MovieDetails({ movie, reviews }) {
                       placeholder="Share your thoughts about the movie..."
                       value={reviewText}
                       onChange={(e) => setReviewText(e.target.value)}
-                      className="min-h-[120px]"
+                      className="min-h-30"
                     />
                     <Button
                       type="submit"

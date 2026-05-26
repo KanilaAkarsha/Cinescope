@@ -2,7 +2,14 @@
 const nextConfig = {
   skipTrailingSlashRedirect: true,
   images: {
-    remotePatterns: [new URL("https://m.media-amazon.com/**")],
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "m.media-amazon.com",
+        pathname: "/**",
+      },
+    ],
   },
   eslint: {
     ignoreDuringBuilds: true,
