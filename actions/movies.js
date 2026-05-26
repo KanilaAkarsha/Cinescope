@@ -1,10 +1,7 @@
 "use server";
 import { db } from "@/db";
 
-// import { MOVIES } from "@/lib/data";
-
 import { ObjectId } from "mongodb";
-import { it, run } from "node:test";
 
 // get all movies database - action
 export const getMovies = async () => {
@@ -192,6 +189,7 @@ export const createReviewForMovie = async (movieId, review) => {
   try {
     const result = await db.collection("reviews").insertOne({
       movieId: ObjectId.createFromHexString(movieId),
+      createdAt: new Date(),
       ...review,
     });
 
@@ -216,6 +214,7 @@ export const getReviewsForMovie = async (movieId) => {
     const reviews = await db
       .collection("reviews")
       .find({ movieId: ObjectId.createFromHexString(movieId) })
+      .sort({ createdAt: -1, _id: -1 })
       .toArray();
     console.log("reviews", reviews);
     if (reviews && reviews.length > 0) {

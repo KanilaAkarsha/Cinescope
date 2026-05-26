@@ -146,9 +146,12 @@ __turbopack_context__.s([
 ]);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = /*#__PURE__*/ __turbopack_context__.i("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$better$2d$auth$2f$dist$2f$client$2f$react$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/better-auth/dist/client/react/index.mjs [app-client] (ecmascript)");
+var _globalThis_window;
 ;
+var _globalThis_window_location_origin;
+const baseURL = (_globalThis_window_location_origin = (_globalThis_window = globalThis.window) === null || _globalThis_window === void 0 ? void 0 : _globalThis_window.location.origin) !== null && _globalThis_window_location_origin !== void 0 ? _globalThis_window_location_origin : ("TURBOPACK compile-time value", "http://localhost:3000");
 const { signIn, signUp, signOut, useSession } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$better$2d$auth$2f$dist$2f$client$2f$react$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["createAuthClient"])({
-    /** The base URL of the server (optional if you're using the same domain) */ baseURL: ("TURBOPACK compile-time value", "https://cinescope-nxb9.onrender.com") || "https://cinescope-nxb9.onrender.com"
+    /** The base URL of the server (optional if you're using the same domain) */ baseURL
 });
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(__turbopack_context__.m, globalThis.$RefreshHelpers$);

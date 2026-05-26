@@ -1,28 +1,9 @@
 "use client";
 
-import { Switch } from "@/components/ui/switch";
-
-import { SelectItem } from "@/components/ui/select";
-
-import { SelectContent } from "@/components/ui/select";
-
-import { SelectValue } from "@/components/ui/select";
-
-import { SelectTrigger } from "@/components/ui/select";
-
-import { Select } from "@/components/ui/select";
-
-import { useState } from "react";
-import {
-  Camera,
-  Check,
-  Edit,
-  Key,
-  Lock,
-  Mail,
-  Smartphone,
-  User,
-} from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Camera, Check, Edit, Mail, Shield, User } from "lucide-react";
+import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -35,51 +16,191 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { toast } from "sonner";
+import { updateUser, useSession } from "@/lib/auth-client";
+
+function getInitials(name, email) {
+  const source = name || email || "U";
+
+  return source
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || "")
+    .join("")
+    .slice(0, 2);
+}
+
+function formatDate(value) {
+  if (!value) return "Recently";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Recently";
+
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+async function fileToCompressedDataUrl(file) {
+  const imageBitmap = await createImageBitmap(file);
+  const maxSize = 256;
+  const scale = Math.min(
+    maxSize / imageBitmap.width,
+    maxSize / imageBitmap.height,
+    1,
+  );
+  const width = Math.max(1, Math.round(imageBitmap.width * scale));
+  const height = Math.max(1, Math.round(imageBitmap.height * scale));
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+
+  const context = canvas.getContext("2d");
+  if (!context) {
+    throw new Error("Unable to process image.");
+  }
+
+  context.drawImage(imageBitmap, 0, 0, width, height);
+
+  const blob = await new Promise((resolve) =>
+    canvas.toBlob(resolve, "image/jpeg", 0.8),
+  );
+
+  if (!blob) {
+    throw new Error("Unable to compress image.");
+  }
+
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve(typeof reader.result === "string" ? reader.result : "");
+    };
+    reader.onerror = () => reject(new Error("Unable to read image."));
+    reader.readAsDataURL(blob);
+  });
+}
 
 export default function ProfilePage() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: session, isPending, refetch } = useSession();
+  const user = session?.user;
+  const fileInputRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formState, setFormState] = useState({
+    name: "",
+    image: "",
+  });
 
-  const handleSaveProfile = () => {
-    setIsSubmitting(true);
+  useEffect(() => {
+    if (!user) return;
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsEditing(false);
-      // toast({
-      //   title: "Profile updated",
-      //   description: "Your profile has been updated successfully.",
-      // });
-      toast.success("Profile updated!", {
-        className: "success",
-        description: "Your profile has been updated successfully.",
-        icon: <MyIcon />,
-        cancel: {
-          label: "Dismiss",
-          onClick: () => console.log("Dismiss"),
-        },
+    setFormState({
+      name: user.name || "",
+      image: user.image || "",
+    });
+  }, [user?.id]);
+
+  const initials = useMemo(
+    () => getInitials(formState.name || user?.name, user?.email),
+    [formState.name, user?.name, user?.email],
+  );
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormState((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  };
+
+  const handleAvatarPick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleAvatarChange = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file.");
+      event.target.value = "";
+      return;
+    }
+
+    try {
+      const result = await fileToCompressedDataUrl(file);
+      setFormState((current) => ({
+        ...current,
+        image: result,
+      }));
+      setIsEditing(true);
+    } catch (error) {
+      toast.error("Could not process image.", {
+        description: error?.message || "Please try a smaller image.",
       });
-    }, 1000);
+    }
+
+    event.target.value = "";
   };
 
-  const handleChangePassword = () => {
+  const handleSaveProfile = async () => {
+    if (!user) return;
+
     setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      await updateUser({
+        name: formState.name.trim(),
+        image: formState.image.trim() || null,
+      });
+
+      await refetch();
+      setIsEditing(false);
+      toast.success("Profile updated", {
+        description: "Your account details were saved successfully.",
+      });
+    } catch (error) {
+      toast.error("Could not update profile", {
+        description: error?.message || "Please try again.",
+      });
+    } finally {
       setIsSubmitting(false);
-      // toast({
-      //   title: "Password changed",
-      //   description: "Your password has been changed successfully.",
-      // });
-      toast("Password changed");
-    }, 1000);
+    }
   };
+
+  if (isPending) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Profile</h2>
+          <p className="text-muted-foreground">
+            Loading your account details...
+          </p>
+        </div>
+        <Card>
+          <CardContent className="p-6">
+            <div className="h-40 animate-pulse rounded-lg bg-muted" />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Profile</h2>
+          <p className="text-muted-foreground">
+            Sign in to view and edit your profile.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -91,49 +212,58 @@ export default function ProfilePage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-[1fr_3fr]">
-        {/* Profile Sidebar */}
         <Card>
           <CardContent className="p-6">
             <div className="flex flex-col items-center space-y-4">
               <div className="relative">
                 <Avatar className="h-32 w-32">
                   <AvatarImage
-                    src="/placeholder.svg?height=128&width=128"
-                    alt="Admin User"
+                    src={formState.image || user.image || ""}
+                    alt={user.name || user.email}
                   />
-                  <AvatarFallback className="text-4xl">AD</AvatarFallback>
+                  <AvatarFallback className="text-4xl">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full">
+                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full"
+                  type="button"
+                  onClick={handleAvatarPick}>
                   <Camera className="h-4 w-4" />
                 </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarChange}
+                />
               </div>
+
               <div className="text-center">
-                <h3 className="text-xl font-bold">Admin User</h3>
-                <p className="text-muted-foreground text-sm">
-                  admin@cinescope.com
-                </p>
+                <h3 className="text-xl font-bold">{user.name || user.email}</h3>
+                <p className="text-muted-foreground text-sm">{user.email}</p>
               </div>
-              <div className="w-full">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => setIsEditing(!isEditing)}>
-                  {isEditing ? (
-                    <>
-                      <Check className="mr-2 h-4 w-4" />
-                      Done Editing
-                    </>
-                  ) : (
-                    <>
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit Profile
-                    </>
-                  )}
-                </Button>
-              </div>
+
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setIsEditing((current) => !current)}
+                type="button">
+                {isEditing ? (
+                  <>
+                    <Check className="mr-2 h-4 w-4" />
+                    Done Editing
+                  </>
+                ) : (
+                  <>
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit Profile
+                  </>
+                )}
+              </Button>
             </div>
 
             <Separator className="my-6" />
@@ -142,316 +272,99 @@ export default function ProfilePage() {
               <div className="flex items-center gap-3">
                 <User className="text-muted-foreground h-5 w-5" />
                 <div>
-                  <p className="text-sm font-medium">Admin</p>
-                  <p className="text-muted-foreground text-xs">Role</p>
+                  <p className="text-sm font-medium">Signed in user</p>
+                  <p className="text-muted-foreground text-xs">
+                    {user.emailVerified
+                      ? "Email verified"
+                      : "Email not verified"}
+                  </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
                 <Mail className="text-muted-foreground h-5 w-5" />
                 <div>
-                  <p className="text-sm font-medium">admin@cinescope.com</p>
+                  <p className="text-sm font-medium">{user.email}</p>
                   <p className="text-muted-foreground text-xs">Email</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-3">
-                <Smartphone className="text-muted-foreground h-5 w-5" />
+                <Shield className="text-muted-foreground h-5 w-5" />
                 <div>
-                  <p className="text-sm font-medium">+1 (555) 123-4567</p>
-                  <p className="text-muted-foreground text-xs">Phone</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Key className="text-muted-foreground h-5 w-5" />
-                <div>
-                  <p className="text-sm font-medium">Last login: 2 hours ago</p>
-                  <p className="text-muted-foreground text-xs">
-                    Account Activity
+                  <p className="text-sm font-medium">
+                    Joined {formatDate(user.createdAt)}
                   </p>
+                  <p className="text-muted-foreground text-xs">Account</p>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Profile Content */}
-        <div className="space-y-6">
-          <Tabs defaultValue="personal" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="personal">Personal Information</TabsTrigger>
-              <TabsTrigger value="security">Security</TabsTrigger>
-            </TabsList>
+        <Card>
+          <CardHeader>
+            <CardTitle>Personal Information</CardTitle>
+            <CardDescription>
+              Update the real profile data linked to your account.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="name">Display Name</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={formState.name}
+                  onChange={handleChange}
+                  disabled={!isEditing}
+                  placeholder="Your display name"
+                />
+              </div>
 
-            <TabsContent value="personal" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Personal Information</CardTitle>
-                  <CardDescription>
-                    Update your personal information and contact details.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="first-name">First Name</Label>
-                      <Input
-                        id="first-name"
-                        defaultValue="Admin"
-                        disabled={!isEditing}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="last-name">Last Name</Label>
-                      <Input
-                        id="last-name"
-                        defaultValue="User"
-                        disabled={!isEditing}
-                      />
-                    </div>
-                  </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="image">Avatar URL</Label>
+                <Input
+                  id="image"
+                  name="image"
+                  value={formState.image}
+                  onChange={handleChange}
+                  disabled={!isEditing}
+                  placeholder="https://..."
+                />
+                <p className="text-muted-foreground text-xs">
+                  Paste an image URL or use the camera button to upload a
+                  compressed profile picture.
+                </p>
+              </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      defaultValue="admin@cinescope.com"
-                      disabled={!isEditing}
-                    />
-                  </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input id="email" value={user.email} disabled />
+              </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      defaultValue="+1 (555) 123-4567"
-                      disabled={!isEditing}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="bio">Bio</Label>
-                    <Textarea
-                      id="bio"
-                      className="min-h-[100px]"
-                      defaultValue="Administrator of the CineScope platform. Movie enthusiast and critic."
-                      disabled={!isEditing}
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button
-                    onClick={handleSaveProfile}
-                    disabled={isSubmitting || !isEditing}
-                    className="ml-auto">
-                    {isSubmitting ? "Saving..." : "Save Changes"}
-                  </Button>
-                </CardFooter>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Preferences</CardTitle>
-                  <CardDescription>
-                    Configure your account preferences.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="language">Language</Label>
-                    <Select defaultValue="en" disabled={!isEditing}>
-                      <SelectTrigger id="language">
-                        <SelectValue placeholder="Select language" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="es">Spanish</SelectItem>
-                        <SelectItem value="fr">French</SelectItem>
-                        <SelectItem value="de">German</SelectItem>
-                        <SelectItem value="ja">Japanese</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="timezone">Timezone</Label>
-                    <Select defaultValue="utc" disabled={!isEditing}>
-                      <SelectTrigger id="timezone">
-                        <SelectValue placeholder="Select timezone" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="utc">UTC</SelectItem>
-                        <SelectItem value="est">
-                          Eastern Standard Time (EST)
-                        </SelectItem>
-                        <SelectItem value="cst">
-                          Central Standard Time (CST)
-                        </SelectItem>
-                        <SelectItem value="mst">
-                          Mountain Standard Time (MST)
-                        </SelectItem>
-                        <SelectItem value="pst">
-                          Pacific Standard Time (PST)
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button
-                    onClick={handleSaveProfile}
-                    disabled={isSubmitting || !isEditing}
-                    className="ml-auto">
-                    {isSubmitting ? "Saving..." : "Save Changes"}
-                  </Button>
-                </CardFooter>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="security" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Change Password</CardTitle>
-                  <CardDescription>
-                    Update your password to keep your account secure.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="current-password">Current Password</Label>
-                    <Input id="current-password" type="password" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="new-password">New Password</Label>
-                    <Input id="new-password" type="password" />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="confirm-password">
-                      Confirm New Password
-                    </Label>
-                    <Input id="confirm-password" type="password" />
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button
-                    onClick={handleChangePassword}
-                    disabled={isSubmitting}
-                    className="ml-auto">
-                    {isSubmitting ? "Changing..." : "Change Password"}
-                  </Button>
-                </CardFooter>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Two-Factor Authentication</CardTitle>
-                  <CardDescription>
-                    Add an extra layer of security to your account.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label htmlFor="two-factor">
-                        Two-Factor Authentication
-                      </Label>
-                      <p className="text-muted-foreground text-sm">
-                        Require a verification code when logging in.
-                      </p>
-                    </div>
-                    <Switch id="two-factor" defaultChecked />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Recovery Codes</Label>
-                    <Button variant="outline" className="w-full">
-                      <Lock className="mr-2 h-4 w-4" />
-                      Generate Recovery Codes
-                    </Button>
-                    <p className="text-muted-foreground text-sm">
-                      Recovery codes can be used to access your account if you
-                      lose your two-factor authentication device.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Login Sessions</CardTitle>
-                  <CardDescription>
-                    Manage your active login sessions.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-primary/10 rounded-full p-2">
-                          <Smartphone className="text-primary h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">Current Session</p>
-                          <p className="text-muted-foreground text-xs">
-                            Chrome on Windows • IP: 192.168.1.1 • Active now
-                          </p>
-                        </div>
-                      </div>
-                      <Button variant="ghost" size="sm" disabled>
-                        Current
-                      </Button>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-primary/10 rounded-full p-2">
-                          <Smartphone className="text-primary h-5 w-5" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">Mobile App</p>
-                          <p className="text-muted-foreground text-xs">
-                            iPhone • IP: 192.168.1.2 • Last active: 2 hours ago
-                          </p>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm">
-                        Revoke
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline" className="text-destructive w-full">
-                    Log Out of All Sessions
-                  </Button>
-                </CardFooter>
-              </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
+              <div className="space-y-2">
+                <Label htmlFor="verified">Status</Label>
+                <Input
+                  id="verified"
+                  value={user.emailVerified ? "Verified" : "Not verified"}
+                  disabled
+                />
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button
+              onClick={handleSaveProfile}
+              disabled={isSubmitting || !isEditing}
+              className="ml-auto"
+              type="button">
+              {isSubmitting ? "Saving..." : "Save Changes"}
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     </div>
-  );
-}
-
-function MyIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="hsl(var(--primary))"
-      className="size-4">
-      <path d="M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z" />
-      <path
-        fillRule="evenodd"
-        d="M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z"
-        clipRule="evenodd"
-      />
-    </svg>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { use } from "react";
+
 import { EMAIL_REGEX } from "@/lib/constants";
 
 const DEFAULT_ERROR = {
@@ -82,6 +82,7 @@ export default function LoginForm() {
           },
         );
       } catch (error) {
+        console.error(error);
         setError({
           error: true,
           message: "unexpected error occurred. Please try again later.",
@@ -91,6 +92,23 @@ export default function LoginForm() {
       }
     } else {
       console.log("validation failed. Fix errors and try again.");
+    }
+  };
+  const handleGoogleLogin = async () => {
+    try {
+      const res = await fetch("/api/auth/sign-in/oauth2", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          providerId: "google",
+          callbackURL: globalThis.location.origin + "/admin",
+        }),
+      });
+      const data = await res.json();
+      if (data?.redirect && data?.url) globalThis.location.href = data.url;
+    } catch (err) {
+      console.error("Google sign-in failed", err);
+      setError({ error: true, message: "Google sign-in failed" });
     }
   };
   return (
@@ -145,7 +163,10 @@ export default function LoginForm() {
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading && <Loader2 className="animate-spin" />} Login
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleGoogleLogin}>
                   Login with Google
                 </Button>
               </div>

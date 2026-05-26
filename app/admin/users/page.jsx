@@ -1,23 +1,13 @@
-"use client";
-
-import { useState } from "react";
-import {
-  ChevronDown,
-  ChevronUp,
-  MoreHorizontal,
-  Search,
-  SlidersHorizontal,
-} from "lucide-react";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Label } from "@/components/ui/label";
+import AddUserDialog from "@/components/add-user-dialog";
 import {
   Table,
   TableBody,
@@ -26,255 +16,244 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { users } from "@/lib/data";
+import { db } from "@/db";
 
-export default function UsersPage() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortField, setSortField] = useState("name");
-  const [sortDirection, setSortDirection] = useState("asc");
-  const [roleFilter, setRoleFilter] = useState("all");
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [showEditRole, setShowEditRole] = useState(false);
+export const dynamic = "force-dynamic";
 
-  // Filter and sort users
-  const filteredUsers = users
-    .filter(
-      (user) =>
-        (roleFilter === "all" || user.role === roleFilter) &&
-        (user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchQuery.toLowerCase()))
-    )
-    .sort((a, b) => {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
+function getInitials(name, email) {
+  const source = name || email || "U";
 
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        return sortDirection === "asc"
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
-      }
+  return source
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || "")
+    .join("")
+    .slice(0, 2);
+}
 
-      return 0;
-    });
+function formatDate(value) {
+  if (!value) return "Recently";
 
-  const handleSort = (field) => {
-    if (field === sortField) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortDirection("asc");
-    }
-  };
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Recently";
 
-  const getSortIcon = (field) => {
-    if (field !== sortField) return null;
-    return sortDirection === "asc" ? (
-      <ChevronUp className="ml-1 h-4 w-4" />
-    ) : (
-      <ChevronDown className="ml-1 h-4 w-4" />
-    );
-  };
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
 
-  const handleEditRole = (user) => {
-    setSelectedUser(user);
-    setShowEditRole(true);
-  };
+function getRoleBadgeClass(role) {
+  if (role === "admin") {
+    return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+  }
+
+  if (role === "moderator") {
+    return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+  }
+
+  return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
+}
+
+export default async function UsersPage({ searchParams }) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const isAdmin = session?.user?.role === "admin";
+
+  const params = await searchParams;
+  const query = params?.q?.trim() || "";
+  const roleFilter = params?.role || "all";
+
+  const usersCollection = db.collection("user");
+
+  const filter = {};
+
+  if (query) {
+    filter.$or = [
+      { name: { $regex: query, $options: "i" } },
+      { email: { $regex: query, $options: "i" } },
+    ];
+  }
+
+  if (roleFilter !== "all") {
+    filter.role = roleFilter;
+  }
+
+  const [users, totalUsers, verifiedUsers, adminUsers] = await Promise.all([
+    usersCollection
+      .find(filter, {
+        projection: {
+          name: 1,
+          email: 1,
+          image: 1,
+          avatar: 1,
+          role: 1,
+          emailVerified: 1,
+          createdAt: 1,
+        },
+      })
+      .sort({ createdAt: -1, _id: -1 })
+      .limit(100)
+      .toArray(),
+    usersCollection.countDocuments({}),
+    usersCollection.countDocuments({ emailVerified: true }),
+    usersCollection.countDocuments({ role: "admin" }),
+  ]);
+
+  const normalizedUsers = users.map((user) => ({
+    id: user._id.toString(),
+    name: user.name || user.email || "Unknown User",
+    email: user.email || "No email available",
+    avatar: user.image || user.avatar || "",
+    role: user.role || "user",
+    emailVerified: Boolean(user.emailVerified),
+    createdAt: user.createdAt || user._id,
+  }));
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-3xl font-bold tracking-tight">Users</h2>
-        <p className="text-muted-foreground">
-          Manage user accounts and permissions
-        </p>
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">Users</h2>
+          <p className="text-muted-foreground">
+            Live user records from the MongoDB auth collection.
+          </p>
+        </div>
+        {isAdmin ? <AddUserDialog /> : null}
       </div>
 
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex w-full items-center space-x-2 md:w-1/2">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search users..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-9"
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className="h-9 w-[180px]">
-              <SelectValue placeholder="Filter by role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Roles</SelectItem>
-              <SelectItem value="admin">Admin</SelectItem>
-              <SelectItem value="moderator">Moderator</SelectItem>
-              <SelectItem value="user">User</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button variant="outline" size="sm" className="h-9">
-            <SlidersHorizontal className="mr-2 h-4 w-4" />
-            Filters
-          </Button>
-        </div>
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalUsers}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">
+              Verified Users
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{verifiedUsers}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Admins</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{adminUsers}</div>
+          </CardContent>
+        </Card>
       </div>
+
+      <Card>
+        <CardContent className="pt-6">
+          <form
+            className="grid gap-4 md:grid-cols-[1fr_220px_auto]"
+            method="get">
+            <div className="space-y-2">
+              <Label htmlFor="q">Search users</Label>
+              <Input
+                id="q"
+                name="q"
+                placeholder="Search by name or email"
+                defaultValue={query}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="role">Role filter</Label>
+              <select
+                id="role"
+                name="role"
+                defaultValue={roleFilter}
+                className="border-input bg-background focus-visible:ring-ring h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2">
+                <option value="all">All roles</option>
+                <option value="admin">Admin</option>
+                <option value="moderator">Moderator</option>
+                <option value="user">User</option>
+              </select>
+            </div>
+            <div className="flex items-end">
+              <Button type="submit" className="w-full md:w-auto">
+                Search
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[80px]">ID</TableHead>
-              <TableHead
-                className="cursor-pointer"
-                onClick={() => handleSort("name")}>
-                <div className="flex items-center">
-                  Name
-                  {getSortIcon("name")}
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer"
-                onClick={() => handleSort("email")}>
-                <div className="flex items-center">
-                  Email
-                  {getSortIcon("email")}
-                </div>
-              </TableHead>
+              <TableHead>User</TableHead>
+              <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead
-                className="cursor-pointer"
-                onClick={() => handleSort("createdAt")}>
-                <div className="flex items-center">
-                  Created At
-                  {getSortIcon("createdAt")}
-                </div>
-              </TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead className="text-right">Profile</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredUsers.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">{user.id}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.avatar} alt={user.name} />
-                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <span>{user.name}</span>
-                  </div>
-                </TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>
-                  <Badge
-                    className={
-                      user.role === "admin"
-                        ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-                        : user.role === "moderator"
-                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                        : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
-                    }>
-                    {user.role}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant={
-                      user.status === "active" ? "default" : "destructive"
-                    }>
-                    {user.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => handleEditRole(user)}>
-                        Edit Role
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>View Profile</DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className={
-                          user.status === "active" ? "text-destructive" : ""
-                        }>
-                        {user.status === "active"
-                          ? "Suspend User"
-                          : "Activate User"}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+            {normalizedUsers.length > 0 ? (
+              normalizedUsers.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={user.avatar} alt={user.name} />
+                        <AvatarFallback>
+                          {getInitials(user.name, user.email)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">{user.name}</div>
+                        <div className="text-muted-foreground text-xs">
+                          ID: {user.id}
+                        </div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>
+                    <Badge className={getRoleBadgeClass(user.role)}>
+                      {user.role}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={user.emailVerified ? "default" : "secondary"}>
+                      {user.emailVerified ? "Verified" : "Unverified"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>{formatDate(user.createdAt)}</TableCell>
+                  <TableCell className="text-right">
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={`/admin/users/${user.id}`}>View</Link>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="text-muted-foreground py-10 text-center">
+                  No users matched your filters.
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>
-
-      <Dialog open={showEditRole} onOpenChange={setShowEditRole}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit User Role</DialogTitle>
-            <DialogDescription>
-              Change the role for {selectedUser?.name}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="role">Role</Label>
-              <Select defaultValue={selectedUser?.role}>
-                <SelectTrigger id="role">
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="moderator">Moderator</SelectItem>
-                  <SelectItem value="user">User</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowEditRole(false)}>
-              Cancel
-            </Button>
-            <Button type="button" onClick={() => setShowEditRole(false)}>
-              Save Changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

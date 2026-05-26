@@ -16,25 +16,38 @@ import {
 import { getAllGenres, getAllMovieStatus, getAllYears } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { createMovie } from "@/actions/movies";
-import { on } from "events";
-import { Calendar22 } from "@/components/date";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function AddMovieForm({ showDialog }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedGenres, setSelectedGenres] = useState([]);
+  const [castValue, setCastValue] = useState("");
   const years = getAllYears();
   const genres = getAllGenres();
   const statuses = getAllMovieStatus();
 
+  const toggleGenre = (genre) => {
+    setSelectedGenres((currentGenres) =>
+      currentGenres.includes(genre)
+        ? currentGenres.filter((currentGenre) => currentGenre !== genre)
+        : [...currentGenres, genre],
+    );
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const cast = castValue
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean);
     const movie = {
       title: formData.get("title"),
       year: formData.get("year"),
       directors: [formData.get("director")],
-      cast: [formData.get("cast")],
-      genres: [formData.get("genre")],
+      cast,
+      genres: selectedGenres,
       imdb: { rating: Number(formData.get("rating")) },
       runtime: formData.get("runtime"),
       plot: formData.get("overview"),
@@ -61,7 +74,7 @@ export default function AddMovieForm({ showDialog }) {
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="title">
             Title<span className="text-red-500">*</span>
@@ -86,31 +99,44 @@ export default function AddMovieForm({ showDialog }) {
           </Select>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="director">Director</Label>
           <Input id="director" name="director" placeholder="Director Name" />
         </div>
         <div className="space-y-2">
           <Label htmlFor="cast">Cast</Label>
-          <Input id="cast" name="cast" placeholder="Cast Name" />
+          <Textarea
+            id="cast"
+            name="cast"
+            value={castValue}
+            onChange={(event) => setCastValue(event.target.value)}
+            placeholder="Cast names separated by commas"
+          />
+          <p className="text-muted-foreground text-xs">
+            Add multiple cast members separated by commas.
+          </p>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 md:col-span-2">
           <Label htmlFor="genre">
             Genre<span className="text-red-500">*</span>
           </Label>
-          <Select id="genre" name="genre" required>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Please select genre" />
-            </SelectTrigger>
-            <SelectContent>
-              {genres.map((genre, index) => (
-                <SelectItem key={`${genre}-${index}`} value={genre}>
-                  {genre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="grid max-h-48 gap-2 overflow-y-auto rounded-md border p-3 sm:grid-cols-2 lg:grid-cols-3">
+            {genres.map((genre, index) => (
+              <label
+                key={`${genre}-${index}`}
+                className="flex items-center gap-2 text-sm">
+                <Checkbox
+                  checked={selectedGenres.includes(genre)}
+                  onCheckedChange={() => toggleGenre(genre)}
+                />
+                <span>{genre}</span>
+              </label>
+            ))}
+          </div>
+          <p className="text-muted-foreground text-xs">
+            Select one or more genres.
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="rating">
@@ -149,11 +175,10 @@ export default function AddMovieForm({ showDialog }) {
           id="overview"
           name="overview"
           placeholder="Movie discription"
-          className="h-[6.25rem]"
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="poster">
             Poster URL<span className="text-red-500">*</span>
@@ -201,15 +226,13 @@ export default function AddMovieForm({ showDialog }) {
         <Button
           type="reset"
           variant="outline"
-          className="min-w-[6.375rem] "
           disabled={isSubmitting}
           onClick={() => showDialog(false)}>
           Cancel
         </Button>
         <Button
           type="submit"
-          className="min-w-[6.375rem]"
-          disabled={isSubmitting}>
+          disabled={isSubmitting || selectedGenres.length === 0}>
           {isSubmitting ? "Adding..." : "Add Movie"}
         </Button>
       </DialogFooter>

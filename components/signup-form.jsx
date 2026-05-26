@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { signIn, signUp } from "@/lib/auth-client";
+import { signUp } from "@/lib/auth-client";
 import {
   Card,
   CardContent,
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { use } from "react";
+
 import { EMAIL_REGEX } from "@/lib/constants";
 
 const DEFAULT_ERROR = {
@@ -112,6 +112,7 @@ export default function SignupForm() {
           },
         );
       } catch (error) {
+        console.error(error);
         setError({
           error: true,
           message: "unexpected error occurred. Please try again later.",
@@ -121,6 +122,24 @@ export default function SignupForm() {
       }
     } else {
       console.log("validation failed. Fix errors and try again.");
+    }
+  };
+  const handleGoogleSignup = async () => {
+    try {
+      const res = await fetch("/api/auth/sign-in/oauth2", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          providerId: "google",
+          callbackURL: globalThis.location.origin + "/admin",
+          requestSignUp: true,
+        }),
+      });
+      const data = await res.json();
+      if (data?.redirect && data?.url) globalThis.location.href = data.url;
+    } catch (err) {
+      console.error("Google sign-up failed", err);
+      setError({ error: true, message: "Google sign-up failed" });
     }
   };
   return (
@@ -207,7 +226,10 @@ export default function SignupForm() {
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading && <Loader2 className="animate-spin" />} Sign Up
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleGoogleSignup}>
                   Sign Up with Google
                 </Button>
               </div>

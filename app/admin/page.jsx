@@ -1,4 +1,3 @@
-import Image from "next/image";
 import {
   Card,
   CardContent,
@@ -16,28 +15,187 @@ import {
   Clock,
   ArrowRight,
 } from "lucide-react";
-import { users, reviews } from "@/lib/data";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import MoviesData from "./movies-data";
-import { getMovies } from "@/actions/movies";
+import { db } from "@/db";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminDashboard() {
-  const pendingReviews = reviews.filter(
-    (review) => review.status === "pending"
-  ).length;
-  const movies = await getMovies();
+function formatRelativeTime(value) {
+  if (!value) return "Recently";
 
-  if (!movies || movies.length === 0) {
-    return (
-      <div className=" text-foreground font-medium text-center py-12">
-        No movies available.
-      </div>
-    );
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Recently";
+
+  const diffInMinutes = Math.floor((Date.now() - date.getTime()) / 60000);
+  if (diffInMinutes < 1) return "Just now";
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes} minute${diffInMinutes === 1 ? "" : "s"} ago`;
   }
+
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return `${diffInHours} hour${diffInHours === 1 ? "" : "s"} ago`;
+  }
+
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 7) {
+    return `${diffInDays} day${diffInDays === 1 ? "" : "s"} ago`;
+  }
+
+  return date.toLocaleDateString();
+}
+
+function toTimestamp(value) {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+}
+
+function getUserRoleClass(role) {
+  if (role === "admin") {
+    return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+  }
+
+  if (role === "moderator") {
+    return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+  }
+
+  return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
+}
+
+function getReviewStatusClass(status) {
+  if (status === "approved") {
+    return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+  }
+
+  if (status === "pending") {
+    return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
+  }
+
+  return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+}
+
+export default async function AdminDashboard() {
+  const moviesCollection = db.collection("movies_n");
+  const usersCollection = db.collection("user");
+  const reviewsCollection = db.collection("reviews");
+
+  const [
+    totalMovies,
+    publishedMovies,
+    totalUsers,
+    totalReviews,
+    pendingReviews,
+    approvedReviews,
+    recentMoviesRaw,
+    recentUsersRaw,
+    recentReviewsRaw,
+    movieTitleDocs,
+  ] = await Promise.all([
+    moviesCollection.countDocuments({}),
+    moviesCollection.countDocuments({ status: "published" }),
+    usersCollection.countDocuments({}),
+    reviewsCollection.countDocuments({}),
+    reviewsCollection.countDocuments({ status: "pending" }),
+    reviewsCollection.countDocuments({ status: "approved" }),
+    moviesCollection
+      .find(
+        {},
+        {
+          projection: { title: 1, year: 1, poster: 1, status: 1, createdAt: 1 },
+        },
+      )
+      .sort({ createdAt: -1, _id: -1 })
+      .limit(5)
+      .toArray(),
+    usersCollection
+      .find(
+        {},
+        { projection: { name: 1, email: 1, role: 1, avatar: 1, createdAt: 1 } },
+      )
+      .sort({ createdAt: -1, _id: -1 })
+      .limit(5)
+      .toArray(),
+    reviewsCollection
+      .find(
+        {},
+        {
+          projection: {
+            movieId: 1,
+            userName: 1,
+            userAvatar: 1,
+            rating: 1,
+            comment: 1,
+            status: 1,
+            createdAt: 1,
+          },
+        },
+      )
+      .sort({ createdAt: -1, _id: -1 })
+      .limit(5)
+      .toArray(),
+    moviesCollection.find({}, { projection: { title: 1 } }).toArray(),
+  ]);
+
+  const movieTitleMap = new Map(
+    movieTitleDocs.map((movie) => [movie._id.toString(), movie.title]),
+  );
+
+  const recentMovies = recentMoviesRaw.map((movie) => ({
+    id: movie._id.toString(),
+    title: movie.title,
+    year: movie.year,
+    poster: movie.poster,
+    status: movie.status ?? "published",
+    createdAt: movie.createdAt ?? movie._id.toString(),
+  }));
+
+  const recentUsers = recentUsersRaw.map((user) => ({
+    id: user._id.toString(),
+    name: user.name ?? user.email ?? "Unknown User",
+    email: user.email ?? "No email available",
+    role: user.role ?? "user",
+    avatar: user.avatar ?? "/placeholder.svg?height=40&width=40",
+    createdAt: user.createdAt ?? user._id.toString(),
+  }));
+
+  const recentReviews = recentReviewsRaw.map((review) => {
+    const movieId = review.movieId?.toString?.() ?? review.movieId;
+
+    return {
+      id: review._id.toString(),
+      movieId,
+      movieTitle: movieTitleMap.get(movieId) ?? "Unknown Movie",
+      userName: review.userName ?? "Anonymous",
+      userAvatar: review.userAvatar ?? "/placeholder.svg?height=40&width=40",
+      rating: review.rating ?? 0,
+      comment: review.comment ?? "",
+      status: review.status ?? "pending",
+      createdAt: review.createdAt ?? review._id.toString(),
+    };
+  });
+
+  const recentActivity = [
+    ...recentMovies.map((movie) => ({
+      label: `New movie added: ${movie.title}`,
+      time: formatRelativeTime(movie.createdAt),
+      sortValue: toTimestamp(movie.createdAt),
+    })),
+    ...recentUsers.map((user) => ({
+      label: `User registered: ${user.name}`,
+      time: formatRelativeTime(user.createdAt),
+      sortValue: toTimestamp(user.createdAt),
+    })),
+    ...recentReviews.map((review) => ({
+      label: `New review submitted: ${review.userName}`,
+      time: formatRelativeTime(review.createdAt),
+      sortValue: toTimestamp(review.createdAt),
+    })),
+  ]
+    .sort((a, b) => b.sortValue - a.sortValue)
+    .slice(0, 4);
 
   return (
     <div className="flex flex-col gap-4">
@@ -55,10 +213,9 @@ export default async function AdminDashboard() {
             <Film className="text-primary h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{movies.length}</div>
+            <div className="text-2xl font-bold">{totalMovies}</div>
             <p className="text-muted-foreground text-xs">
-              {movies.filter((movie) => movie.status === "published").length}{" "}
-              published
+              {publishedMovies} published
             </p>
           </CardContent>
         </Card>
@@ -68,11 +225,8 @@ export default async function AdminDashboard() {
             <Users className="text-primary h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{users.length}</div>
-            <p className="text-muted-foreground text-xs">
-              {users.filter((user) => user.status === "active").length} active
-              users
-            </p>
+            <div className="text-2xl font-bold">{totalUsers}</div>
+            <p className="text-muted-foreground text-xs">Registered accounts</p>
           </CardContent>
         </Card>
         <Card>
@@ -85,21 +239,18 @@ export default async function AdminDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{pendingReviews}</div>
             <p className="text-muted-foreground text-xs">
-              {reviews.filter((review) => review.status === "approved").length}{" "}
-              approved reviews
+              {approvedReviews} approved reviews
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Reviews</CardTitle>
             <Eye className="text-primary h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">85.4K</div>
-            <p className="text-muted-foreground text-xs">
-              +12.5% from last month
-            </p>
+            <div className="text-2xl font-bold">{totalReviews}</div>
+            <p className="text-muted-foreground text-xs">Live review records</p>
           </CardContent>
         </Card>
       </div>
@@ -151,7 +302,7 @@ export default async function AdminDashboard() {
                 <div className="flex-1">
                   <h3 className="font-medium">Manage Users</h3>
                   <p className="text-muted-foreground text-sm">
-                    {users.length} users total
+                    {totalUsers} users total
                   </p>
                 </div>
                 <Link href="/admin/users">
@@ -187,38 +338,19 @@ export default async function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <Clock className="text-muted-foreground h-5 w-5" />
-                <div>
-                  <p className="text-sm font-medium">New movie added</p>
-                  <p className="text-muted-foreground text-xs">
-                    10 minutes ago
-                  </p>
+              {recentActivity.map((activity) => (
+                <div
+                  key={`${activity.label}-${activity.time}`}
+                  className="flex items-center gap-4">
+                  <Clock className="text-muted-foreground h-5 w-5" />
+                  <div>
+                    <p className="text-sm font-medium">{activity.label}</p>
+                    <p className="text-muted-foreground text-xs">
+                      {activity.time}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Clock className="text-muted-foreground h-5 w-5" />
-                <div>
-                  <p className="text-sm font-medium">User role updated</p>
-                  <p className="text-muted-foreground text-xs">
-                    30 minutes ago
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Clock className="text-muted-foreground h-5 w-5" />
-                <div>
-                  <p className="text-sm font-medium">New review submitted</p>
-                  <p className="text-muted-foreground text-xs">1 hour ago</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Clock className="text-muted-foreground h-5 w-5" />
-                <div>
-                  <p className="text-sm font-medium">User registered</p>
-                  <p className="text-muted-foreground text-xs">2 hours ago</p>
-                </div>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -242,36 +374,36 @@ export default async function AdminDashboard() {
               </p>
             </div>
             <div className="divide-y">
-              {users.slice(0, 5).map((user) => (
-                <div
-                  key={user.id}
-                  className="flex items-center justify-between p-4">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src={user.avatar} alt={user.name} />
-                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-medium">{user.name}</p>
-                      <p className="text-muted-foreground text-xs">
-                        {user.email}
-                      </p>
+              {recentUsers.length > 0 ? (
+                recentUsers.map((user) => (
+                  <div
+                    key={user.id}
+                    className="flex items-center justify-between p-4">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-9 w-9">
+                        <AvatarImage src={user.avatar} alt={user.name} />
+                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-sm font-medium">{user.name}</p>
+                        <p className="text-muted-foreground text-xs">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`rounded-full px-2 py-1 text-xs ${getUserRoleClass(user.role)}`}>
+                        {user.role}
+                      </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`rounded-full px-2 py-1 text-xs ${
-                        user.role === "admin"
-                          ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-                          : user.role === "moderator"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                          : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
-                      }`}>
-                      {user.role}
-                    </span>
-                  </div>
+                ))
+              ) : (
+                <div className="p-4 text-sm text-muted-foreground">
+                  No user records found.
                 </div>
-              ))}
+              )}
             </div>
             <div className="p-4 text-right">
               <Link
@@ -291,9 +423,8 @@ export default async function AdminDashboard() {
               </p>
             </div>
             <div className="divide-y">
-              {reviews.slice(0, 5).map((review) => {
-                const movie = movies.find((m) => m.id === review.movieId);
-                return (
+              {recentReviews.length > 0 ? (
+                recentReviews.map((review) => (
                   <div key={review.id} className="p-4">
                     <div className="mb-2 flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -311,18 +442,17 @@ export default async function AdminDashboard() {
                         </span>
                       </div>
                       <span
-                        className={`rounded-full px-2 py-1 text-xs ${
-                          review.status === "approved"
-                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                            : review.status === "pending"
-                            ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-                            : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                        }`}>
+                        className={`rounded-full px-2 py-1 text-xs ${getReviewStatusClass(review.status)}`}>
                         {review.status}
                       </span>
                     </div>
                     <p className="mb-1 text-sm">
-                      <span className="font-medium">Movie:</span> {movie?.title}
+                      <span className="font-medium">Movie:</span>{" "}
+                      <Link
+                        href={`/admin/movies/${review.movieId}`}
+                        className="text-primary hover:underline">
+                        {review.movieTitle}
+                      </Link>
                     </p>
                     <p className="mb-2 text-sm">
                       <span className="font-medium">Rating:</span>{" "}
@@ -332,8 +462,12 @@ export default async function AdminDashboard() {
                       {review.comment}
                     </p>
                   </div>
-                );
-              })}
+                ))
+              ) : (
+                <div className="p-4 text-sm text-muted-foreground">
+                  No review records found.
+                </div>
+              )}
             </div>
             <div className="p-4 text-right">
               <Link

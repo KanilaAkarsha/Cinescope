@@ -16,8 +16,7 @@ import {
 import { getAllGenres, getAllMovieStatus, getAllYears } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { updateMovie } from "@/actions/movies";
-import { on } from "events";
-import { Calendar22 } from "@/components/date";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function UpdateMovieForm({ showDialog, movie }) {
   const router = useRouter();
@@ -26,8 +25,8 @@ export default function UpdateMovieForm({ showDialog, movie }) {
     title: movie?.title || "",
     year: movie?.year || null,
     director: movie?.directors?.at(0) || "",
-    cast: movie?.cast?.at(0) || "",
-    genre: movie?.genres?.at(0) || null,
+    cast: movie?.cast?.join(", ") || "",
+    genres: movie?.genres || [],
     rating: movie?.imdb?.rating || "",
     runtime: movie?.runtime || "",
     overview: movie?.plot || "",
@@ -40,6 +39,15 @@ export default function UpdateMovieForm({ showDialog, movie }) {
   const genres = getAllGenres();
   const statuses = getAllMovieStatus();
 
+  const toggleGenre = (genre) => {
+    setFormState((prevState) => ({
+      ...prevState,
+      genres: prevState.genres.includes(genre)
+        ? prevState.genres.filter((currentGenre) => currentGenre !== genre)
+        : [...prevState.genres, genre],
+    }));
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormState((prevState) => ({
@@ -51,12 +59,16 @@ export default function UpdateMovieForm({ showDialog, movie }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const cast = (formState.cast || "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean);
     const movieDoc = {
       title: formData.get("title"),
       year: formData.get("year"),
       directors: [formData.get("director")],
-      cast: [formData.get("cast")],
-      genres: [formData.get("genre")],
+      cast,
+      genres: formState.genres,
       imdb: { rating: Number(formData.get("rating")) },
       runtime: formData.get("runtime"),
       plot: formData.get("overview"),
@@ -83,8 +95,8 @@ export default function UpdateMovieForm({ showDialog, movie }) {
   };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      <div className="grid grid-cols-2 gap-4">
+    <form className="space-y-6 scroll-m-20" onSubmit={handleSubmit}>
+      <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="title">
             Title<span className="text-red-500">*</span>
@@ -126,7 +138,7 @@ export default function UpdateMovieForm({ showDialog, movie }) {
           </Select>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="director">Director</Label>
           <Input
@@ -136,43 +148,6 @@ export default function UpdateMovieForm({ showDialog, movie }) {
             onChange={handleChange}
             placeholder="Director Name"
           />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="cast">Cast</Label>
-          <Input
-            id="cast"
-            name="cast"
-            value={formState?.cast}
-            onChange={handleChange}
-            placeholder="Cast Name"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="genre">
-            Genre<span className="text-red-500">*</span>
-          </Label>
-          <Select
-            id="genre"
-            name="genre"
-            value={formState?.genre}
-            onValueChange={(value) =>
-              setFormState((prevState) => ({
-                ...prevState,
-                genre: value,
-              }))
-            }
-            required>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select Genre" />
-            </SelectTrigger>
-            <SelectContent>
-              {genres.map((genre, index) => (
-                <SelectItem key={`${genre}-${index}`} value={genre}>
-                  {genre}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
         <div className="space-y-2">
           <Label htmlFor="rating">
@@ -209,20 +184,58 @@ export default function UpdateMovieForm({ showDialog, movie }) {
           />
         </div>
       </div>
+
       <div className="space-y-2">
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor="genre">
+            Genre<span className="text-red-500">*</span>
+          </Label>
+          <div className="grid max-h-48 gap-2 overflow-y-auto rounded-md border p-3 md:grid-cols-2 lg:grid-cols-3">
+            {genres.map((genre, index) => (
+              <label
+                key={`${genre}-${index}`}
+                className="flex items-center gap-2 text-sm">
+                <Checkbox
+                  checked={formState.genres.includes(genre)}
+                  onCheckedChange={() => toggleGenre(genre)}
+                />
+                <span>{genre}</span>
+              </label>
+            ))}
+          </div>
+          <p className="text-muted-foreground text-xs">
+            Select one or more genres.
+          </p>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="cast">Cast</Label>
+          <Input
+            id="cast"
+            name="cast"
+            value={formState?.cast}
+            onChange={handleChange}
+            placeholder="Cast names separated by commas"
+          />
+          <p className="text-muted-foreground text-xs">
+            Example: Leonardo DiCaprio, Joseph Gordon-Levitt, Elliot Page
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-2 md:col-span-2">
         <Label htmlFor="overview">Overview</Label>
         <Textarea
           id="overview"
           name="overview"
-          placeholder="Movie discription"
-          className="h-[6.25rem]"
+          placeholder="Movie description"
+          className="h-25"
           value={formState?.overview}
           onChange={handleChange}
           required
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="poster">
             Poster URL<span className="text-red-500">*</span>
@@ -251,7 +264,7 @@ export default function UpdateMovieForm({ showDialog, movie }) {
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 md:col-span-2">
           <Label htmlFor="status">
             Status<span className="text-red-500">*</span>
           </Label>
@@ -279,19 +292,19 @@ export default function UpdateMovieForm({ showDialog, movie }) {
           </Select>
         </div>
       </div>
-      <DialogFooter>
+      <DialogFooter className="gap-2 sm:gap-0">
         <Button
           type="reset"
           variant="outline"
-          className="min-w-[6.375rem] "
+          className="min-w-25.5"
           disabled={isSubmitting}
           onClick={() => showDialog(false)}>
           Cancel
         </Button>
         <Button
           type="submit"
-          className="min-w-[6.375rem]"
-          disabled={isSubmitting}>
+          className="min-w-25.5"
+          disabled={isSubmitting || formState.genres.length === 0}>
           {isSubmitting ? "Updating..." : "Update Movie"}
         </Button>
       </DialogFooter>

@@ -1,6 +1,7 @@
 "use client";
+
 import { useState } from "react";
-import { PlusIcon } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,25 +11,28 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import AddMovieForm from "./add-movie-form";
-export default function AddMovieDialog() {
-  const [showAddMovie, setShowAddMovie] = useState(false);
+import AddUserForm from "./add-user-form";
+
+export default function AddUserDialog() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Dialog open={showAddMovie} onOpenChange={setShowAddMovie}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <PlusIcon className="mr-2 w-4 h-4" />
-          Add Movie
+          <UserPlus className="mr-2 h-4 w-4" />
+          Add User
         </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-150">
         <DialogHeader>
-          <DialogTitle>Add New Movie</DialogTitle>
+          <DialogTitle>Add New User</DialogTitle>
           <DialogDescription>
-            Fill in the details to add a new movie to your catalog.
+            Create a real login account, assign a role, and set the initial
+            password.
           </DialogDescription>
         </DialogHeader>
-        <AddMovieForm showDialog={setShowAddMovie} />
+        <AddUserForm showDialog={setOpen} />
       </DialogContent>
     </Dialog>
   );

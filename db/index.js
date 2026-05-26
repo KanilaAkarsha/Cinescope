@@ -1,7 +1,7 @@
-import {MongoClient} from 'mongodb';
+import { MongoClient } from "mongodb";
 
 const options = {};
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017";
+const MONGODB_URI = process.env.MONGODB_URI;
 
 const client = new MongoClient(MONGODB_URI, options);
 

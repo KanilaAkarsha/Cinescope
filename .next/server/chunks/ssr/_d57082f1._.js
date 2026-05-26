@@ -702,7 +702,6 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 ;
 ;
 ;
-;
 function MovieCard({ movie }) {
     const [posterUrl, setPosterUrl] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(movie.poster);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -720,15 +719,16 @@ function MovieCard({ movie }) {
                         alt: movie.title,
                         className: "h-full w-full object-cover transition-transform duration-300 hover:scale-105",
                         priority: true,
+                        unoptimized: true,
                         onError: ()=>setPosterUrl("/placeholder.svg")
                     }, void 0, false, {
                         fileName: "[project]/components/home/movie-card.jsx",
-                        lineNumber: 19,
-                        columnNumber: 13
+                        lineNumber: 17,
+                        columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/home/movie-card.jsx",
-                    lineNumber: 18,
+                    lineNumber: 16,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -739,8 +739,8 @@ function MovieCard({ movie }) {
                             children: movie.title
                         }, void 0, false, {
                             fileName: "[project]/components/home/movie-card.jsx",
-                            lineNumber: 23,
-                            columnNumber: 13
+                            lineNumber: 29,
+                            columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                             className: "text-muted-foreground text-sm",
@@ -752,8 +752,8 @@ function MovieCard({ movie }) {
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/home/movie-card.jsx",
-                            lineNumber: 24,
-                            columnNumber: 13
+                            lineNumber: 30,
+                            columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "flex flex-wrap gap-1 mt-2",
@@ -764,8 +764,8 @@ function MovieCard({ movie }) {
                                         children: genre
                                     }, `${genre}-${index}`, false, {
                                         fileName: "[project]/components/home/movie-card.jsx",
-                                        lineNumber: 27,
-                                        columnNumber: 21
+                                        lineNumber: 35,
+                                        columnNumber: 15
                                     }, this)),
                                 movie?.genres?.length > 2 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
                                     children: [
@@ -774,19 +774,19 @@ function MovieCard({ movie }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/home/movie-card.jsx",
-                                    lineNumber: 30,
-                                    columnNumber: 48
+                                    lineNumber: 44,
+                                    columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/home/movie-card.jsx",
-                            lineNumber: 25,
-                            columnNumber: 13
+                            lineNumber: 33,
+                            columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/home/movie-card.jsx",
-                    lineNumber: 22,
+                    lineNumber: 28,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardFooter"], {
@@ -802,13 +802,13 @@ function MovieCard({ movie }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/home/movie-card.jsx",
-                                lineNumber: 35,
-                                columnNumber: 21
+                                lineNumber: 50,
+                                columnNumber: 13
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/home/movie-card.jsx",
-                            lineNumber: 34,
-                            columnNumber: 17
+                            lineNumber: 49,
+                            columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
                             variant: "Ghost",
@@ -817,24 +817,24 @@ function MovieCard({ movie }) {
                             children: "Details"
                         }, void 0, false, {
                             fileName: "[project]/components/home/movie-card.jsx",
-                            lineNumber: 37,
-                            columnNumber: 17
+                            lineNumber: 54,
+                            columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/home/movie-card.jsx",
-                    lineNumber: 33,
+                    lineNumber: 48,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/home/movie-card.jsx",
-            lineNumber: 17,
-            columnNumber: 5
+            lineNumber: 15,
+            columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/home/movie-card.jsx",
-        lineNumber: 16,
+        lineNumber: 14,
         columnNumber: 5
     }, this);
 }
@@ -846,8 +846,8 @@ function MovieCardSkeleton() {
                 className: "aspect-2/3 w-full"
             }, void 0, false, {
                 fileName: "[project]/components/home/movie-card.jsx",
-                lineNumber: 47,
-                columnNumber: 9
+                lineNumber: 66,
+                columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "p-4",
@@ -859,20 +859,20 @@ function MovieCardSkeleton() {
                                 className: "h-4 w-3/4"
                             }, void 0, false, {
                                 fileName: "[project]/components/home/movie-card.jsx",
-                                lineNumber: 50,
-                                columnNumber: 13
+                                lineNumber: 69,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$skeleton$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
                                 className: "h-4 w-1/2"
                             }, void 0, false, {
                                 fileName: "[project]/components/home/movie-card.jsx",
-                                lineNumber: 51,
-                                columnNumber: 13
+                                lineNumber: 70,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/home/movie-card.jsx",
-                        lineNumber: 49,
+                        lineNumber: 68,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -882,20 +882,20 @@ function MovieCardSkeleton() {
                                 className: "h-5 w-1/5"
                             }, void 0, false, {
                                 fileName: "[project]/components/home/movie-card.jsx",
-                                lineNumber: 54,
-                                columnNumber: 13
+                                lineNumber: 73,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$skeleton$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
                                 className: "h-5 w-1/5"
                             }, void 0, false, {
                                 fileName: "[project]/components/home/movie-card.jsx",
-                                lineNumber: 55,
-                                columnNumber: 13
+                                lineNumber: 74,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/home/movie-card.jsx",
-                        lineNumber: 53,
+                        lineNumber: 72,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -905,33 +905,33 @@ function MovieCardSkeleton() {
                                 className: "h-6 w-16 rounded-full"
                             }, void 0, false, {
                                 fileName: "[project]/components/home/movie-card.jsx",
-                                lineNumber: 58,
-                                columnNumber: 13
+                                lineNumber: 77,
+                                columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$skeleton$2e$jsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Skeleton"], {
                                 className: "h-6 w-16 rounded-full"
                             }, void 0, false, {
                                 fileName: "[project]/components/home/movie-card.jsx",
-                                lineNumber: 59,
-                                columnNumber: 13
+                                lineNumber: 78,
+                                columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/home/movie-card.jsx",
-                        lineNumber: 57,
+                        lineNumber: 76,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/home/movie-card.jsx",
-                lineNumber: 48,
-                columnNumber: 9
+                lineNumber: 67,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/home/movie-card.jsx",
-        lineNumber: 46,
-        columnNumber: 12
+        lineNumber: 65,
+        columnNumber: 5
     }, this);
 }
 }),

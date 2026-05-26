@@ -15,7 +15,7 @@ __turbopack_context__.s([
 var __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/mongodb [external] (mongodb, cjs)");
 ;
 const options = {};
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017";
+const MONGODB_URI = process.env.MONGODB_URI;
 const client = new __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["MongoClient"](MONGODB_URI, options);
 const db = client.db("sample_mflix"); // Access the database instance
 }),
@@ -45,11 +45,8 @@ const db = client.db("sample_mflix"); // Access the database instance
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$server$2d$reference$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/webpack/loaders/next-flight-loader/server-reference.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$app$2d$render$2f$encryption$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/app-render/encryption.js [app-rsc] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/db/index.js [app-rsc] (ecmascript)");
-// import { MOVIES } from "@/lib/data";
 var __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/mongodb [external] (mongodb, cjs)");
-var __TURBOPACK__url__external__node$3a$test__ = __turbopack_context__.x("node:test", ()=>require("node:test"), true);
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$webpack$2f$loaders$2f$next$2d$flight$2d$loader$2f$action$2d$validate$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/webpack/loaders/next-flight-loader/action-validate.js [app-rsc] (ecmascript)");
-;
 ;
 ;
 ;
@@ -58,7 +55,7 @@ const getMovies = async ()=>{
     console.log("response");
     try {
         // Fetch movies from the API
-        const movieResponse = await fetch(`${("TURBOPACK compile-time value", "https://cinescope-nxb9.onrender.com")}/api/v1/movies`, {
+        const movieResponse = await fetch(`${("TURBOPACK compile-time value", "http://localhost:3000")}/api/v1/movies`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -221,6 +218,7 @@ const createReviewForMovie = async (movieId, review)=>{
     try {
         const result = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("reviews").insertOne({
             movieId: __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["ObjectId"].createFromHexString(movieId),
+            createdAt: new Date(),
             ...review
         });
         if (result.acknowledged) {
@@ -241,6 +239,9 @@ const getReviewsForMovie = async (movieId)=>{
     try {
         const reviews = await __TURBOPACK__imported__module__$5b$project$5d2f$db$2f$index$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].collection("reviews").find({
             movieId: __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["ObjectId"].createFromHexString(movieId)
+        }).sort({
+            createdAt: -1,
+            _id: -1
         }).toArray();
         console.log("reviews", reviews);
         if (reviews && reviews.length > 0) {

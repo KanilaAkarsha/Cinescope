@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import HeaderNav from "@/components/header-nav";
 import {
   Card,
   CardContent,
@@ -7,25 +8,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Logo } from "@/components/logo";
-import Link from "next/link";
-import { Github, Mail, Twitter } from "lucide-react";
+import { Link2, Mail, MessageCircleMore } from "lucide-react";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
-export default function AboutPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AboutPage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const isAuthenticated = !!session;
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
-        <div className="container flex h-14 max-w-(--breakpoint-2xl) items-center">
-          <div className="mr-4 hidden md:flex">
-            <Link className="mr-6 flex items-center space-x-2" href="/">
-              <Logo />
-              <span className="hidden font-bold sm:inline-block">
-                CineScope
-              </span>
-            </Link>
-          </div>
-        </div>
-      </header>
-
+      <HeaderNav isAuthenticated={isAuthenticated} />
       <div className="container py-8">
         <div className="flex flex-col items-center gap-8 text-center">
           <div className="rounded-full bg-primary/10 p-4">
@@ -35,7 +32,7 @@ export default function AboutPage() {
             <h1 className="text-3xl font-bold sm:text-4xl">
               About <span className="text-primary">CineScope</span>
             </h1>
-            <p className="mx-auto max-w-[700px] text-muted-foreground">
+            <p className="mx-auto max-w-175 text-muted-foreground">
               Your ultimate destination for discovering and managing movies
             </p>
           </div>
@@ -86,11 +83,11 @@ export default function AboutPage() {
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Twitter className="h-4 w-4" />
+                  <MessageCircleMore className="h-4 w-4" />
                   <span className="text-muted-foreground">@cinescope</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Github className="h-4 w-4" />
+                  <Link2 className="h-4 w-4" />
                   <span className="text-muted-foreground">
                     github.com/cinescope
                   </span>

@@ -5,35 +5,52 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getAllGenres, movies } from "@/lib/data";
+import HeaderNav from "@/components/header-nav";
+import { getMovies } from "@/actions/movies";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import Link from "next/link";
-import { Logo } from "@/components/logo";
 
-export default function GenresPage() {
-  const genres = getAllGenres();
+export const dynamic = "force-dynamic";
 
-  // Count movies per genre
-  const genreCounts = genres.map((genre) => ({
-    name: genre,
-    count: movies.filter((movie) => movie.genre.includes(genre)).length,
-    movies: movies.filter((movie) => movie.genre.includes(genre)).slice(0, 4),
+export default async function GenresPage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const isAuthenticated = !!session;
+
+  const moviesData = (await getMovies()) || [];
+
+  const normalizedMovies = moviesData.map((movie) => ({
+    ...movie,
+    _id: movie._id?.toString?.() ?? movie._id,
   }));
+
+  const genreMap = new Map();
+
+  normalizedMovies.forEach((movie) => {
+    const movieGenres = movie.genres ?? movie.genre ?? [];
+
+    movieGenres.forEach((genre) => {
+      if (!genreMap.has(genre)) {
+        genreMap.set(genre, []);
+      }
+
+      genreMap.get(genre).push(movie);
+    });
+  });
+
+  const genreCounts = Array.from(genreMap.entries())
+    .map(([name, genreMovies]) => ({
+      name,
+      count: genreMovies.length,
+      movies: genreMovies.slice(0, 4),
+    }))
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
-        <div className="container flex h-14 max-w-(--breakpoint-2xl) items-center">
-          <div className="mr-4 hidden md:flex">
-            <Link className="mr-6 flex items-center space-x-2" href="/">
-              <Logo />
-              <span className="hidden font-bold sm:inline-block">
-                CineScope
-              </span>
-            </Link>
-          </div>
-        </div>
-      </header>
-
+      <HeaderNav isAuthenticated={isAuthenticated} />
       <div className="container py-8">
         <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">
           <div className="flex-1 space-y-4">
@@ -57,8 +74,8 @@ export default function GenresPage() {
                 <div className="grid grid-cols-2 gap-2">
                   {genre.movies.map((movie) => (
                     <Link
-                      key={movie.id}
-                      href={`/movies/${movie.id}`}
+                      key={movie._id}
+                      href={`/movies/${movie._id}`}
                       className="overflow-hidden rounded-md">
                       <img
                         src={movie.poster || "/placeholder.svg"}
