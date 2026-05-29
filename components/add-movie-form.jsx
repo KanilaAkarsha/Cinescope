@@ -133,7 +133,7 @@ export default function AddMovieForm({ showDialog }) {
 
   return (
     <form
-      className="space-y-4 max-h-[70vh] overflow-auto pr-4"
+      className="space-y-4 max-h-[70vh] overflow-auto pr-5"
       onSubmit={handleSubmit}>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">

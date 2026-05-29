@@ -47,6 +47,42 @@ const parseDate = (value) => {
   return Number.isNaN(date.getTime()) ? null : date;
 };
 
+const parseObjectIdDate = (value) => {
+  const id =
+    typeof value === "string"
+      ? value
+      : value?._id?.toString?.() || value?.id?.toString?.() || "";
+
+  if (!/^[a-f\d]{24}$/i.test(id)) {
+    return null;
+  }
+
+  return new Date(parseInt(id.slice(0, 8), 16) * 1000);
+};
+
+const getActivityDate = (...values) => {
+  for (const value of values) {
+    const date = parseDate(value) || parseObjectIdDate(value);
+    if (date) {
+      return date;
+    }
+  }
+
+  return null;
+};
+
+const getMovieViews = (movie) => Number(movie?.views || movie?.imdb?.votes || 0);
+
+const getPercentChange = (current, previous) => {
+  if (previous > 0) {
+    return ((current - previous) / previous) * 100;
+  }
+
+  return current > 0 ? 100 : 0;
+};
+
+const normalizeStatus = (status) => String(status || "").toLowerCase();
+
 const normalizeUserForDashboard = (user) => ({
   id: user?.id || user?._id?.toString?.() || "",
   name: user?.name || "Unknown User",
@@ -54,7 +90,7 @@ const normalizeUserForDashboard = (user) => ({
   role: user?.role || "user",
   status: user?.status || "active",
   avatar: user?.avatar || user?.image || "/placeholder.svg?height=40&width=40",
-  createdAt: user?.createdAt || new Date().toISOString(),
+  createdAt: user?.createdAt || "",
 });
 
 const normalizeReviewForDashboard = (review, movieTitleMap) => {
@@ -70,7 +106,7 @@ const normalizeReviewForDashboard = (review, movieTitleMap) => {
     rating: Number(review?.rating || 0),
     comment: review?.comment || "",
     status: review?.status || "pending",
-    createdAt: review?.createdAt || new Date().toISOString(),
+    createdAt: review?.createdAt || "",
   };
 };
 
@@ -158,7 +194,7 @@ export default async function AdminDashboard() {
   ).length;
 
   const totalViews = Array.isArray(movies)
-    ? movies.reduce((sum, movie) => sum + Number(movie?.imdb?.votes || 0), 0)
+    ? movies.reduce((sum, movie) => sum + getMovieViews(movie), 0)
     : 0;
 
   const now = new Date();
@@ -168,22 +204,20 @@ export default async function AdminDashboard() {
 
   if (Array.isArray(movies)) {
     for (const movie of movies) {
-      const releaseDate =
-        parseDate(movie?.released) || parseDate(movie?.releaseDate);
-      if (!releaseDate) continue;
-      monthViews[releaseDate.getMonth()] += Number(movie?.imdb?.votes || 0);
+      const activityDate =
+        getActivityDate(movie.createdAt, movie._id, movie.id) ||
+        parseDate(movie?.released) ||
+        parseDate(movie?.releaseDate);
+
+      if (!activityDate) continue;
+
+      monthViews[activityDate.getMonth()] += getMovieViews(movie);
     }
   }
 
   const currentViews = monthViews[thisMonth] || 0;
   const previousViews = monthViews[lastMonth] || 0;
-  let viewsDelta = 0;
-
-  if (previousViews) {
-    viewsDelta = ((currentViews - previousViews) / previousViews) * 100;
-  } else if (currentViews > 0) {
-    viewsDelta = 100;
-  }
+  const viewsDelta = getPercentChange(currentViews, previousViews);
 
   // Build recent activity from real data sources: movies, users, reviews
   const timeAgo = (date) => {
@@ -201,36 +235,42 @@ export default async function AdminDashboard() {
   };
 
   const movieActivities = Array.isArray(movies)
-    ? movies.map((m) => ({
-        type: "movie",
-        title: m.title || "Untitled",
-        actor: "",
-        date: parseDate(m.createdAt) || parseDate(m.releaseDate) || new Date(),
-        description: "New movie added",
-        href: "/admin/movies",
-      }))
+    ? movies
+        .map((m) => ({
+          type: "movie",
+          title: m.title || "Untitled",
+          actor: "",
+          date: getActivityDate(m.createdAt, m._id, m.id),
+          description: "New movie added",
+          href: "/admin/movies",
+        }))
+        .filter((activity) => activity.date)
     : [];
 
   const userActivities = Array.isArray(users)
-    ? users.map((u) => ({
-        type: "user",
-        title: u.name,
-        actor: u.email,
-        date: parseDate(u.createdAt) || new Date(),
-        description: "User registered",
-        href: "/admin/users",
-      }))
+    ? users
+        .map((u) => ({
+          type: "user",
+          title: u.name,
+          actor: u.email,
+          date: getActivityDate(u.createdAt, u._id, u.id),
+          description: "User registered",
+          href: "/admin/users",
+        }))
+        .filter((activity) => activity.date)
     : [];
 
   const reviewActivities = Array.isArray(reviews)
-    ? reviews.map((r) => ({
-        type: "review",
-        title: r.userName,
-        actor: r.movieTitle,
-        date: parseDate(r.createdAt) || new Date(),
-        description: "New review submitted",
-        href: "/admin/reviews",
-      }))
+    ? reviews
+        .map((r) => ({
+          type: "review",
+          title: r.userName,
+          actor: r.movieTitle,
+          date: getActivityDate(r.createdAt, r._id, r.id),
+          description: "New review submitted",
+          href: "/admin/reviews",
+        }))
+        .filter((activity) => activity.date)
     : [];
 
   const recentActivity = [
@@ -267,7 +307,11 @@ export default async function AdminDashboard() {
           <CardContent>
             <div className="text-2xl font-bold">{movies.length}</div>
             <p className="text-muted-foreground text-xs">
-              {movies.filter((movie) => movie.status === "published").length}{" "}
+              {
+                movies.filter(
+                  (movie) => normalizeStatus(movie.status) === "published",
+                ).length
+              }{" "}
               published
             </p>
           </CardContent>

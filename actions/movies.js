@@ -84,7 +84,12 @@ export const searchMovies = async (query) => {
 
 export const createMovie = async (movie) => {
   try {
-    const result = await db.collection("movies_n").insertOne(movie);
+    const now = new Date().toISOString();
+    const result = await db.collection("movies_n").insertOne({
+      ...movie,
+      createdAt: movie?.createdAt || now,
+      updatedAt: movie?.updatedAt || now,
+    });
 
     if (result.acknowledged) {
       console.log(`A movie was inserted with the _id: ${result.insertedId}`);
@@ -105,7 +110,7 @@ export const updateMovie = async (movieDoc, movieId) => {
   try {
     const result = await db.collection("movies_n").updateOne(
       { _id: ObjectId.createFromHexString(movieId) }, // Filter to find the movie by its ID
-      { $set: movieDoc },
+      { $set: { ...movieDoc, updatedAt: new Date().toISOString() } },
       { upsert: true }, // Update the movie with the new data
     );
 

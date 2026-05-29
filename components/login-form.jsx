@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { use } from "react";
 import { EMAIL_REGEX } from "@/lib/constants";
 
 const DEFAULT_ERROR = {
@@ -27,6 +26,7 @@ export default function LoginForm() {
   const router = useRouter();
   const [error, setError] = useState(DEFAULT_ERROR);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const validateForm = ({ email, password }) => {
     console.log("Email:", email);
@@ -71,7 +71,7 @@ export default function LoginForm() {
           {
             onSuccess: (ctx) => {
               console.log("Login successful", ctx);
-              router.push("/admin");
+              router.push("/");
             },
             onError: (ctx) => {
               setError({
@@ -93,6 +93,36 @@ export default function LoginForm() {
       console.log("validation failed. Fix errors and try again.");
     }
   };
+
+  const handleGoogleLogin = async () => {
+    setError(DEFAULT_ERROR);
+    setIsGoogleLoading(true);
+
+    try {
+      await signIn.social(
+        {
+          provider: "google",
+          callbackURL: "/",
+        },
+        {
+          onError: (ctx) => {
+            setError({
+              error: true,
+              message: ctx.error.message || "Google login failed",
+            });
+            setIsGoogleLoading(false);
+          },
+        },
+      );
+    } catch {
+      setError({
+        error: true,
+        message: "Google login failed. Please try again later.",
+      });
+      setIsGoogleLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col">
       <Card>
@@ -145,7 +175,13 @@ export default function LoginForm() {
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading && <Loader2 className="animate-spin" />} Login
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  disabled={isLoading || isGoogleLoading}
+                  onClick={handleGoogleLogin}>
+                  {isGoogleLoading && <Loader2 className="animate-spin" />}
                   Login with Google
                 </Button>
               </div>

@@ -101,7 +101,7 @@ export default function SignupForm() {
           {
             onSuccess: (ctx) => {
               console.log("Login successful", ctx);
-              router.push("/admin");
+              router.push("/");
             },
             onError: (ctx) => {
               setError({

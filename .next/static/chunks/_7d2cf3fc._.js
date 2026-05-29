@@ -404,7 +404,6 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
-;
 const DEFAULT_ERROR = {
     error: false,
     message: ""
@@ -414,6 +413,7 @@ function LoginForm() {
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(DEFAULT_ERROR);
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [isGoogleLoading, setIsGoogleLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const validateForm = (param)=>{
         let { email, password } = param;
         console.log("Email:", email);
@@ -459,7 +459,7 @@ function LoginForm() {
                 }, {
                     onSuccess: (ctx)=>{
                         console.log("Login successful", ctx);
-                        router.push("/admin");
+                        router.push("/");
                     },
                     onError: (ctx)=>{
                         setError({
@@ -480,6 +480,30 @@ function LoginForm() {
             console.log("validation failed. Fix errors and try again.");
         }
     };
+    const handleGoogleLogin = async ()=>{
+        setError(DEFAULT_ERROR);
+        setIsGoogleLoading(true);
+        try {
+            await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$auth$2d$client$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["signIn"].social({
+                provider: "google",
+                callbackURL: "/"
+            }, {
+                onError: (ctx)=>{
+                    setError({
+                        error: true,
+                        message: ctx.error.message || "Google login failed"
+                    });
+                    setIsGoogleLoading(false);
+                }
+            });
+        } catch (e) {
+            setError({
+                error: true,
+                message: "Google login failed. Please try again later."
+            });
+            setIsGoogleLoading(false);
+        }
+    };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "flex flex-col",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
@@ -490,20 +514,20 @@ function LoginForm() {
                             children: "Login to Your Account"
                         }, void 0, false, {
                             fileName: "[project]/components/login-form.jsx",
-                            lineNumber: 100,
+                            lineNumber: 130,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardDescription"], {
                             children: "Enter your email below to login to your account"
                         }, void 0, false, {
                             fileName: "[project]/components/login-form.jsx",
-                            lineNumber: 101,
+                            lineNumber: 131,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/login-form.jsx",
-                    lineNumber: 99,
+                    lineNumber: 129,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -522,7 +546,7 @@ function LoginForm() {
                                                 children: "Email"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/login-form.jsx",
-                                                lineNumber: 109,
+                                                lineNumber: 139,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -534,13 +558,13 @@ function LoginForm() {
                                                 required: true
                                             }, void 0, false, {
                                                 fileName: "[project]/components/login-form.jsx",
-                                                lineNumber: 110,
+                                                lineNumber: 140,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/login-form.jsx",
-                                        lineNumber: 108,
+                                        lineNumber: 138,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -554,7 +578,7 @@ function LoginForm() {
                                                         children: "Password"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/login-form.jsx",
-                                                        lineNumber: 121,
+                                                        lineNumber: 151,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -563,13 +587,13 @@ function LoginForm() {
                                                         children: "Forgot your password?"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/login-form.jsx",
-                                                        lineNumber: 122,
+                                                        lineNumber: 152,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/login-form.jsx",
-                                                lineNumber: 120,
+                                                lineNumber: 150,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -581,13 +605,13 @@ function LoginForm() {
                                                 required: true
                                             }, void 0, false, {
                                                 fileName: "[project]/components/login-form.jsx",
-                                                lineNumber: 128,
+                                                lineNumber: 158,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/login-form.jsx",
-                                        lineNumber: 119,
+                                        lineNumber: 149,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -597,12 +621,12 @@ function LoginForm() {
                                             children: error.message
                                         }, void 0, false, {
                                             fileName: "[project]/components/login-form.jsx",
-                                            lineNumber: 139,
+                                            lineNumber: 169,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/login-form.jsx",
-                                        lineNumber: 137,
+                                        lineNumber: 167,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -617,35 +641,47 @@ function LoginForm() {
                                                         className: "animate-spin"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/login-form.jsx",
-                                                        lineNumber: 146,
+                                                        lineNumber: 176,
                                                         columnNumber: 33
                                                     }, this),
                                                     " Login"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/components/login-form.jsx",
-                                                lineNumber: 145,
+                                                lineNumber: 175,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$jsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                                                type: "button",
                                                 variant: "outline",
                                                 className: "w-full",
-                                                children: "Login with Google"
-                                            }, void 0, false, {
+                                                disabled: isLoading || isGoogleLoading,
+                                                onClick: handleGoogleLogin,
+                                                children: [
+                                                    isGoogleLoading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$loader$2d$circle$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Loader2$3e$__["Loader2"], {
+                                                        className: "animate-spin"
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/components/login-form.jsx",
+                                                        lineNumber: 184,
+                                                        columnNumber: 39
+                                                    }, this),
+                                                    "Login with Google"
+                                                ]
+                                            }, void 0, true, {
                                                 fileName: "[project]/components/login-form.jsx",
-                                                lineNumber: 148,
+                                                lineNumber: 178,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/login-form.jsx",
-                                        lineNumber: 144,
+                                        lineNumber: 174,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/login-form.jsx",
-                                lineNumber: 107,
+                                lineNumber: 137,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -659,39 +695,39 @@ function LoginForm() {
                                         children: "Sign up"
                                     }, void 0, false, {
                                         fileName: "[project]/components/login-form.jsx",
-                                        lineNumber: 155,
+                                        lineNumber: 191,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/login-form.jsx",
-                                lineNumber: 153,
+                                lineNumber: 189,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/login-form.jsx",
-                        lineNumber: 106,
+                        lineNumber: 136,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/login-form.jsx",
-                    lineNumber: 105,
+                    lineNumber: 135,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/login-form.jsx",
-            lineNumber: 98,
+            lineNumber: 128,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/login-form.jsx",
-        lineNumber: 97,
+        lineNumber: 127,
         columnNumber: 5
     }, this);
 }
-_s(LoginForm, "zWGNcV12zfFVVK4hTF8z7jAPnx0=", false, function() {
+_s(LoginForm, "PA1sXulWJFG6TSGTy64n9occrFc=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];

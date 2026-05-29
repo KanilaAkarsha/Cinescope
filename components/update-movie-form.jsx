@@ -192,7 +192,9 @@ export default function UpdateMovieForm({ showDialog, movie }) {
   };
 
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
+    <form
+      className="space-y-4 max-h-[70vh] overflow-auto pr-5"
+      onSubmit={handleSubmit}>
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="title">

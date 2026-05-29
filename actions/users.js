@@ -2,6 +2,8 @@
 import { db } from "@/db";
 import { ObjectId } from "mongodb";
 
+const serializeDate = (date) => date?.toISOString?.() || date || "";
+
 const normalizeUser = (user) => ({
   ...user,
   id: user?._id?.toString?.() || user?.id,
@@ -10,7 +12,8 @@ const normalizeUser = (user) => ({
   email: user?.email ?? "",
   role: user?.role ?? "user",
   status: user?.status ?? "active",
-  createdAt: user?.createdAt ?? new Date().toISOString(),
+  createdAt: serializeDate(user?.createdAt) || new Date().toISOString(),
+  updatedAt: serializeDate(user?.updatedAt),
 });
 
 const buildUserIdFilter = (userId) => {
@@ -97,7 +100,7 @@ export const getUserById = async (userId) => {
       return {
         success: true,
         message: "User fetched successfully",
-        data: user,
+        data: normalizeUser(user),
       };
     } else {
       return {
@@ -127,7 +130,12 @@ export const searchUsers = async (query) => {
 
 export const createUser = async (user) => {
   try {
-    const result = await db.collection("user").insertOne(user);
+    const now = new Date().toISOString();
+    const result = await db.collection("user").insertOne({
+      ...user,
+      createdAt: user?.createdAt || now,
+      updatedAt: user?.updatedAt || now,
+    });
 
     if (result.acknowledged) {
       console.log(`A user was inserted with the _id: ${result.insertedId}`);

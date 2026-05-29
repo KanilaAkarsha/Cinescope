@@ -10,14 +10,10 @@ import Link from "next/link";
 
 import { getMovies } from "@/actions/movies";
 import HeaderNav from "@/components/header-nav";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getCurrentUser } from "@/lib/current-user";
 
 export default async function GenresPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  const isAuthenticated = Boolean(session);
+  const { isAuthenticated, user } = await getCurrentUser();
   const movies = await getMovies(); // Fetch or pass movies data here
 
   if (!movies || movies.length === 0) {
@@ -50,7 +46,7 @@ export default async function GenresPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <HeaderNav isAuthenticated={isAuthenticated} />
+      <HeaderNav isAuthenticated={isAuthenticated} user={user} />
 
       <div className="container py-8">
         <div className="flex flex-col items-start gap-4 md:flex-row md:justify-between md:gap-8">

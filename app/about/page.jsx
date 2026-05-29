@@ -10,17 +10,14 @@ import { Logo } from "@/components/logo";
 import Link from "next/link";
 import { Github, Mail, Twitter } from "lucide-react";
 import HeaderNav from "@/components/header-nav";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getCurrentUser } from "@/lib/current-user";
 
 export default async function AboutPage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  const isAuthenticated = session ? true : false;
+  const { isAuthenticated, user } = await getCurrentUser();
+
   return (
     <div className="min-h-screen bg-background">
-      <HeaderNav isAuthenticated={isAuthenticated} />
+      <HeaderNav isAuthenticated={isAuthenticated} user={user} />
 
       <div className="container py-8">
         <div className="flex flex-col items-center gap-8 text-center">
