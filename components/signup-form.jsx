@@ -27,6 +27,7 @@ export default function SignupForm() {
   const router = useRouter();
   const [error, setError] = useState(DEFAULT_ERROR);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const validateForm = ({
     first_name,
@@ -123,6 +124,36 @@ export default function SignupForm() {
       console.log("validation failed. Fix errors and try again.");
     }
   };
+
+  const handleGoogleLogin = async () => {
+    setError(DEFAULT_ERROR);
+    setIsGoogleLoading(true);
+
+    try {
+      await signIn.social(
+        {
+          provider: "google",
+          callbackURL: "/",
+        },
+        {
+          onError: (ctx) => {
+            setError({
+              error: true,
+              message: ctx.error.message || "Google login failed",
+            });
+            setIsGoogleLoading(false);
+          },
+        },
+      );
+    } catch {
+      setError({
+        error: true,
+        message: "Google login failed. Please try again later.",
+      });
+      setIsGoogleLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col">
       <Card>
@@ -207,7 +238,13 @@ export default function SignupForm() {
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading && <Loader2 className="animate-spin" />} Sign Up
                 </Button>
-                <Button variant="outline" className="w-full">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  disabled={isLoading || isGoogleLoading}
+                  onClick={handleGoogleLogin}>
+                  {isGoogleLoading && <Loader2 className="animate-spin" />}
                   Sign Up with Google
                 </Button>
               </div>

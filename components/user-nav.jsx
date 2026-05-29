@@ -59,13 +59,13 @@ export default function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/admin/profile">
+          <Link href="/user/profile">
             <UserIcon className="mr-2 h-4 w-4" />
             <span>Profile</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href="/admin/settings">
+          <Link href="/user/settings">
             <SettingsIcon className="mr-2 h-4 w-4" />
             <span>Settings</span>
           </Link>

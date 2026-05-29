@@ -1,13 +1,20 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
   "/about/page": "app/about/page.js",
   "/admin/movies/page": "app/admin/movies/page.js",
   "/admin/page": "app/admin/page.js",
+  "/admin/profile/page": "app/admin/profile/page.js",
   "/admin/reviews/page": "app/admin/reviews/page.js",
+  "/admin/settings/page": "app/admin/settings/page.js",
   "/admin/users/page": "app/admin/users/page.js",
   "/api/admin/reviews/route": "app/api/admin/reviews/route.js",
   "/api/auth/[...all]/route": "app/api/auth/[...all]/route.js",
   "/api/v1/movies/route": "app/api/v1/movies/route.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/login/page": "app/login/page.js",
-  "/page": "app/page.js"
+  "/movies/[id]/page": "app/movies/[id]/page.js",
+  "/movies/page": "app/movies/page.js",
+  "/page": "app/page.js",
+  "/user/profile/page": "app/user/profile/page.js",
+  "/user/settings/page": "app/user/settings/page.js"
 }
